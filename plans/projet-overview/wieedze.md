@@ -247,4 +247,4 @@ Email → agent running. No API keys to configure, no repo to clone, no prompt t
    - Initial seed with most popular packages?
    - Partnerships with experts for initial curation?
 
-6. **Relationship with Intuition/Sofia**: Is Wispr a standalone product using Intuition, or the new public-facing version of Sofia?
+
