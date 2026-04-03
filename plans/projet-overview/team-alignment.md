@@ -280,32 +280,6 @@ Collects feedback throughout the course of a project (called by the Wispr Skill 
 
 ---
 
-## Hackathon Scope
-
-### P0 — Core Demo
-- Swipe onboarding (profile detection in <2 min)
-- Natural language intent → AI-powered blueprint generation
-- Live visual construction (animated block UI)
-- Blueprint export (system prompt, MCP config, packages, one-shot install)
-- Explorer catalogue with trust scores
-- Publish blueprint to Intuition (on-chain attestations)
-- Seed registry: 10-15 pre-seeded components with initial ontology
-- Curator swipe onboarding + simple attestation dashboard
-- Curator CTA from novice app
-
-### P1 — Post-hackathon
-- Wallet connect (Reown) + 3-level actor system
-- ENS subname registration
-- Community Sets with staking to unlock
-- Battle mode
-- Wispr Skill/MCP (direct LLM access)
-- Feedback API
-- Peer validation / meta-reputation (nested triples)
-- Curator rewards
-- Real $TRUST staking mechanics
-
----
-
 ## The Wow Moments
 
 ### 1. Live Construction
