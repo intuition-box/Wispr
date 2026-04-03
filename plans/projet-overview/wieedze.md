@@ -115,7 +115,6 @@ Three distinct layers, designed to work together. Each layer provides autonomous
 - Registry = 10-15 pre-seeded components (we create before demo)
 - Trust scores = mock stakes (real data structure, fake deposits)
 - Curators = hardcoded profiles (concept demonstration)
-- Single user flow (builder only, no curator dashboard)
 - Read-only registry (users can't add new components in P0)
 
 **What This Proves:**
@@ -140,7 +139,7 @@ Three distinct layers, designed to work together. Each layer provides autonomous
 - **Discovery**: Browse entire registry with filters (type, reputation, domain)
 - **Contribution**: Share your bundle configurations back to the community
 
-### For Curators (Post-Hackathon)
+### For Curators 
 - **Monetize expertise**: Earn by validating quality tools in your domain
 - **Reputation building**: Public track record of curation accuracy
 - **Early-bird advantage**: Stake on rising tools before they're mainstream
