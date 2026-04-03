@@ -1,4 +1,4 @@
-# Wispr Project Vision
+# Wispr Project Vision — Maxime
 
 > **"Collective intelligence whispered to AI before it responds."**
 
@@ -10,13 +10,11 @@ LLMs don't know what **really works** — not in your context, not with your sta
 
 **Three fundamental issues:**
 
-1. **Frozen knowledge**: Models don't know that tools deprecated APIs, became standards, or cause production conflicts.
+1. **Frozen knowledge**: Models don't know deprecated APIs, new standards, or production conflicts
+2. **Missing context**: "Which auth?" depends on serverless vs monolith, team vs solo
+3. **Lost experience**: Developers solve same problems daily, knowledge disappears
 
-2. **Missing context**: "Which auth solution?" has different answers for serverless vs monolith, solo dev vs team.
-
-3. **Lost experience**: Thousands of developers solve the same problems daily. That knowledge disappears.
-
-**Result**: Building AI agents means navigating a fragmented ecosystem alone. No trust layer. No collective memory.
+**Result**: Fragmented ecosystem, no trust layer, no collective memory.
 
 ---
 
@@ -24,237 +22,228 @@ LLMs don't know what **really works** — not in your context, not with your sta
 
 **Wispr** is where developers' collective intelligence becomes the context for AI responses.
 
-Before generating anything, Wispr queries a **living knowledge graph** — built by practitioners who've shipped with these tools. The AI receives pre-resolved context: which components work, validated by real humans on-chain.
+Before generating, Wispr queries a **living knowledge graph** — built by practitioners who've shipped. The AI receives **pre-resolved context**: which components work, validated by real humans on-chain.
 
-**This is not a chatbot with a better prompt.** It's a new paradigm — AI learns not through training, but through continuous community attestation.
+**Not a chatbot with a better prompt.** A new paradigm — AI learns through community attestation, not training.
 
 ---
 
-## How It Changes Everything
+## Pre-Resolved Context (Core Innovation)
 
-### For Users
-The difference is **invisible but radical**. You ask Wispr like asking a senior dev who's built it three times. No exploration. No ten options. Just the right answer, backed by collective experience.
+**The difference:**
+- **Standard LLM**: Lists 10 auth options → User decides → Decision paralysis
+- **Wispr**: Graph queries first → Returns top-rated (Clerk 9.1/10, 23 attestations) → LLM executes directly
 
-### For the Graph
-A **living system** that grows continuously. Every curator attestation enriches it. The graph learns through community validation.
-
-### For the Ecosystem
-A shared asset: operational knowledge about AI tools — neutral, verifiable, community-owned.
+**No exploration phase. Pre-decided by community, contextualized for your stack.**
 
 ---
 
 ## User Experience
 
-### Step 1: Describe Your Need
-
-Just type in plain English:
+### Step 1: Describe Need
 ```
-"Build a Next.js agent that monitors GitHub issues and sends daily summaries"
+"Build a Next.js agent that monitors GitHub issues"
 ```
+No setup. No API keys.
 
-No setup. No API keys. No technical knowledge required.
+### Step 2: Wispr Queries Graph
+Behind the scenes: Intent parsed → Graph query → Top components (contextualized) → Pre-resolved context → AI executes
 
-### Step 2: Wispr Queries the Graph
+### Step 3: Receive Agent Blueprint
 
-**What happens behind the scenes**:
-```
-1. Intent classification: Next.js + GitHub + scheduling
-2. Graph query → Top validated components:
-   - GitHub MCP (9.1/10, 23 attestations)
-   - Vercel AI SDK (8.9/10, 31 attestations)
-3. Pre-resolved context injected into AI
-```
+**Not just code — an executable plan:**
 
-**Key difference**:
-- **Standard LLM**: "Here are 10 GitHub integrations... which do you prefer?"
-- **Wispr**: "I'll use GitHub MCP (validated for Next.js)" → generates code directly
+**Visual Gallery**: Component cards showing GitHub MCP (9.1/10, 23 votes), Vercel AI SDK (8.9/10, 31 votes), Next.js Cron (9.0/10, 18 votes)
 
-### Step 3: Receive Working Solution
+**Blueprint includes:**
+- **Components**: Which tools (GitHub MCP, Vercel AI SDK)
+- **Order**: How to assemble (orchestrator → tools → scheduler)
+- **Why**: Justification ("validated for Next.js contexts by 23 experts")
+- **Risk**: Permissions, autonomy level
 
-You get **two outputs**:
+**Two outputs:**
+1. **Working code** — Ready to run
+2. **Exportable configs** — Copy-paste to Claude, Cursor
 
-1. **Working code** — Ready to run, pre-configured with validated components
-2. **Exportable config** — System prompt, MCP setup, install commands (copy-paste into Claude Desktop, Cursor, etc.)
 
-### Step 4: If Unsatisfied
+### Step 5: Usage & Feedback
 
-**"Contribute to Wispr"** button appears → Become a curator, shape what Wispr recommends.
+**Feedback Loop** (closes the cycle):
+1. User builds with recommended components
+2. Wispr collects usage feedback (web2-friendly, no wallet)
+3. Aggregated weekly → On-chain attestation updates
+4. Curators see real production data in dashboard
+5. Adjust attestations based on reality
 
----
+**Closes loop**: attestation → usage → feedback → better attestation
 
-## Two Modes
+### Step 6: If Unsatisfied
 
-### Default Mode (90% of users)
-- No visible graph, no jargon
-- Just fast, accurate answers
-- The graph works invisibly
-
-### Advanced Mode (experts, demos)
-- Animated blocks showing selection in real-time
-- Trust scores visible ("9.1/10 from 23 curators")
-- Customizable stack
-
-Toggle between modes.
+"Contribute to Wispr" → Become curator
 
 ---
 
 ## Becoming a Curator
 
-### Who Are Curators?
+### Swipe Profiling (6-8 questions)
 
-Practitioners with real experience who've shipped projects.
+**Tinder-style onboarding:** Binary questions ("Do you work with code?" → "Frontend or backend?" → "Use React?" → "Familiar with Next.js?")
 
-### The Flow
+**Result**: On-chain profile with expertise tags: `[nextjs, react, typescript, frontend]`
 
-```
-Bad response
-  ↓
-"Contribute to Wispr"
-  ↓
-Quick profiling (6-8 questions)
-  ↓
-Curator dashboard
-```
+### Dashboard
+
+Curators see:
+- Components in their domains (Next.js tools)
+- Real usage feedback from production
+- Peer validations/disputes
 
 ### What Curators Do
 
-Rate components in their domains:
-- **Relevance**: Does it solve the problem well?
-- **Developer Experience**: Pleasant to work with?
+**Contextualized attestations:** Not just "GitHub MCP is good (9/10)", but "GitHub MCP for Next.js (9/10)" vs "for Python (6/10)"
+
+**Rate on:**
+- **Relevance**: Solves the problem?
+- **Developer Experience**: Pleasant to use?
 - **Reliability**: Works in production?
 
-Submit → On-chain attestation → Reputation updates → Next response benefits.
-
-**Self-scaling**: Every bad response recruits a potential curator.
+**Meta-reputation (P1):** Peers validate/dispute your attestations → Weight increases/decreases → Self-regulating system
 
 ---
 
 ## The Living Graph
 
-### Simple Structure
+### Structure
 
-**Components**: GitHub MCP, Clerk auth, Claude Sonnet, etc.
+**1. Components** (Tools/MCPs/Libraries):
+- GitHub MCP, Clerk, Claude Sonnet, Vercel AI SDK, etc.
 
-**Contexts**: Next.js + AI agents, Python pipelines, etc.
+**2. Contexts** (Domains/Use Cases):
+- `web3-building`: Smart contracts, dApps, wallets
+- `ai-agents`: LLM orchestration, RAG, MCP integration
+- `event-planning`: Scheduling, booking, notifications
+- `data-pipelines`: ETL, analytics, streaming
+- `frontend`: React, Next.js, UI components
+- `backend`: APIs, databases, auth
 
-**Attestations**: What curators say
-- "GitHub MCP works great for Next.js" (9/10)
-- "Clerk is perfect for startups" (8/10)
+**3. Attestations** (Contextualized ratings):
+- `(curator, rates, GitHub-MCP, in-context: "ai-agents") → 9.1/10`
+- `(curator, rates, Clerk, in-context: "frontend") → 8.8/10`
+
+**4. Meta** (Peer validation):
+- Peers validate/dispute attestations (nested triples)
+
+**5. Feedback** (Real usage):
+- Production data from actual deployments
 
 ### Reputation
 
-**Hackathon**: Simple average
+**P0 (Hackathon)**: Simple average
 ```
 reputation = Σ scores / attestations
 
-Example: GitHub MCP (9/10 + 10/10 + 9/10) / 3 = 9.3/10
 ```
 
-**Post-Hackathon**: Economic weight (curators stake tokens, higher stakes = more influence)
+**Domain expertise matters:**
+- DeFi expert stakes on DeFi tool > generalist stakes
+- Calculated from validated claims + peer validation
 
 ### Why On-Chain?
 
 - **Verifiable**: Anyone can audit
 - **Permanent**: Can't be deleted/manipulated
-- **Transparent**: See who vouched for each tool
+- **Portable**: Reputation travels across apps (Intuition ecosystem)
+- **Transparent**: See who vouched, when, how much
 
-Built on **Intuition Protocol** (L3 chain for attestations).
-
----
-
-## What Wispr Is Not
-
-**Not a search engine** → No public rankings. Reputation serves generation.
-
-**Not a review platform** → Curators aren't anonymous. Attestations tied to on-chain identity.
-
-**Not an improved LLM** → Same models, better context.
-
-**Not just for beginners** → Experts benefit most.
+Built on **Intuition Protocol** (L3 chain).
 
 ---
 
-## The Wow Moments
+## What Makes This Unique
 
-### 1. Zero to Agent in 60 Seconds
-Describe need → Code ready. No API keys. No setup.
+### 1. Pre-Resolved Context ✨
+Graph decides **before** LLM generates → Execution, not exploration
 
-### 2. Invisible Intelligence
-Answers are suspiciously good. Like having a senior dev on call.
+### 2. Agent Blueprint ✨
+Not just code, but **complete plan**: components + order + why + cost + risk
 
-### 3. Visible Trust (Advanced Mode)
-See real humans vouching. "23 curators, avg 9.1/10." Not algorithms. People with skin in the game.
+### 3. Visual Gallery + Animated Blocks ✨
+- Gallery shows stack as cards
+- Advanced mode: cards appear animated in real-time
+- Educational: see AI decision process
 
-### 4. Living Knowledge
-The graph gets smarter daily. Your attestation today improves responses tomorrow.
+### 4. Feedback Loop ✨
+Real usage data feeds back to curators → Data-driven curation
+
+### 5. Nested Triples ✨
+Attestations on attestations → Meta-reputation, self-regulating
+
 
 ---
 
 ## Hackathon Scope (48h)
 
-### What We're Building
-
-**Core Experience**:
-- Chat interface (plain English input)
-- Graph query (10-15 pre-seeded components)
-- Code generation (direct, no exploration)
-- Config export (copy-paste ready)
-- Curator flow (onboarding + attestation)
-
-**Demo Features**:
-- Animated blocks (switchable visual mode)
-- Trust scores display
+**Core**:
+- Chat interface (plain English)
+- Pre-resolved context (graph decides before LLM)
+- Visual gallery (component cards)
+- Agent blueprint generation
+- Code + config export
+- Curator swipe onboarding
 - Simple attestation dashboard
 
+**Demo Features**:
+- Animated blocks (switchable)
+- Trust scores visible
+- Feedback collection (off-chain for P0)
+
 **Simplified**:
-- Pre-seeded graph (we create before demo)
-- Social curation (no token staking yet)
-- Single context (Next.js + AI agents)
+- Pre-seeded graph (10-15 components)
+- Social curation (no staking)
+- Single context (Next.js + AI)
+- Simple average reputation
 
-### Post-Hackathon
-
-**Economic Layer** (P1):
-- Stake tokens on attestations
-- Earn rewards from adoption
-- TVL-weighted reputation
-
-**Expansion**:
-- Multi-context (Python, Rust, mobile)
-- Anyone can propose components
-- Agent hosting
 
 ---
 
 ## Why This Matters
 
-**For Developers**: Stop wasting hours researching. Get validated answers from people who've shipped.
+**For Developers**:
+- Validated answers from people who've shipped
+- Blueprint (not just code) = understand the stack
+- Skip hours of research
 
-**For Curators**: Shape what AI recommends to thousands. Build reputation. Earn rewards.
+**For Curators**:
+- Shape what AI recommends
+- Build portable reputation (Intuition ecosystem)
+- Earn rewards (P1)
+- See real usage data
 
-**For AI**: Operational knowledge, continuously updated, context-aware. Not frozen training data.
+**For AI**:
+- Operational knowledge, continuously updated
+- Context-aware (Next.js ≠ Python)
+- Not frozen training data
 
-**For Web3**: Proves on-chain attestations create real value beyond speculation.
+**For Web3**:
+- On-chain attestations create real value
+- Portable reputation across apps
+- Beyond speculation
 
 ---
 
 ## Pitch (30 seconds)
 
-> **"We're building collective intelligence for AI."**
+> **"Collective intelligence for AI — pre-resolved, visual, validated."**
 >
-> **Problem**: LLMs hallucinate about tools. They don't know what works in production.
+> **Problem**: LLMs hallucinate about tools. No context. No trust.
 >
-> **Solution**: A living knowledge graph where developers attest to what actually works. Before responding, AI queries the graph.
+> **Solution**: Living knowledge graph. AI queries **before** generating. Pre-resolved context = direct execution.
 >
-> **Demo**: Natural language → production code in under 60 seconds. Components validated by practitioners, on-chain.
+> **Unique**:
+> - Visual gallery + animated blocks
+> - Agent blueprints (not just code)
+> - Feedback loop (usage → curation)
+> - Nested triples (meta-reputation)
 >
-> **Post-hackathon**: Economic staking, curator rewards, expansion.
+> **Demo**: 60 seconds to executable agent plan, validated by domain experts, on-chain.
 
----
-
-## Open Questions
-
-1. How to bootstrap initial curators?
-2. When to migrate from social to economic curation?
-3. How much code to generate? (Full apps vs configs)
-4. When to show graph vs hide it?
-5. Which contexts to expand to first?
