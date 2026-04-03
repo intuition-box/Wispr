@@ -256,17 +256,6 @@ Collects feedback throughout the course of a project (called by the Wispr Skill 
 
 ---
 
-## Partners
-
-| Partner | Usage |
-|---|---|
-| **Intuition Protocol** | Knowledge graph + on-chain attestations + recommendation via MCP (TVL-based) + economics |
-| **ENS** | Portable identity — `{name}.wispr.eth` |
-| **0G** | Decentralized LLM database — source for recommending specific LLMs as components |
-| **Reown** | Multi-chain wallet connection |
-
----
-
 ## Project Components
 
 | # | Component | Description |
