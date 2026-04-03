@@ -31,19 +31,22 @@ This is not a chatbot with a better prompt. It's a new paradigm — AI learns th
 ## Three Actors
 
 ### Level 1 — User, no wallet
-- Full access through a single text field
 - Swipe onboarding detects profile (role + AI maturity)
-- Describes need in natural language → receives a personalized blueprint
+- Receives a pre-filled stack of recommended components
+- Validates, adjusts, and publishes their stack → feeds the knowledge graph
+- Can use the chat at any point for questions or blueprint generation
 - Zero blockchain friction, zero account needed
 
 ### Level 2 — User, wallet connected
 - Stacks saved on-chain, portable across apps
 - Can follow tools, track history, unlock Community Sets
-- No curation responsibilities
+- Can attest on **existing** components (validate/remove from their stack)
 - A connected wallet does not make someone a curator
+- **Cannot create new components** in the registry
 
 ### Level 3 — Curator, explicit opt-in
 - Deliberate onboarding: declares expertise domains, tools used in production, identity links (ENS, GitHub, Farcaster)
+- **Can create new components** in the registry (sole privilege over users)
 - Stakes $TRUST on components they validate
 - Reputation is portable cross-app on Intuition
 - Domain expertise built from declared signals + peer validation
@@ -90,25 +93,36 @@ Output: `Profile { role, level }` → used to personalize everything downstream.
 
 ---
 
-### 2. Intent `/chat`
+### 2. My Stack `/profile`
 
-After profiling, the user lands on a **single text field**.
+After profiling, the user lands on their **pre-filled stack page**. Based on the detected profile, Wispr recommends a set of components (packages, APIs, LLMs, MCP servers, skills) relevant to their domain.
 
-> "I want to build a Next.js app with Google auth and an admin dashboard"
+**The user's first action is a contribution:**
+- Review each recommended component — keep or remove
+- **Button +** to search and add atoms not in the initial recommendation
+- Each component card shows: name, type, trust score, curator count
+- Trust scores "breathe" — they fluctuate in real-time as curators stake/unstake. Click any component to see who staked and how much — visible skin in the game.
 
-The Wispr Agent:
+**Publish** → certify on-chain that "these components are good for MY domain". Each publication = Intuition attestation. This is the user's **portable agentic skills profile**.
+
+This means **every user who publishes their stack feeds the knowledge graph** — not just curators.
+
+---
+
+### 3. Chat (transversal)
+
+The chat is **not a step in the flow — it's available everywhere**, as an overlay or sidebar. The user can open it at any point to:
+
+- Ask questions about a component ("what does this MCP server do?", "what's the difference between X and Y?")
+- Get recommendations ("what's the best ORM for serverless?")
+- Generate a full blueprint from a natural language intent ("build me a Next.js app with Google auth and an admin dashboard")
+
+When generating a blueprint, the Wispr Agent:
 1. **Extracts semantic claims** from the intent (framework, features, constraints)
 2. **Queries the Intuition knowledge graph** filtered by profile context + reputation threshold
 3. **Composes an executable blueprint** — not a list, but a plan: which tools, in what order, why, with what cost and risk
 
-The response is displayed as a **live visual construction** — animated blocks appear in real-time as the AI resolves each component. Each block shows: tool name, trust score, active curators. Not a loading spinner. A visible building process.
-
----
-
-### 3. Blueprint `/blueprint`
-
-The generated blueprint is both visual and actionable:
-
+Blueprint output includes:
 - **Visual gallery** — each component as a card with trust score, curator count, reasoning
 - **System Prompt** — editable textarea, one-click copy
 - **MCP Config** — toggleable servers, generates `claude_desktop_config.json`, one-click copy
@@ -117,9 +131,7 @@ The generated blueprint is both visual and actionable:
 - **One-shot install prompt** — single command to configure your local environment
 - **Publish on-chain** — Intuition triples + ENS subname `{name}.wispr.eth`
 
-Trust scores "breathe" — they fluctuate in real-time as curators stake/unstake. Click any component to see who staked and how much — visible skin in the game.
-
-If the user is unsatisfied → **CTA "Contribute to Wispr"** → become a curator. The app doubles as the entry point for the curator persona.
+The chat is essential for novices who don't know what to put in their profile. For experts, it's optional.
 
 ---
 
