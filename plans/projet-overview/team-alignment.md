@@ -12,7 +12,7 @@ The web3 community is approaching agentic reputation the wrong way. An agent is 
 Current state:
 - **Extreme fragmentation** — hundreds of agents, MCPs, packages, skills, with no intelligent discovery layer
 - **No composition** — you can find a single tool, but not assemble a coherent stack for a specific need
-- **Opaque trust** — a tool's reputation relies on GitHub stars or marketing, no verifiable signal
+- **Opaque trust** — a tool's reputation relies on GitHub stars, download counts (e.g. skills.sh), or marketing — no verifiable signal
 - **Frozen priors** — LLMs don't know what really works in your context, in 2025, with your stack
 - **No collective memory** — thousands of developers solve the same problems, and that experience disappears
 
