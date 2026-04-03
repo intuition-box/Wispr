@@ -4,7 +4,7 @@ The AI agent ecosystem is fragmented: hundreds of agents, MCPs, packages and ski
 
 **Wispr** is the npm registry for AI agents — but with a trust-scoring layer on top. A user describes their need in natural language and gets back a **complete, executable agent blueprint**. Curators feed the registry and stake **Trust** on every tool they recommend via Intuition Protocol. The more a tool is staked on by recognized experts, the higher it ranks.
 
-"The trust-scored discovery engine for AI agent capabilities."
+> "The trust-scored discovery engine for AI agent capabilities."
 
 ---
 
@@ -225,6 +225,57 @@ This score feeds directly into the trust signal calculation, making attestation 
 
 ---
 
+## The Learning Flywheel
+
+Every interaction makes the next one better. Wispr is not a static registry — it is a system that learns continuously from two interlocking loops, both running on Intuition.
+
+### The user loop
+```
+User queries → intent atoms on-chain
+    ↓
+Agent recommends → blueprint from trust graph
+    ↓
+User adopts tools → real usage signal on-chain
+    ↓
+Usage validates attestations → confirms or weakens curator stakes
+    ↓
+Better trust signal → sharper next recommendation
+    ↑─────────────────────────────────────────┘
+```
+
+Every query teaches the agent what the ecosystem actually needs. Every saved stack reveals which tool combinations work in practice. Every tool adoption confirms or challenges what curators predicted.
+
+### The curator loop
+```
+Curator declares expertise → low-weight triples on-chain
+    ↓
+Curator stakes on tools → trust signal enters scoring
+    ↓
+Peers validate claims → domain expertise score rises
+    ↓
+Higher expertise score → attestations carry more weight
+    ↓
+More weight → more adoption of staked tools
+    ↓
+More adoption → reputation compounds further
+    ↑────────────────────────────────────────┘
+```
+
+A curator who consistently stakes on the right tools in their domain accumulates an expertise score that multiplies their future influence. The better their track record, the harder it is for newcomers to dilute the signal.
+
+### How the two loops talk to each other
+
+- **User queries inform curation priorities** — when many users ask for the same capability and no curator has staked in that domain, it creates a visible gap. Curators see demand before it's met.
+- **Curator stakes feed agent recommendations** — the trust signal the agent reads is a direct function of who staked what. Better curators → better rankings → better blueprints.
+- **Real adoption validates curator judgment** — when a tool staked by a curator gets widely adopted, their domain expertise score rises automatically. When it gets ignored, it doesn't.
+- **The graph compounds** — each loop reinforces the other. More users → more usage signals → better curator validation → better rankings → more users. The system gets smarter with every transaction.
+
+### What this means at scale
+
+At launch, the agent recommends from a small, manually curated registry. Over time, as the graph accumulates queries, adoptions, stakes, validations and disputes, the recommendations become increasingly precise — not because the model changed, but because the trust graph it reads has become richer. The quality of the output is a direct function of the depth of the graph.
+
+---
+
 ## Key Differentiators
 
 **Anyone can submit — not everyone carries the same weight**
@@ -239,6 +290,9 @@ Connecting a wallet is a low-friction step for portability and identity. Becomin
 **Curator expertise is declared and validated, not assumed**
 Curators declare their domains at onboarding. Peers validate or dispute those claims on-chain. A DeFi expert's stake on a DeFi tool carries more weight than a generalist's — expertise is earned, not inferred from wallet activity.
 
+**A system that learns with every transaction**
+Every query, adoption, stake and validation enriches the on-chain graph. Recommendations get sharper over time — not because the model was retrained, but because the trust graph it reads grows more precise. The flywheel is the product.
+
 **Portable cross-app reputation via Intuition**
 A curator's reputation is not locked inside this product. It lives on-chain and is readable by any app in the Intuition graph. This is infrastructure, not a closed product.
 
@@ -252,4 +306,4 @@ Not just attestations — attestations on attestations. A curator whose recommen
 
 ## 30-Second Pitch
 
-"AI agents don't have an intelligence problem — they have a discovery, composition and trust problem. We're building the npm registry for AI agents, with a trust-scoring layer on top: curators explicitly stake their reputation and Trust on the tools they recommend, declare their expertise on-chain, and get rewarded as their picks get adopted. Connecting a wallet gives you portability. Becoming a curator means putting skin in the game. Invisible to the end user. Verifiable on-chain."
+"AI agents don't have an intelligence problem — they have a discovery, composition and trust problem. We're building the npm registry for AI agents, with a self-improving trust layer on top: every query, every adoption, every curator stake and peer validation enriches an on-chain graph that makes the next recommendation sharper. Curators put skin in the game, users get better blueprints over time, and the whole thing gets smarter with every transaction. Invisible to the end user. Verifiable on-chain."
