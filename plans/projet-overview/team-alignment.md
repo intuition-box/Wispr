@@ -20,7 +20,7 @@ Current state:
 
 ## The Vision
 
-**Wispr** is where developers' collective intelligence becomes the context for AI responses.
+**Wispr** is where agentic users' collective intelligence becomes the context for AI responses.
 
 Before generating, Wispr queries a **living knowledge graph** built by practitioners who've shipped. The AI receives **pre-resolved context**: which components work, validated by real humans on-chain. It doesn't explore. It executes.
 
