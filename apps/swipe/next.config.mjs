@@ -10,6 +10,9 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ["@wispr/ontology"],
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
 };
 
 export default withPWA(nextConfig);

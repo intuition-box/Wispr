@@ -1,12 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import dynamic from "next/dynamic";
-import { AppKitProvider } from "@/components/AppKitProvider";
 import "../styles/globals.css";
-
-const InstallBanner = dynamic(
-  () => import("@/components/InstallBanner").then((m) => ({ default: m.InstallBanner })),
-  { ssr: false }
-);
 
 export const metadata: Metadata = {
   title: "Wispr Profile",
@@ -35,12 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppKitProvider>
-          <main className="min-h-screen flex flex-col">
-            {children}
-          </main>
-          <InstallBanner />
-        </AppKitProvider>
+        <main className="min-h-screen flex flex-col">
+          {children}
+        </main>
       </body>
     </html>
   );
