@@ -3,9 +3,10 @@ import dynamic from "next/dynamic";
 import { AppKitProvider } from "@/components/AppKitProvider";
 import "../styles/globals.css";
 
-const InstallBanner = dynamic(() => import("@/components/InstallBanner").then(m => ({ default: m.InstallBanner })), {
-  ssr: false,
-});
+const InstallBanner = dynamic(
+  () => import("@/components/InstallBanner").then((m) => ({ default: m.InstallBanner })),
+  { ssr: false }
+);
 
 export const metadata: Metadata = {
   title: "Wispr Profile",

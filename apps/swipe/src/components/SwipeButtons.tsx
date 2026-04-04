@@ -8,17 +8,17 @@ interface SwipeButtonsProps {
 
 export function SwipeButtons({ onSwipe }: SwipeButtonsProps) {
   return (
-    <div className="flex gap-6 justify-center mt-2">
+    <div className="flex gap-8 justify-center mt-4">
       <button
         onClick={() => onSwipe("dislike")}
-        className="w-16 h-16 rounded-full border-none text-[22px] flex items-center justify-center shadow-card bg-red/8 text-red hover:shadow-md transition-shadow"
+        className="w-[64px] h-[64px] rounded-full text-[24px] flex items-center justify-center bg-red-soft text-red shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200"
         aria-label="No"
       >
         ✕
       </button>
       <button
         onClick={() => onSwipe("like")}
-        className="w-16 h-16 rounded-full border-none text-[22px] flex items-center justify-center shadow-card bg-green/8 text-green hover:shadow-md transition-shadow"
+        className="w-[64px] h-[64px] rounded-full text-[24px] flex items-center justify-center bg-green-soft text-green shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200"
         aria-label="Yes"
       >
         ✓

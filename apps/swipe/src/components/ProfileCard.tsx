@@ -33,30 +33,35 @@ const ROLE_EMOJI: Record<string, string> = {
   founder: "🚀",
 };
 
-const LEVEL_COLORS: Record<string, string> = {
-  beginner: "bg-green/10 text-green",
-  intermediate: "bg-accent/10 text-accent",
-  advanced: "bg-amber/20 text-amber",
-  expert: "bg-red/10 text-red",
+const LEVEL_STYLE: Record<string, string> = {
+  beginner: "bg-green-soft text-green",
+  intermediate: "bg-accent-soft text-accent",
+  advanced: "bg-amber/15 text-[#C69B20]",
+  expert: "bg-red-soft text-red",
 };
 
 export function ProfileCard({ profile }: ProfileCardProps) {
   const roleLabel = ROLE_LABELS[profile.role] ?? profile.role;
   const levelLabel = LEVEL_LABELS[profile.level] ?? profile.level;
   const emoji = ROLE_EMOJI[profile.role] ?? "👤";
-  const levelColor = LEVEL_COLORS[profile.level] ?? "bg-accent/10 text-accent";
+  const levelStyle = LEVEL_STYLE[profile.level] ?? "bg-accent-soft text-accent";
 
   return (
-    <div className="w-full max-w-[380px] mx-auto bg-bg-card rounded-xl border border-border shadow-card p-8 flex flex-col items-center gap-4">
-      <span className="text-5xl">{emoji}</span>
-      <h2 className="text-xl font-bold text-text-primary text-center">
-        {roleLabel}
-      </h2>
-      <span
-        className={`px-4 py-1.5 rounded-lg text-sm font-semibold ${levelColor}`}
-      >
-        {levelLabel} in AI
-      </span>
+    <div className="w-full max-w-[380px] mx-auto bg-card rounded-3xl border border-line shadow-md p-8 flex flex-col items-center gap-5 noise relative overflow-hidden">
+      {/* Decorative gradient */}
+      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-accent/5 to-transparent pointer-events-none" />
+
+      <div className="relative z-10 w-20 h-20 rounded-2xl bg-bg flex items-center justify-center border border-line shadow-xs">
+        <span className="text-4xl">{emoji}</span>
+      </div>
+      <div className="relative z-10 text-center">
+        <h2 className="font-display text-[22px] text-ink mb-3">
+          {roleLabel}
+        </h2>
+        <span className={`inline-flex items-center px-4 py-2 rounded-full text-[13px] font-bold tracking-wide ${levelStyle}`}>
+          {levelLabel} in AI
+        </span>
+      </div>
     </div>
   );
 }

@@ -19,9 +19,9 @@ export function WalletConnect({
 }: WalletConnectProps) {
   if (loading) {
     return (
-      <div className="flex flex-col items-center gap-2">
-        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-        <span className="text-sm text-text-muted">Connecting wallet...</span>
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-7 h-7 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+        <span className="text-[13px] text-ink-muted">Connecting wallet...</span>
       </div>
     );
   }
@@ -29,13 +29,15 @@ export function WalletConnect({
   if (isConnected && address) {
     return (
       <div className="flex flex-col items-center gap-3">
-        <div className="flex items-center gap-2 bg-green/10 text-green px-4 py-2 rounded-lg text-sm font-medium">
-          <span className="w-2 h-2 bg-green rounded-full" />
-          {address.slice(0, 6)}...{address.slice(-4)}
+        <div className="flex items-center gap-2.5 bg-green-soft border border-green/15 px-5 py-2.5 rounded-full">
+          <span className="w-2 h-2 bg-green rounded-full animate-pulse-soft" />
+          <span className="text-[13px] font-semibold text-green font-mono">
+            {address.slice(0, 6)}...{address.slice(-4)}
+          </span>
         </div>
         <button
           onClick={onDisconnect}
-          className="text-xs text-text-muted hover:text-text-secondary transition-colors bg-transparent border-none"
+          className="text-[12px] text-ink-muted hover:text-ink-secondary transition-colors bg-transparent"
         >
           Disconnect
         </button>
@@ -44,15 +46,16 @@ export function WalletConnect({
   }
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-3">
       <button
         onClick={onConnect}
-        className="bg-accent text-text-white font-semibold text-sm px-6 py-3 rounded-xl border-none shadow-card hover:shadow-md transition-shadow"
+        className="flex items-center gap-2 bg-ink text-ink-inverse font-semibold text-[14px] px-7 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
       >
+        <span>🔗</span>
         Connect Wallet
       </button>
       {error && (
-        <span className="text-xs text-red text-center max-w-[280px]">
+        <span className="text-[12px] text-red text-center max-w-[280px]">
           {error}
         </span>
       )}
