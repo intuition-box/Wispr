@@ -42,9 +42,17 @@ export function useWalletConnection() {
       try {
         const { ethers } = await import("ethers");
 
-        // Get the underlying provider from Dynamic wallet
-        const walletProvider = await (primaryWallet.connector as any).getProvider();
-        const provider = new ethers.BrowserProvider(walletProvider as any);
+        // Get the EIP-1193 compatible provider from Dynamic wallet
+        const dynamicWallet = primaryWallet as any;
+        const walletProvider = typeof dynamicWallet.getWalletClient === "function"
+          ? await dynamicWallet.getWalletClient()
+          : null;
+
+        if (!walletProvider) {
+          throw new Error("Could not get wallet provider");
+        }
+
+        const provider = new ethers.BrowserProvider(walletProvider);
 
         // Ensure wallet is on Intuition chain (1155)
         let needsChainSwitch = false;
@@ -77,7 +85,7 @@ export function useWalletConnection() {
         }
 
         const freshProvider = needsChainSwitch
-          ? new ethers.BrowserProvider(walletProvider as any)
+          ? new ethers.BrowserProvider(walletProvider)
           : provider;
 
         const signer = await freshProvider.getSigner();

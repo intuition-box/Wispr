@@ -2,7 +2,7 @@ import type { Role, AILevel } from "@wispr/ontology";
 
 export type SwipeDirection = "like" | "dislike";
 
-export type SwipePhase = "role" | "maturity" | "result";
+export type SwipePhase = "role" | "maturity" | "result" | "components";
 
 export interface QuestionNode {
   id: string;
