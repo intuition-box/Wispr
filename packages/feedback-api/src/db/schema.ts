@@ -50,9 +50,11 @@ export const blueprintComponents = sqliteTable(
   {
     id:                 text("id").primaryKey(),
     blueprintId:        text("blueprint_id").notNull().references(() => blueprints.id, { onDelete: "cascade" }),
-    componentId:        text("component_id").notNull(),
+    componentId:        text("component_id").notNull(),   // Intuition atom ID (numeric) or slug fallback
     componentType:      text("component_type").notNull(), // agent | skill | mcp | api | package | llm
     componentName:      text("component_name").notNull(),
+    intuitionAtomId:    text("intuition_atom_id"),        // numeric Intuition atom ID when available
+    intuitionTripleId:  text("intuition_triple_id"),      // triple ID: (component isRelevantFor intent)
     trustScoreAtTime:   real("trust_score_at_time"),
     position:           integer("position"),
     adopted:            integer("adopted").notNull().default(0), // 0 | 1
@@ -124,8 +126,8 @@ export type Message               = typeof messages.$inferSelect;
 export type NewMessage            = typeof messages.$inferInsert;
 export type Blueprint             = typeof blueprints.$inferSelect;
 export type NewBlueprint          = typeof blueprints.$inferInsert;
-export type BlueprintComponent    = typeof blueprintComponents.$inferSelect;
-export type NewBlueprintComponent = typeof blueprintComponents.$inferInsert;
+export type BlueprintComponent     = typeof blueprintComponents.$inferSelect;
+export type NewBlueprintComponent  = typeof blueprintComponents.$inferInsert;
 export type FeedbackSignal        = typeof feedbackSignals.$inferSelect;
 export type NewFeedbackSignal     = typeof feedbackSignals.$inferInsert;
 export type CurationSignal        = typeof curationSignals.$inferSelect;

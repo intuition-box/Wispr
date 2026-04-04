@@ -7,6 +7,7 @@ import {
   type RankedComponent,
 } from "@wispr/agent";
 import { db, sessions, conversations, messages, blueprints, blueprintComponents } from "@wispr/feedback-api";
+import { eq } from "drizzle-orm";
 
 const anthropic = new Anthropic();
 
@@ -28,6 +29,19 @@ export async function POST(req: Request) {
       .values({ id: conversationId, sessionId })
       .onConflictDoNothing()
       .run();
+
+    // Save system prompt once (first message of the conversation)
+    const existing = db.select().from(messages).where(eq(messages.conversationId, conversationId)).limit(1).all();
+    if (existing.length === 0) {
+      db.insert(messages)
+        .values({
+          id: crypto.randomUUID(),
+          conversationId,
+          role: "system",
+          content: SYSTEM_PROMPT,
+        })
+        .run();
+    }
 
     // Save user message
     db.insert(messages)

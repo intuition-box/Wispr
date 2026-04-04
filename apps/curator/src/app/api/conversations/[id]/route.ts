@@ -1,4 +1,4 @@
-import { db, messages, curationSignals } from "@wispr/feedback-api";
+import { db, messages, curationSignals, blueprints, blueprintComponents } from "@wispr/feedback-api";
 import { eq } from "drizzle-orm";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -18,5 +18,21 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     .orderBy(curationSignals.createdAt)
     .all();
 
-  return Response.json({ messages: msgs, curations });
+  const blueprint = db
+    .select()
+    .from(blueprints)
+    .where(eq(blueprints.conversationId, id))
+    .limit(1)
+    .all()[0] ?? null;
+
+  const components = blueprint
+    ? db
+        .select()
+        .from(blueprintComponents)
+        .where(eq(blueprintComponents.blueprintId, blueprint.id))
+        .orderBy(blueprintComponents.position)
+        .all()
+    : [];
+
+  return Response.json({ messages: msgs, curations, blueprint, components });
 }
