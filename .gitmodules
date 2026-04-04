@@ -1,3 +1,0 @@
-[submodule ".claude/skills/wispear-skill"]
-	path = .claude/skills/wispear-skill
-	url = git@github.com:Wieedze/Wispear-Skill.git
