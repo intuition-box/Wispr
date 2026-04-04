@@ -1,0 +1,196 @@
+{
+  "version": "1.0.0-w4-p3",
+  "description": "Minimal ontology foundation for 2 use cases: W4 (Notion to Twitter) + P3 (DeFi Rebalancing)",
+  "use_cases": ["w4-notion-to-twitter", "p3-defi-rebalancing"],
+  "stats": {
+    "totalAtoms": 16,
+    "totalTriples": 26
+  },
+  "atoms": [
+    {
+      "id": "mcp-notion",
+      "name": "MCP Notion",
+      "description": "Model Context Protocol server for Notion - reads databases and pages",
+      "url": "https://github.com/makenotion/notion-mcp-server"
+    },
+    {
+      "id": "mcp-twitter",
+      "name": "MCP Twitter",
+      "description": "Model Context Protocol server for Twitter - posts tweets and threads",
+      "url": "https://github.com/EnesCinr/twitter-mcp"
+    },
+    {
+      "id": "claude-sonnet-4-5",
+      "name": "claude-sonnet-4-5",
+      "description": "Anthropic's Claude Sonnet 4.5 - long-form generation, reasoning, tone control",
+      "url": "https://docs.anthropic.com/en/docs/about-claude/models"
+    },
+    {
+      "id": "chainlink-data-feeds",
+      "name": "Chainlink Data Feeds",
+      "description": "Real-time on-chain price oracles for crypto assets",
+      "url": "https://docs.chain.link/data-feeds"
+    },
+    {
+      "id": "1inch-fusion-plus-sdk",
+      "name": "1inch Fusion+ SDK",
+      "description": "Optimal swap execution with MEV protection and guaranteed slippage",
+      "url": "https://docs.1inch.io/docs/fusion-swap"
+    },
+    {
+      "id": "privy-embedded-wallet",
+      "name": "Privy Embedded Wallet",
+      "description": "Embedded wallet solution for seamless transaction signing",
+      "url": "https://docs.privy.io"
+    },
+    {
+      "id": "brand-voice-skill",
+      "name": "brand-voice-skill",
+      "description": "AI service that analyzes user's writing style and applies it to new content",
+      "url": "whisper.xyz/skills/brand-voice"
+    },
+    {
+      "id": "type-tool",
+      "name": "tool",
+      "description": "External tools, MCPs, SDKs, APIs"
+    },
+    {
+      "id": "type-skill",
+      "name": "skill",
+      "description": "Domain-specific AI services and capabilities"
+    },
+    {
+      "id": "type-model",
+      "name": "model",
+      "description": "LLM models for reasoning and generation"
+    },
+    {
+      "id": "context-content-automation",
+      "name": "content-automation",
+      "description": "Automated content management and workflows"
+    },
+    {
+      "id": "context-social-media",
+      "name": "social-media",
+      "description": "Social media platforms and publishing"
+    },
+    {
+      "id": "context-content-generation",
+      "name": "content-generation",
+      "description": "AI-powered content generation"
+    },
+    {
+      "id": "context-defi",
+      "name": "defi",
+      "description": "Decentralized finance protocols and applications"
+    },
+    {
+      "id": "context-web3-building",
+      "name": "web3-building",
+      "description": "Web3 development and infrastructure"
+    },
+    {
+      "id": "context-content-creation",
+      "name": "content-creation",
+      "description": "Content creation and writing"
+    }
+  ],
+  "triples": [
+    {
+      "subject": "mcp-notion",
+      "predicate": "is-best-of",
+      "object": "type-tool"
+    },
+    {
+      "subject": "mcp-twitter",
+      "predicate": "is-best-of",
+      "object": "type-tool"
+    },
+    {
+      "subject": "claude-sonnet-4-5",
+      "predicate": "is-best-of",
+      "object": "type-model"
+    },
+    {
+      "subject": "chainlink-data-feeds",
+      "predicate": "is-best-of",
+      "object": "type-tool"
+    },
+    {
+      "subject": "1inch-fusion-plus-sdk",
+      "predicate": "is-best-of",
+      "object": "type-tool"
+    },
+    {
+      "subject": "privy-embedded-wallet",
+      "predicate": "is-best-of",
+      "object": "type-tool"
+    },
+    {
+      "subject": "brand-voice-skill",
+      "predicate": "is-best-of",
+      "object": "type-skill"
+    },
+    {
+      "subject": "mcp-notion",
+      "predicate": "in-context-of",
+      "object": "context-content-automation"
+    },
+    {
+      "subject": "mcp-twitter",
+      "predicate": "in-context-of",
+      "object": "context-social-media"
+    },
+    {
+      "subject": "claude-sonnet-4-5",
+      "predicate": "in-context-of",
+      "object": "context-content-generation"
+    },
+    {
+      "subject": "chainlink-data-feeds",
+      "predicate": "in-context-of",
+      "object": "context-defi"
+    },
+    {
+      "subject": "1inch-fusion-plus-sdk",
+      "predicate": "in-context-of",
+      "object": "context-defi"
+    },
+    {
+      "subject": "privy-embedded-wallet",
+      "predicate": "in-context-of",
+      "object": "context-web3-building"
+    },
+    {
+      "subject": "brand-voice-skill",
+      "predicate": "in-context-of",
+      "object": "context-content-creation"
+    }
+  ],
+
+  "use_case_stacks": {
+    "w4-notion-to-twitter": {
+      "components": [
+        "mcp-notion",
+        "mcp-twitter",
+        "claude-sonnet-4-5",
+        "brand-voice-skill"
+      ],
+      "infrastructure": [
+        "Weekly cron job (Vercel Cron, GitHub Actions, AWS EventBridge, etc.)"
+      ],
+      "flow": "Cron triggers → MCP Notion reads notes → Claude Sonnet + brand-voice-skill generate thread → MCP Twitter posts"
+    },
+    "p3-defi-rebalancing": {
+      "components": [
+        "chainlink-data-feeds",
+        "1inch-fusion-plus-sdk",
+        "privy-embedded-wallet"
+      ],
+      "custom_code": [
+        "Portfolio rebalancing algorithm (calculates deviations, determines swaps)"
+      ],
+      "flow": "Chainlink prices → Custom algo calculates swaps → 1inch executes swaps → Privy signs txs"
+    }
+  }
+}
