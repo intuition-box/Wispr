@@ -51,6 +51,7 @@ export function WalletProvider({ children, environmentId }: WalletProviderProps)
       settings={{
         environmentId: envId,
         walletConnectors: [EthereumWalletConnectors],
+        initialAuthenticationMode: "connect-only",
         overrides: {
           evmNetworks: () => [intuitionNetwork]
         },

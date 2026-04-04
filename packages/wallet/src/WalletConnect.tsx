@@ -24,7 +24,8 @@ export function WalletConnect() {
       <div className="flex flex-col items-center gap-2">
         <button
           onClick={connect}
-          className="flex items-center gap-2 bg-pear text-ink-inverse font-semibold text-[14px] px-7 py-3.5 rounded-2xl shadow-glow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+          className="flex items-center gap-2 font-semibold text-[14px] px-10 py-3.5 rounded-2xl shadow-glow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+          style={{ backgroundColor: "#d4ff47", color: "#06070f", paddingLeft: "40px", paddingRight: "40px" }}
         >
           Connect Wallet
         </button>
