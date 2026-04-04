@@ -1,136 +1,148 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
+import { Send, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BlueprintCard } from "@/components/blueprint-card";
+import { mockBlueprintW4, mockBlueprintP3 } from "@/lib/mock-blueprint";
+import type { Blueprint } from "@/lib/mock-blueprint";
+
+// Simulate agent response — picks blueprint based on keywords
+function matchBlueprint(input: string): Blueprint {
+  const lower = input.toLowerCase();
+  if (
+    lower.includes("defi") ||
+    lower.includes("rebalance") ||
+    lower.includes("portfolio") ||
+    lower.includes("swap")
+  ) {
+    return mockBlueprintP3;
+  }
+  return mockBlueprintW4;
+}
+
+interface Message {
+  role: "user" | "agent";
+  content?: string;
+  blueprint?: Blueprint;
+}
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
-  const [response, setResponse] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const abortRef = useRef<AbortController | null>(null);
 
-  async function submit() {
-    if (!input.trim() || loading) return;
+  function submit() {
+    const text = input.trim();
+    if (!text || loading) return;
 
-    abortRef.current?.abort();
-    abortRef.current = new AbortController();
-
+    setInput("");
+    setMessages((prev) => [...prev, { role: "user", content: text }]);
     setLoading(true);
-    setResponse("");
 
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
-        signal: abortRef.current.signal,
-      });
-
-      if (!res.ok || !res.body) {
-        setResponse("Error: " + res.statusText);
-        return;
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        setResponse((prev) => prev + decoder.decode(value, { stream: true }));
-      }
-    } catch (err) {
-      if ((err as Error).name !== "AbortError") {
-        setResponse("Error: " + (err as Error).message);
-      }
-    } finally {
+    // Simulate agent thinking delay
+    setTimeout(() => {
+      const blueprint = matchBlueprint(text);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "agent",
+          blueprint,
+        },
+      ]);
       setLoading(false);
-    }
+    }, 1500);
   }
 
   return (
-    <main style={styles.container}>
-      <h1 style={styles.title}>Wispr</h1>
-      <p style={styles.subtitle}>Describe your need. Get a blueprint.</p>
+    <main className="flex flex-col h-screen max-w-3xl mx-auto">
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto px-4 pt-12 pb-4 space-y-6">
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-center">
+            <h1 className="text-2xl font-bold tracking-tight">Wispr</h1>
+            <p className="text-sm text-muted-foreground mt-2 max-w-md">
+              Describe what you want to build.
+            </p>
+            <div className="flex gap-2 mt-6">
+              <button
+                onClick={() =>
+                  setInput(
+                    "I want to automatically turn my Notion notes into Twitter threads every week"
+                  )
+                }
+                className="text-xs text-muted-foreground bg-secondary hover:bg-secondary/80 rounded-lg px-3 py-2 transition-colors"
+              >
+                Notion → Twitter threads
+              </button>
+              <button
+                onClick={() =>
+                  setInput(
+                    "I want an agent that automatically rebalances my DeFi portfolio"
+                  )
+                }
+                className="text-xs text-muted-foreground bg-secondary hover:bg-secondary/80 rounded-lg px-3 py-2 transition-colors"
+              >
+                DeFi portfolio rebalancer
+              </button>
+            </div>
+          </div>
+        )}
 
-      <div style={styles.inputRow}>
-        <textarea
-          style={styles.textarea}
-          placeholder="I want to build a Next.js app with Google auth and an admin dashboard..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) submit();
-          }}
-          rows={3}
-          disabled={loading}
-        />
-        <button style={styles.button} onClick={submit} disabled={loading}>
-          {loading ? "..." : "→"}
-        </button>
+        {messages.map((msg, i) => (
+          <div key={i}>
+            {msg.role === "user" ? (
+              <div className="flex justify-end">
+                <div className="bg-primary text-primary-foreground rounded-2xl rounded-br-md px-4 py-2.5 max-w-lg">
+                  <p className="text-sm">{msg.content}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {msg.content && (
+                  <p className="text-sm text-muted-foreground">{msg.content}</p>
+                )}
+                {msg.blueprint && <BlueprintCard blueprint={msg.blueprint} />}
+              </div>
+            )}
+          </div>
+        ))}
+
+        {loading && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Composing blueprint…
+          </div>
+        )}
       </div>
 
-      {response && (
-        <div style={styles.response}>
-          <pre style={styles.pre}>{response}</pre>
+      {/* Input bar */}
+      <div className="border-t border-border px-4 py-3">
+        <div className="flex items-end gap-2">
+          <textarea
+            className="flex-1 resize-none bg-secondary rounded-xl px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            placeholder="I want to build..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                submit();
+              }
+            }}
+            rows={1}
+            disabled={loading}
+          />
+          <Button
+            size="icon"
+            className="h-10 w-10 rounded-xl shrink-0"
+            onClick={submit}
+            disabled={loading || !input.trim()}
+          >
+            <Send className="h-4 w-4" />
+          </Button>
         </div>
-      )}
+      </div>
     </main>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    maxWidth: 720,
-    margin: "80px auto",
-    padding: "0 24px",
-    fontFamily: "system-ui, sans-serif",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 700,
-    margin: 0,
-  },
-  subtitle: {
-    color: "#666",
-    marginTop: 8,
-    marginBottom: 32,
-  },
-  inputRow: {
-    display: "flex",
-    gap: 12,
-    alignItems: "flex-end",
-  },
-  textarea: {
-    flex: 1,
-    padding: "12px 16px",
-    fontSize: 16,
-    border: "1px solid #ddd",
-    borderRadius: 8,
-    resize: "vertical",
-    fontFamily: "inherit",
-  },
-  button: {
-    padding: "12px 20px",
-    fontSize: 20,
-    background: "#000",
-    color: "#fff",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer",
-  },
-  response: {
-    marginTop: 32,
-    padding: "20px 24px",
-    background: "#f9f9f9",
-    borderRadius: 8,
-    border: "1px solid #eee",
-  },
-  pre: {
-    margin: 0,
-    whiteSpace: "pre-wrap",
-    wordBreak: "break-word",
-    fontFamily: "inherit",
-    fontSize: 15,
-    lineHeight: 1.6,
-  },
-};
