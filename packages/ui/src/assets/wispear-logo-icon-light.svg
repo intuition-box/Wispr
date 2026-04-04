@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="60 30 200 220" width="200" height="220">
+  <defs>
+    <linearGradient id="pearGrad" x1="0%" y1="0%" x2="40%" y2="100%">
+      <stop offset="0%" stop-color="#b8e600"/>
+      <stop offset="40%" stop-color="#3bc776"/>
+      <stop offset="100%" stop-color="#0070dd"/>
+    </linearGradient>
+
+    <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur1" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="baseLight" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" />
+    </filter>
+  </defs>
+
+  <g transform="translate(20, 0)">
+    <g transform="translate(0, 220)">
+      <ellipse cx="150" cy="0" rx="70" ry="16" fill="#0070dd" opacity="0.25" filter="url(#baseLight)"/>
+      <ellipse cx="150" cy="0" rx="60" ry="14" fill="none" stroke="#0070dd" stroke-width="3" filter="url(#ringGlow)"/>
+      <ellipse cx="150" cy="0" rx="56" ry="12" fill="none" stroke="#1d2050" stroke-width="1" opacity="0.4"/>
+    </g>
+
+    <g transform="translate(0, -10)">
+      <path d="M 152 75 C 152 45 178 40 188 45 C 183 62 163 72 152 75 Z" fill="#b8e600"/>
+      <path d="M 148 76 C 145 52 122 47 112 52 C 117 68 137 73 148 76 Z" fill="#8ecc00"/>
+
+      <path d="M 150 75
+               C 165 75 175 95 180 120
+               C 185 145 215 155 215 185
+               C 215 215 185 235 150 235
+               C 115 235 85 215 85 185
+               C 85 155 115 145 120 120
+               C 125 95 135 75 150 75 Z"
+            fill="url(#pearGrad)"/>
+    </g>
+  </g>
+</svg>

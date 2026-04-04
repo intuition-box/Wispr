@@ -6,4 +6,5 @@ dist/
 *.env
 .claude/
 *.tsbuildinfo
+storybook-static/
 next-env.d.ts
