@@ -1,0 +1,111 @@
+{
+    "start": "q_blockchain",
+    "maturity_start": "q_actions",
+    "questions": {
+      "q_blockchain": {
+        "id": "q_blockchain",
+        "block": "role",
+        "text": "I write code that runs on a blockchain",
+        "next": {
+          "like": "q_frontend",
+          "dislike": "q_figma"
+        }
+      },
+      "q_frontend": {
+        "id": "q_frontend",
+        "block": "role",
+        "text": "I build the frontend of my dApp",
+        "next": {
+          "like": "ROLE:fullstack_web3",
+          "dislike": "ROLE:smart_contract"
+        }
+      },
+      "q_figma": {
+        "id": "q_figma",
+        "block": "role",
+        "text": "I spend more time in Figma than in a code editor",
+        "next": {
+          "like": "ROLE:designer",
+          "dislike": "q_define"
+        }
+      },
+      "q_define": {
+        "id": "q_define",
+        "block": "role",
+        "text": "I define what gets built, not how it gets built",
+        "next": {
+          "like": "q_devteam",
+          "dislike": "q_backend"
+        }
+      },
+      "q_devteam": {
+        "id": "q_devteam",
+        "block": "role",
+        "text": "I work closely with the dev team on a daily basis",
+        "next": {
+          "like": "ROLE:product_manager",
+          "dislike": "ROLE:founder"
+        }
+      },
+      "q_backend": {
+        "id": "q_backend",
+        "block": "role",
+        "text": "I own the backend and infrastructure of my project",
+        "next": {
+          "like": "ROLE:backend_dev",
+          "dislike": "ROLE:frontend_dev"
+        }
+      },
+      "q_actions": {
+        "id": "q_actions",
+        "block": "maturity",
+        "text": "I use AI beyond chatting — it takes actions on my behalf",
+        "next": {
+          "like": "q_local",
+          "dislike": "LEVEL:beginner"
+        }
+      },
+      "q_local": {
+        "id": "q_local",
+        "block": "maturity",
+        "text": "I've set up an AI agent running locally on my machine",
+        "next": {
+          "like": "q_mcp",
+          "dislike": "LEVEL:intermediate"
+        }
+      },
+      "q_mcp": {
+        "id": "q_mcp",
+        "block": "maturity",
+        "text": "I've installed MCP servers to extend my AI assistant",
+        "next": {
+          "like": "q_multiagent",
+          "dislike": "LEVEL:advanced"
+        }
+      },
+      "q_multiagent": {
+        "id": "q_multiagent",
+        "block": "maturity",
+        "text": "I've orchestrated multiple agents working together",
+        "next": {
+          "like": "LEVEL:expert",
+          "dislike": "LEVEL:advanced"
+        }
+      }
+    },
+    "roles": [
+      "smart_contract",
+      "fullstack_web3",
+      "frontend_dev",
+      "backend_dev",
+      "designer",
+      "product_manager",
+      "founder"
+    ],
+    "levels": [
+      "beginner",
+      "intermediate",
+      "advanced",
+      "expert"
+    ]
+  }
