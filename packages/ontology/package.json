@@ -15,7 +15,9 @@
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "seed:intuition": "node --loader ts-node/esm src/seed/seed-intuition.ts"
+    "seed:intuition": "node --loader ts-node/esm src/seed/seed-intuition.ts",
+    "seed:test": "node --loader ts-node/esm src/seed/seed-intuition.ts --test",
+    "seed:full": "node --loader ts-node/esm src/seed/seed-intuition.ts --full"
   },
   "dependencies": {
     "ethers": "^6.13.4",

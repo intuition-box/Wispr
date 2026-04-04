@@ -88,13 +88,33 @@ async function waitForTx(provider: ethers.Provider, txHash: string): Promise<eth
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function main() {
-  console.log("🌱 Wispear Ontology Seed - Intuition Protocol Mainnet\n");
+  // Detect mode from command line arguments
+  const isTestMode = process.argv.includes("--test");
+  const isFullMode = process.argv.includes("--full");
 
-  // Check for private key
+  // Display mode
+  if (isTestMode) {
+    console.log("🧪 MODE TEST - Creating 1 atom only\n");
+  } else if (isFullMode) {
+    console.log("🚀 MODE FULL - Creating all atoms and triples\n");
+  } else {
+    console.log("🌱 Wispear Ontology Seed - Intuition Protocol Mainnet\n");
+  }
+
+  // Check for private key (NEVER display it)
   if (!process.env.PRIVATE_KEY) {
     console.error("❌ PRIVATE_KEY not found in .env file");
+    console.error("   Create a .env file with: PRIVATE_KEY=0x...");
     process.exit(1);
   }
+
+  // Validate private key format (NEVER display the actual key)
+  if (!process.env.PRIVATE_KEY.startsWith("0x")) {
+    console.error("❌ PRIVATE_KEY must start with 0x");
+    process.exit(1);
+  }
+
+  console.log("✅ PRIVATE_KEY found in .env\n");
 
   // Setup provider with custom polling interval
   const provider = new ethers.JsonRpcProvider(RPC_URL, CHAIN_ID, {
@@ -120,13 +140,19 @@ async function main() {
   console.log(`💵 Triple cost: ${ethers.formatEther(tripleCost)} TRUST\n`);
 
   // Prepare atoms from ontology
-  const atoms: AtomData[] = ontology.atoms.map((atom: any) => ({
+  let atoms: AtomData[] = ontology.atoms.map((atom: any) => ({
     label: atom.name,
     description: atom.description || "",
     url: atom.url,
   }));
 
-  console.log(`📝 Total atoms to create: ${atoms.length}\n`);
+  // In test mode, only create the first atom
+  if (isTestMode) {
+    atoms = atoms.slice(0, 1);
+    console.log(`🧪 TEST MODE: Will create only 1 atom: "${atoms[0].label}"\n`);
+  } else {
+    console.log(`📝 Total atoms to create: ${atoms.length}\n`);
+  }
 
   // Prepare atom data with IDs
   const atomsWithData = await Promise.all(
@@ -238,6 +264,17 @@ async function main() {
   const atomIdMapPath = join(__dirname, "atom-ids.json");
   writeFileSync(atomIdMapPath, JSON.stringify(atomIdMap, null, 2));
   console.log(`\n💾 Atom IDs saved to: ${atomIdMapPath}\n`);
+
+  // Skip triple creation in test mode
+  if (isTestMode) {
+    console.log("🧪 TEST MODE: Skipping triple creation\n");
+    console.log("✅ Test complete!");
+    console.log("\n📊 Summary:");
+    console.log(`   - Atoms created: ${createdAtomIds.size}`);
+    console.log(`   - Triples created: 0 (test mode)`);
+    console.log("\n🚀 Next step: Run 'pnpm --filter @wispr/ontology seed:full' to create all atoms and triples\n");
+    return;
+  }
 
   // Prepare triples from ontology
   const triples: TripleData[] = ontology.triples.map((triple: any) => {
