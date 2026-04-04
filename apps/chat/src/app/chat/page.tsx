@@ -71,7 +71,7 @@ export default function ChatPage() {
             <p className="text-sm text-muted-foreground mt-2 max-w-md">
               Describe what you want to build.
             </p>
-            <div className="flex flex-wrap gap-2 mt-6 max-w-lg">
+            <div className="grid grid-cols-2 gap-2 mt-6 max-w-md">
               <button
                 onClick={() =>
                   setInput(
