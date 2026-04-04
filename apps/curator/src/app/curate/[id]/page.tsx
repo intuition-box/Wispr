@@ -1,43 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
+import { Button } from "@wispr/ui";
+import { getAtom, ATOMS } from "@/data/atoms";
 
-const ATOM = {
-  id: "chainlink-data-feeds",
-  name: "Chainlink Data Feeds",
-  type: "api",
-  typeIcon: "⚡",
-  url: "https://docs.chain.link/data-feeds",
-  description: "Real-time on-chain price oracles for crypto assets. Provides tamper-proof, decentralized price data for DeFi protocols.",
-  autonomy: "High",
-  trust: "2.4k",
-  curators: 31,
-  contexts: ["defi", "web3-building"],
-  usedIn: [
-    { id: "cs-p3", name: "DeFi Portfolio Rebalancer", trust: "2.1k" },
-    { id: "cs-p2", name: "ETH Prediction Market", trust: "2.4k" },
-  ],
-  topCurators: [
-    { name: "vitalik.eth", staked: "340", domain: "DeFi" },
-    { name: "aave-whale.eth", staked: "280", domain: "DeFi" },
-    { name: "sam.eth", staked: "120", domain: "Infrastructure" },
-  ],
-  stats: {
-    totalStaked: "2,400",
-    avgStake: "77",
-    firstStaked: "3 days ago",
-    lastActivity: "2h ago",
-  },
-};
-
-const TRENDING = [
-  { name: "1inch Fusion+ SDK", type: "SDK", icon: "⚡", trust: "1.7k", change: "+12%" },
-  { name: "Claude Sonnet 4.5", type: "Model", icon: "🤖", trust: "3.1k", change: "+8%" },
-  { name: "World ID MiniKit", type: "Tool", icon: "🔌", trust: "1.6k", change: "+21%" },
-  { name: "MCP Notion", type: "MCP", icon: "🔌", trust: "1.4k", change: "+5%" },
-  { name: "Privy Embedded Wallet", type: "SDK", icon: "⚡", trust: "1.2k", change: "+15%" },
-];
+const TRENDING = Object.values(ATOMS).slice(0, 5).map((a, i) => ({
+  name: a.name,
+  type: a.type.toUpperCase(),
+  trust: ["2.4k", "1.8k", "1.7k", "1.4k", "1.1k"][i],
+  change: ["+12%", "+8%", "+21%", "+5%", "+15%"][i],
+}));
 
 const TOP_CURATORS = [
   { name: "vitalik.eth", totalStaked: "4.2k", atoms: 18, avatar: "V" },
@@ -48,6 +22,10 @@ const TOP_CURATORS = [
 ];
 
 export default function AtomDetailPage() {
+  const params = useParams();
+  const atomId = params.id as string;
+  const atom = getAtom(atomId);
+
   const [showShare, setShowShare] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -58,6 +36,17 @@ export default function AtomDetailPage() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  if (!atom) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-4">
+        <span className="text-4xl">🔍</span>
+        <h2 className="text-xl font-bold text-text-primary">Atom not found</h2>
+        <p className="text-sm text-text-secondary">No on-chain data for &quot;{atomId}&quot;</p>
+        <Link href="/explorer" className="text-sm text-accent hover:underline">← Back to Explorer</Link>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -76,26 +65,31 @@ export default function AtomDetailPage() {
           {/* Identity */}
           <div className="flex items-start gap-4">
             <div className="w-16 h-16 rounded-2xl bg-surface-2 border border-border flex items-center justify-center text-2xl shrink-0">
-              {ATOM.typeIcon}
+              {atom.typeIcon}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-bold text-text-primary">{ATOM.name}</h1>
+                <h1 className="text-2xl font-bold text-text-primary">{atom.name}</h1>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider bg-accent-soft text-accent border-accent/20">
-                  {ATOM.type}
+                  {atom.type}
                 </span>
               </div>
               <p className="text-[14px] text-text-secondary mt-2 leading-relaxed">
-                {ATOM.description}
+                {atom.description}
               </p>
               <a
-                href={ATOM.url}
+                href={atom.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-[13px] text-accent hover:text-pear transition-colors mt-2"
               >
-                {ATOM.url} ↗
+                {atom.url} ↗
               </a>
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-[11px] text-text-muted font-mono bg-surface px-2 py-0.5 rounded border border-border">
+                  {atom.hash}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -106,41 +100,41 @@ export default function AtomDetailPage() {
               <h3 className="text-sm font-semibold text-text-primary mb-3">$TRUST staked over time</h3>
               <div className="bg-surface rounded-xl border border-border p-4 transition-all duration-200 hover:border-border-light flex-1 flex items-center">
                 <svg viewBox="0 0 500 160" className="w-full h-full">
-                <defs>
-                  <linearGradient id="trustGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#d4ff47" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#d4ff47" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                {[0, 1, 2, 3].map((i) => (
-                  <line key={i} x1="40" y1={20 + i * 40} x2="490" y2={20 + i * 40} stroke="#2d2d52" strokeWidth="1" />
-                ))}
-                <text x="32" y="24" textAnchor="end" fill="#4a4a6a" fontSize="10">2.4k</text>
-                <text x="32" y="64" textAnchor="end" fill="#4a4a6a" fontSize="10">1.8k</text>
-                <text x="32" y="104" textAnchor="end" fill="#4a4a6a" fontSize="10">1.2k</text>
-                <text x="32" y="144" textAnchor="end" fill="#4a4a6a" fontSize="10">600</text>
-                <path d="M 50 130 C 80 125 100 120 130 110 C 160 100 180 95 210 85 C 240 78 260 70 290 55 C 320 45 350 38 380 30 C 410 25 440 22 470 20 L 470 150 L 50 150 Z" fill="url(#trustGrad)" />
-                <path d="M 50 130 C 80 125 100 120 130 110 C 160 100 180 95 210 85 C 240 78 260 70 290 55 C 320 45 350 38 380 30 C 410 25 440 22 470 20" fill="none" stroke="#d4ff47" strokeWidth="2.5" strokeLinecap="round" />
-                <circle cx="470" cy="20" r="4" fill="#d4ff47" />
-                <circle cx="470" cy="20" r="8" fill="#d4ff47" opacity="0.2">
-                  <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.2;0.05;0.2" dur="2s" repeatCount="indefinite" />
-                </circle>
-                <text x="50" y="155" fill="#4a4a6a" fontSize="10">Apr 1</text>
-                <text x="170" y="155" fill="#4a4a6a" fontSize="10">Apr 2</text>
-                <text x="290" y="155" fill="#4a4a6a" fontSize="10">Apr 3</text>
-                <text x="440" y="155" fill="#4a4a6a" fontSize="10">Now</text>
-              </svg>
+                  <defs>
+                    <linearGradient id="trustGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#d4ff47" stopOpacity="0.2" />
+                      <stop offset="100%" stopColor="#d4ff47" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  {[0, 1, 2, 3].map((i) => (
+                    <line key={i} x1="40" y1={20 + i * 40} x2="490" y2={20 + i * 40} stroke="#2d2d52" strokeWidth="1" />
+                  ))}
+                  <text x="32" y="24" textAnchor="end" fill="#4a4a6a" fontSize="10">2.4k</text>
+                  <text x="32" y="64" textAnchor="end" fill="#4a4a6a" fontSize="10">1.8k</text>
+                  <text x="32" y="104" textAnchor="end" fill="#4a4a6a" fontSize="10">1.2k</text>
+                  <text x="32" y="144" textAnchor="end" fill="#4a4a6a" fontSize="10">600</text>
+                  <path d="M 50 130 C 80 125 100 120 130 110 C 160 100 180 95 210 85 C 240 78 260 70 290 55 C 320 45 350 38 380 30 C 410 25 440 22 470 20 L 470 150 L 50 150 Z" fill="url(#trustGrad)" />
+                  <path d="M 50 130 C 80 125 100 120 130 110 C 160 100 180 95 210 85 C 240 78 260 70 290 55 C 320 45 350 38 380 30 C 410 25 440 22 470 20" fill="none" stroke="#d4ff47" strokeWidth="2.5" strokeLinecap="round" />
+                  <circle cx="470" cy="20" r="4" fill="#d4ff47" />
+                  <circle cx="470" cy="20" r="8" fill="#d4ff47" opacity="0.2">
+                    <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.2;0.05;0.2" dur="2s" repeatCount="indefinite" />
+                  </circle>
+                  <text x="50" y="155" fill="#4a4a6a" fontSize="10">Apr 1</text>
+                  <text x="170" y="155" fill="#4a4a6a" fontSize="10">Apr 2</text>
+                  <text x="290" y="155" fill="#4a4a6a" fontSize="10">Apr 3</text>
+                  <text x="440" y="155" fill="#4a4a6a" fontSize="10">Now</text>
+                </svg>
               </div>
             </div>
 
             {/* Stats column */}
             <div className="w-[160px] shrink-0 flex flex-col gap-2">
               {[
-                { label: "Total staked", value: `${ATOM.stats.totalStaked} $T`, color: "text-pear" },
-                { label: "Curators", value: String(ATOM.curators), color: "text-white" },
-                { label: "Avg stake", value: `${ATOM.stats.avgStake} $T`, color: "text-white" },
-                { label: "Autonomy", value: ATOM.autonomy, color: "text-amber" },
+                { label: "Autonomy", value: atom.autonomy, color: "text-amber" },
+                { label: "Type", value: atom.type.toUpperCase(), color: "text-white" },
+                { label: "Contexts", value: String(atom.contexts.length), color: "text-white" },
+                { label: "Bundles", value: String(atom.usedIn.length), color: "text-pear" },
               ].map((s) => (
                 <div key={s.label} className="bg-surface rounded-xl border border-border p-3 text-center transition-all duration-200 hover:border-border-light hover:-translate-y-0.5 flex-1 flex flex-col justify-center">
                   <div className={`text-base font-bold ${s.color}`}>{s.value}</div>
@@ -150,25 +144,49 @@ export default function AtomDetailPage() {
             </div>
           </div>
 
-          {/* CTAs — right under chart */}
+          {/* CTAs */}
           <div className="flex gap-3">
-            <button className="flex-1 py-3.5 rounded-xl text-[14px] font-bold bg-pear text-bg shadow-[0_0_24px_rgba(212,255,71,0.2)] hover:shadow-[0_0_32px_rgba(212,255,71,0.3)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300">
+            <Button
+              variant="primary"
+              size="lg"
+              style={{
+                flex: 1,
+                borderRadius: "12px",
+                background: "#d4ff47",
+                color: "#06070f",
+                border: "none",
+                fontWeight: 700,
+                fontSize: "14px",
+                boxShadow: "0 0 24px rgba(212, 255, 71, 0.2)",
+                transition: "all 0.3s ease",
+              }}
+            >
               Stake $TRUST
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="lg"
               onClick={() => setShowShare(true)}
-              className="px-5 py-3.5 rounded-xl text-[14px] font-semibold bg-surface border border-border text-text-primary hover:border-border-light hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300"
+              style={{
+                borderRadius: "12px",
+                background: "transparent",
+                color: "#e8e8ec",
+                border: "1px solid #2d2d52",
+                fontWeight: 600,
+                fontSize: "14px",
+                transition: "all 0.3s ease",
+              }}
             >
               Share ↗
-            </button>
+            </Button>
           </div>
 
-          {/* Contexts + Bundles — compact row */}
+          {/* Contexts + Bundles */}
           <div className="flex gap-6">
             <div className="flex-1">
               <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-wider mb-2">Contexts</h3>
               <div className="flex flex-wrap gap-1.5">
-                {ATOM.contexts.map((ctx) => (
+                {atom.contexts.map((ctx) => (
                   <span key={ctx} className="text-[11px] px-2.5 py-1 rounded-md bg-surface border border-border text-text-secondary hover:border-border-light hover:text-text-primary transition-all duration-200 cursor-pointer">
                     {ctx}
                   </span>
@@ -178,9 +196,9 @@ export default function AtomDetailPage() {
             <div className="flex-1">
               <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-wider mb-2">Used in bundles</h3>
               <div className="flex flex-wrap gap-1.5">
-                {ATOM.usedIn.map((bundle) => (
+                {atom.usedIn.map((bundle) => (
                   <span key={bundle.id} className="text-[11px] px-2.5 py-1 rounded-md bg-surface border border-border text-text-secondary hover:border-border-light hover:text-text-primary transition-all duration-200 cursor-pointer">
-                    {bundle.name} <span className="text-pear ml-1">★ {bundle.trust}</span>
+                    {bundle.name}
                   </span>
                 ))}
               </div>
@@ -216,21 +234,14 @@ export default function AtomDetailPage() {
                       <td className="px-4 py-2.5 text-text-primary font-medium">{row.curator}</td>
                       <td className="px-4 py-2.5">
                         <span className={`text-[11px] font-bold px-2 py-0.5 rounded ${
-                          row.action === "Stake"
-                            ? "bg-pear-soft text-pear"
-                            : "bg-red-soft text-red"
+                          row.action === "Stake" ? "bg-pear-soft text-pear" : "bg-red-soft text-red"
                         }`}>
                           {row.action}
                         </span>
                       </td>
                       <td className="px-4 py-2.5 text-right text-pear font-semibold">{row.amount} $T</td>
                       <td className="px-4 py-2.5 text-right">
-                        <a
-                          href={`https://explorer.intuition.systems/tx/${row.tx}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-accent hover:text-pear transition-colors font-mono text-[12px]"
-                        >
+                        <a href={`https://explorer.intuition.systems/tx/${row.tx}`} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-pear transition-colors font-mono text-[12px]">
                           {row.tx}
                         </a>
                       </td>
@@ -241,17 +252,10 @@ export default function AtomDetailPage() {
               </table>
             </div>
           </div>
-
-          {/* Activity */}
-          <div className="flex items-center justify-between text-[11px] text-text-muted">
-            <span>First staked {ATOM.stats.firstStaked}</span>
-            <span>Last activity {ATOM.stats.lastActivity}</span>
-          </div>
         </div>
 
         {/* Right — Sidebar */}
         <aside className="w-[300px] shrink-0 hidden lg:flex flex-col gap-6 sticky top-14 self-start">
-
           {/* Trending atoms */}
           <div className="bg-surface rounded-xl border border-border p-4">
             <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
@@ -259,8 +263,9 @@ export default function AtomDetailPage() {
             </h3>
             <div className="flex flex-col gap-2.5">
               {TRENDING.map((item, i) => (
-                <div
+                <Link
                   key={item.name}
+                  href={`/curate/${Object.keys(ATOMS)[i]}`}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-hover transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
                 >
                   <span className="text-[12px] font-bold text-text-muted w-5">{i + 1}</span>
@@ -272,7 +277,7 @@ export default function AtomDetailPage() {
                     <span className="text-[12px] font-bold text-pear">★ {item.trust}</span>
                     <span className="text-[10px] font-semibold text-green">{item.change}</span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -283,11 +288,8 @@ export default function AtomDetailPage() {
               <span className="text-base">👑</span> Top Curators
             </h3>
             <div className="flex flex-col gap-2.5">
-              {TOP_CURATORS.map((curator, i) => (
-                <div
-                  key={curator.name}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-hover transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
-                >
+              {TOP_CURATORS.map((curator) => (
+                <div key={curator.name} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-hover transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
                   <div className="w-8 h-8 rounded-full bg-surface-2 border border-border flex items-center justify-center text-[11px] font-bold text-pear shrink-0">
                     {curator.avatar}
                   </div>
@@ -300,59 +302,33 @@ export default function AtomDetailPage() {
               ))}
             </div>
           </div>
-
         </aside>
       </div>
 
       {/* Share Modal */}
       {showShare && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-          onClick={() => setShowShare(false)}
-        >
-          <div
-            className="bg-surface border border-border rounded-2xl p-6 w-[400px] max-w-[90vw] flex flex-col gap-5 shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowShare(false)}>
+          <div className="bg-surface border border-border rounded-2xl p-6 w-[400px] max-w-[90vw] flex flex-col gap-5 shadow-[0_16px_48px_rgba(0,0,0,0.4)]" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-text-primary">Share this atom</h2>
-              <button
-                onClick={() => setShowShare(false)}
-                className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary hover:border-border-light transition-all"
-              >
-                ✕
-              </button>
+              <button onClick={() => setShowShare(false)} className="w-8 h-8 rounded-lg bg-surface-2 border border-border flex items-center justify-center text-text-muted hover:text-text-primary hover:border-border-light transition-all">✕</button>
             </div>
-
             <div className="flex gap-2">
-              <input
-                type="text"
-                readOnly
-                value={shareUrl}
-                className="flex-1 px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-secondary text-[13px] font-mono outline-none truncate"
-              />
-              <button
-                onClick={handleCopy}
-                className={`px-4 py-2.5 rounded-lg text-[13px] font-semibold transition-all duration-200 active:scale-95 ${
-                  copied
-                    ? "bg-green-soft text-green border border-green/20"
-                    : "bg-pear text-bg hover:shadow-[0_0_12px_rgba(212,255,71,0.2)]"
-                }`}
-              >
+              <input type="text" readOnly value={shareUrl} className="flex-1 px-3 py-2.5 rounded-lg bg-surface-2 border border-border text-text-secondary text-[13px] font-mono outline-none truncate" />
+              <button onClick={handleCopy} className={`px-4 py-2.5 rounded-lg text-[13px] font-semibold transition-all duration-200 active:scale-95 ${copied ? "bg-green-soft text-green border border-green/20" : "bg-pear text-bg hover:shadow-[0_0_12px_rgba(212,255,71,0.2)]"}`}>
                 {copied ? "Copied ✓" : "Copy"}
               </button>
             </div>
-
             <div className="flex flex-col gap-2">
               <span className="text-[12px] text-text-muted uppercase tracking-wider">Share on</span>
               <div className="grid grid-cols-2 gap-2">
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just staked $TRUST on ${ATOM.name} via @wispear_ai 🍐⛓️\n\nDiscover AI agent components backed by real experts.\n\n`)}&url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just staked $TRUST on ${atom.name} via @wispear_ai 🍐⛓️\n\nDiscover AI agent components backed by real experts.\n\n`)}&url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
                   <span className="text-lg">𝕏</span> Twitter / X
                 </a>
-                <a href={`https://warpcast.com/~/compose?text=${encodeURIComponent(`I just staked $TRUST on ${ATOM.name} via @wispear 🍐⛓️`)}&embeds[]=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
+                <a href={`https://warpcast.com/~/compose?text=${encodeURIComponent(`I just staked $TRUST on ${atom.name} via @wispear 🍐⛓️`)}&embeds[]=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
                   <span className="text-lg">🟪</span> Farcaster
                 </a>
-                <a href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${ATOM.name} on WisPear — staked by ${ATOM.curators} curators 🍐`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
+                <a href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${atom.name} on WisPear — backed by curators 🍐`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
                   <span className="text-lg">✈️</span> Telegram
                 </a>
                 <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">

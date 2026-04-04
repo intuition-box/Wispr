@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { Logo, brand } from "@wispr/ui";
 
 const NAV_ITEMS = [
-  { href: "/explorer", icon: "🔍", label: "Explorer" },
-  { href: "/curate", icon: "✏️", label: "Curate" },
+  { href: "/explorer", icon: "🧭", label: "Explorer", external: false },
+  { href: "/curate", icon: "🍐", label: "Curate", external: false },
   { href: "/chat", icon: "💬", label: "Chat", external: true },
-  { href: "/onboarding", icon: "⚙️", label: "Settings" },
+  { href: "/onboarding", icon: "⚙️", label: "Settings", external: false },
 ];
 
 export function Sidebar() {
@@ -42,7 +42,7 @@ export function Sidebar() {
                 rel="noopener noreferrer"
                 className={className}
               >
-                <span className="w-6 h-6 flex items-center justify-center text-lg shrink-0">
+                <span className="w-6 h-6 flex items-center justify-center shrink-0" style={{ color: isActive ? "#1990ff" : "#8888a0" }}>
                   {item.icon}
                 </span>
                 <span>{item.label}</span>
