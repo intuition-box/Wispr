@@ -34,6 +34,9 @@ export const MULTIVAULT_ABI = [
   "function getAtomCost() view returns (uint256)",
   "function createAtom(bytes atomData) payable returns (uint256)",
   "function createTriple(uint256 subjectId, uint256 predicateId, uint256 objectId) payable returns (uint256)",
+  "function createAtoms(bytes[] data, uint256[] assets) payable returns (bytes32[])",
+  "function createTriples(bytes32[] subjectIds, bytes32[] predicateIds, bytes32[] objectIds, uint256[] assets) payable returns (bytes32[])",
   "function calculateAtomId(bytes data) pure returns (bytes32)",
+  "function calculateTripleId(bytes32 subjectId, bytes32 predicateId, bytes32 objectId) pure returns (bytes32)",
   "function isTermCreated(bytes32 id) view returns (bool)",
 ] as const;

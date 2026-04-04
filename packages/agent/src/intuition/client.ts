@@ -23,6 +23,9 @@ async function connect(): Promise<Client> {
 }
 
 export async function getIntuitionClient(): Promise<Client> {
+  // Reuse existing connected client
+  if (_client) return _client;
+
   // Deduplicate concurrent connection attempts
   if (_connecting) return _connecting;
 
