@@ -1,7 +1,7 @@
 {
   "type": "excalidraw",
   "version": 2,
-  "source": "https://excalidraw.com",
+  "source": "https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor",
   "elements": [
     {
       "id": "bg_apps",
@@ -91,7 +91,7 @@
       "version": 5,
       "versionNonce": 165676323,
       "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1775259340917,
       "link": null,
       "locked": false,
@@ -344,8 +344,8 @@
     {
       "id": "bg_data",
       "type": "rectangle",
-      "x": 440,
-      "y": 700,
+      "x": 445.5765993265993,
+      "y": 697.6660544842364,
       "width": 820,
       "height": 200,
       "angle": 0,
@@ -363,8 +363,8 @@
         "type": 3
       },
       "seed": 1081671053,
-      "version": 5,
-      "versionNonce": 1304662915,
+      "version": 78,
+      "versionNonce": 712008575,
       "isDeleted": false,
       "boundElements": [
         {
@@ -372,15 +372,15 @@
           "id": "okGInv5xi_0wVXRdy4U9F"
         }
       ],
-      "updated": 1775259327339,
+      "updated": 1775290967674,
       "link": null,
       "locked": false
     },
     {
       "id": "okGInv5xi_0wVXRdy4U9F",
       "type": "text",
-      "x": 828.2900238037109,
-      "y": 705,
+      "x": 833.8666231303102,
+      "y": 702.6660544842364,
       "width": 43.419952392578125,
       "height": 25,
       "angle": 0,
@@ -396,11 +396,11 @@
       "index": "a8V",
       "roundness": null,
       "seed": 970890189,
-      "version": 5,
-      "versionNonce": 366492163,
+      "version": 78,
+      "versionNonce": 1253415839,
       "isDeleted": false,
-      "boundElements": null,
-      "updated": 1775259330647,
+      "boundElements": [],
+      "updated": 1775290967674,
       "link": null,
       "locked": false,
       "text": "Data",
@@ -410,43 +410,6 @@
       "verticalAlign": "top",
       "containerId": "bg_data",
       "originalText": "Data",
-      "autoResize": true,
-      "lineHeight": 1.25
-    },
-    {
-      "id": "lbl_data",
-      "type": "text",
-      "x": 820,
-      "y": 712,
-      "width": 5.7419891357421875,
-      "height": 27.5,
-      "angle": 0,
-      "strokeColor": "#4c1d95",
-      "backgroundColor": "transparent",
-      "fillStyle": "solid",
-      "strokeWidth": 1,
-      "strokeStyle": "solid",
-      "roughness": 0,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "index": "a9",
-      "roundness": null,
-      "seed": 553370605,
-      "version": 8,
-      "versionNonce": 208737443,
-      "isDeleted": true,
-      "boundElements": [],
-      "updated": 1775259326076,
-      "link": null,
-      "locked": false,
-      "text": "",
-      "fontSize": 22,
-      "fontFamily": 6,
-      "textAlign": "left",
-      "verticalAlign": "top",
-      "containerId": null,
-      "originalText": "",
       "autoResize": true,
       "lineHeight": 1.25
     },
@@ -508,7 +471,7 @@
       "version": 12,
       "versionNonce": 822889325,
       "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1775259308670,
       "link": null,
       "locked": false,
@@ -519,80 +482,6 @@
       "verticalAlign": "top",
       "containerId": "bg_useragent",
       "originalText": "User Agent\n(Claude, codex, etc)",
-      "autoResize": true,
-      "lineHeight": 1.25
-    },
-    {
-      "id": "lbl_ua",
-      "type": "text",
-      "x": 106.464801,
-      "y": 422.24999999999994,
-      "width": 5.7419891357421875,
-      "height": 27.5,
-      "angle": 0,
-      "strokeColor": "#92400e",
-      "backgroundColor": "transparent",
-      "fillStyle": "solid",
-      "strokeWidth": 1,
-      "strokeStyle": "solid",
-      "roughness": 0,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "index": "aB",
-      "roundness": null,
-      "seed": 1453550765,
-      "version": 100,
-      "versionNonce": 2044660259,
-      "isDeleted": true,
-      "boundElements": [],
-      "updated": 1775259283126,
-      "link": null,
-      "locked": false,
-      "text": "",
-      "fontSize": 22,
-      "fontFamily": 6,
-      "textAlign": "left",
-      "verticalAlign": "top",
-      "containerId": null,
-      "originalText": "",
-      "autoResize": true,
-      "lineHeight": 1.25
-    },
-    {
-      "id": "lbl_models",
-      "type": "text",
-      "x": 80.258414,
-      "y": 449.74999999999994,
-      "width": 4.175994873046875,
-      "height": 20,
-      "angle": 0,
-      "strokeColor": "#9a5030",
-      "backgroundColor": "transparent",
-      "fillStyle": "solid",
-      "strokeWidth": 1,
-      "strokeStyle": "solid",
-      "roughness": 0,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "index": "aC",
-      "roundness": null,
-      "seed": 1649102605,
-      "version": 98,
-      "versionNonce": 1718858445,
-      "isDeleted": true,
-      "boundElements": [],
-      "updated": 1775259296014,
-      "link": null,
-      "locked": false,
-      "text": "",
-      "fontSize": 16,
-      "fontFamily": 6,
-      "textAlign": "left",
-      "verticalAlign": "top",
-      "containerId": null,
-      "originalText": "",
       "autoResize": true,
       "lineHeight": 1.25
     },
@@ -654,7 +543,7 @@
       "version": 31,
       "versionNonce": 1492027213,
       "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1775259315648,
       "link": null,
       "locked": false,
@@ -804,7 +693,7 @@
       "version": 31,
       "versionNonce": 207487757,
       "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1775257949920,
       "link": null,
       "locked": false,
@@ -915,7 +804,7 @@
       "version": 15,
       "versionNonce": 298711245,
       "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1775259318886,
       "link": null,
       "locked": false,
@@ -1202,7 +1091,8 @@
         "fixedPoint": [
           -0.03957093862931577,
           0.4988436097298917
-        ]
+        ],
+        "focus": 0
       },
       "startArrowhead": null,
       "endArrowhead": "triangle",
@@ -1476,7 +1366,8 @@
         "fixedPoint": [
           0.4989999999999998,
           1.144736842105263
-        ]
+        ],
+        "focus": 0
       },
       "startArrowhead": null,
       "endArrowhead": "triangle",
@@ -1542,7 +1433,8 @@
         "fixedPoint": [
           1.03228921438125,
           0.49736842105263174
-        ]
+        ],
+        "focus": 0
       },
       "endBinding": {
         "elementId": "n_comp",
@@ -1550,7 +1442,8 @@
         "fixedPoint": [
           1.000878444248796,
           -0.08026874384148641
-        ]
+        ],
+        "focus": 0
       },
       "startArrowhead": null,
       "endArrowhead": "triangle",
@@ -1615,7 +1508,8 @@
         "fixedPoint": [
           -0.02894736842105263,
           0.49722222222222157
-        ]
+        ],
+        "focus": 0
       },
       "endBinding": {
         "elementId": "ua_install",
@@ -1623,7 +1517,8 @@
         "fixedPoint": [
           1.034375,
           0.4979166666666662
-        ]
+        ],
+        "focus": 0
       },
       "startArrowhead": null,
       "endArrowhead": "triangle",
@@ -1684,7 +1579,8 @@
         "fixedPoint": [
           -0.016176470588235296,
           0.49950000000000006
-        ]
+        ],
+        "focus": 0
       },
       "endBinding": {
         "elementId": "intuition_graph",
@@ -1692,7 +1588,8 @@
         "fixedPoint": [
           -0.0275,
           0.4982758620689651
-        ]
+        ],
+        "focus": 0
       },
       "startArrowhead": null,
       "endArrowhead": "triangle",
@@ -1753,7 +1650,8 @@
         "fixedPoint": [
           1.0289473684210526,
           0.49722222222222157
-        ]
+        ],
+        "focus": 0
       },
       "endBinding": {
         "elementId": "c_desktop",
@@ -1761,7 +1659,8 @@
         "fixedPoint": [
           -0.03235294117647059,
           0.607510988105851
-        ]
+        ],
+        "focus": 0
       },
       "startArrowhead": null,
       "endArrowhead": "triangle",
@@ -1922,7 +1821,8 @@
         "fixedPoint": [
           0.499375,
           1.1375
-        ]
+        ],
+        "focus": 0
       },
       "endBinding": {
         "elementId": "feedback_api",
@@ -1930,7 +1830,8 @@
         "fixedPoint": [
           0.4995000000000016,
           1.0948275862068966
-        ]
+        ],
+        "focus": 0
       },
       "startArrowhead": null,
       "endArrowhead": "triangle",
@@ -2699,7 +2600,8 @@
         "fixedPoint": [
           0.49924453197092916,
           1.06146996889174
-        ]
+        ],
+        "focus": 0
       },
       "endBinding": {
         "elementId": "feedback_api",
@@ -2707,7 +2609,8 @@
         "fixedPoint": [
           0.37320098766927456,
           1.0948275862068966
-        ]
+        ],
+        "focus": 0
       },
       "startArrowhead": null,
       "endArrowhead": "triangle",
@@ -2751,7 +2654,7 @@
       "version": 11,
       "versionNonce": 1833090051,
       "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1775259361555,
       "link": null,
       "locked": false,
@@ -2770,8 +2673,7 @@
     "gridSize": 20,
     "gridStep": 5,
     "gridModeEnabled": false,
-    "viewBackgroundColor": "#ffffff",
-    "lockedMultiSelections": {}
+    "viewBackgroundColor": "#ffffff"
   },
   "files": {}
 }

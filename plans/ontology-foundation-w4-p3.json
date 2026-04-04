@@ -3,7 +3,7 @@
   "description": "Minimal ontology foundation for 2 use cases: W4 (Notion to Twitter) + P3 (DeFi Rebalancing)",
   "use_cases": ["w4-notion-to-twitter", "p3-defi-rebalancing"],
   "stats": {
-    "totalAtoms": 16,
+    "totalAtoms": 28,
     "totalTriples": 26
   },
   "atoms": [
@@ -21,7 +21,7 @@
     },
     {
       "id": "claude-sonnet-4-5",
-      "name": "claude-sonnet-4-5",
+      "name": "Claude Sonnet 4.5",
       "description": "Anthropic's Claude Sonnet 4.5 - long-form generation, reasoning, tone control",
       "url": "https://docs.anthropic.com/en/docs/about-claude/models"
     },
@@ -45,128 +45,261 @@
     },
     {
       "id": "brand-voice-skill",
-      "name": "brand-voice-skill",
+      "name": "Brand Voice Skill",
       "description": "AI service that analyzes user's writing style and applies it to new content",
       "url": "whisper.xyz/skills/brand-voice"
     },
     {
       "id": "tool",
-      "name": "tool",
-      "description": "External tools, MCPs, SDKs, APIs"
+      "name": "Tool",
+      "description": "Top-level category for all curateable components"
+    },
+    {
+      "id": "mcp",
+      "name": "MCP",
+      "description": "Model Context Protocol server - integrates external services with LLMs"
+    },
+    {
+      "id": "sdk",
+      "name": "SDK",
+      "description": "Software Development Kit - library or framework for building applications"
+    },
+    {
+      "id": "api",
+      "name": "API",
+      "description": "Application Programming Interface - external data or service endpoint"
+    },
+    {
+      "id": "package",
+      "name": "Package",
+      "description": "Reusable software package or library"
     },
     {
       "id": "skill",
-      "name": "skill",
+      "name": "Skill",
       "description": "Domain-specific AI services and capabilities"
     },
     {
       "id": "model",
-      "name": "model",
+      "name": "Model",
       "description": "LLM models for reasoning and generation"
     },
     {
-      "id": "context-content-automation",
-      "name": "content-automation",
+      "id": "content-automation",
+      "name": "Content Automation",
       "description": "Automated content management and workflows"
     },
     {
-      "id": "context-social-media",
-      "name": "social-media",
+      "id": "social-media",
+      "name": "Social Media",
       "description": "Social media platforms and publishing"
     },
     {
-      "id": "context-content-generation",
-      "name": "content-generation",
+      "id": "content-generation",
+      "name": "Content Generation",
       "description": "AI-powered content generation"
     },
     {
-      "id": "context-defi",
-      "name": "defi",
+      "id": "defi",
+      "name": "DeFi",
       "description": "Decentralized finance protocols and applications"
     },
     {
-      "id": "context-web3-building",
-      "name": "web3-building",
+      "id": "web3-building",
+      "name": "Web3 Building",
       "description": "Web3 development and infrastructure"
     },
     {
-      "id": "context-content-creation",
-      "name": "content-creation",
+      "id": "content-creation",
+      "name": "Content Creation",
       "description": "Content creation and writing"
+    },
+    {
+      "id": "productivity",
+      "name": "Productivity",
+      "description": "Productivity and workflow automation tools"
+    },
+    {
+      "id": "communication",
+      "name": "Communication",
+      "description": "Communication and social platforms"
+    },
+    {
+      "id": "creativity",
+      "name": "Creativity",
+      "description": "Creative content generation and writing"
+    },
+    {
+      "id": "finance",
+      "name": "Finance",
+      "description": "Financial services and DeFi protocols"
+    },
+    {
+      "id": "infrastructure",
+      "name": "Infrastructure",
+      "description": "Web3 infrastructure and development tools"
+    },
+    {
+      "id": "is-best-of",
+      "name": "Is Best Of",
+      "description": "Predicate: Indicates component type classification"
+    },
+    {
+      "id": "in-context-of",
+      "name": "In Context Of",
+      "description": "Predicate: Indicates usage context for a component"
+    },
+    {
+      "id": "belongs-to",
+      "name": "Belongs To",
+      "description": "Predicate: Indicates category membership"
     }
   ],
-  "triples": [
-    {
-      "subject": "mcp-notion",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "mcp-twitter",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "claude-sonnet-4-5",
-      "predicate": "is-best-of",
-      "object": "model"
-    },
-    {
-      "subject": "chainlink-data-feeds",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "1inch-fusion-plus-sdk",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "privy-embedded-wallet",
-      "predicate": "is-best-of",
-      "object": "tool"
-    },
-    {
-      "subject": "brand-voice-skill",
-      "predicate": "is-best-of",
-      "object": "skill"
-    },
-    {
-      "subject": "mcp-notion",
-      "predicate": "in-context-of",
-      "object": "context-content-automation"
-    },
-    {
-      "subject": "mcp-twitter",
-      "predicate": "in-context-of",
-      "object": "context-social-media"
-    },
-    {
-      "subject": "claude-sonnet-4-5",
-      "predicate": "in-context-of",
-      "object": "context-content-generation"
-    },
-    {
-      "subject": "chainlink-data-feeds",
-      "predicate": "in-context-of",
-      "object": "context-defi"
-    },
-    {
-      "subject": "1inch-fusion-plus-sdk",
-      "predicate": "in-context-of",
-      "object": "context-defi"
-    },
-    {
-      "subject": "privy-embedded-wallet",
-      "predicate": "in-context-of",
-      "object": "context-web3-building"
-    },
-    {
-      "subject": "brand-voice-skill",
-      "predicate": "in-context-of",
-      "object": "context-content-creation"
-    }
-  ],
+  "triples": {
+    "base_triples": [
+      {
+        "id": "T1-mcp-notion",
+        "subject": "mcp-notion",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      },
+      {
+        "id": "T1-mcp-twitter",
+        "subject": "mcp-twitter",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      },
+      {
+        "id": "T1-claude-sonnet",
+        "subject": "claude-sonnet-4-5",
+        "predicate": "is-best-of",
+        "object": "model"
+      },
+      {
+        "id": "T1-chainlink",
+        "subject": "chainlink-data-feeds",
+        "predicate": "is-best-of",
+        "object": "api"
+      },
+      {
+        "id": "T1-1inch",
+        "subject": "1inch-fusion-plus-sdk",
+        "predicate": "is-best-of",
+        "object": "sdk"
+      },
+      {
+        "id": "T1-privy",
+        "subject": "privy-embedded-wallet",
+        "predicate": "is-best-of",
+        "object": "sdk"
+      },
+      {
+        "id": "T1-brand-voice",
+        "subject": "brand-voice-skill",
+        "predicate": "is-best-of",
+        "object": "skill"
+      }
+    ],
+    "nested_triples": [
+      {
+        "subject_triple": "T1-mcp-notion",
+        "predicate": "in-context-of",
+        "object": "content-automation"
+      },
+      {
+        "subject_triple": "T1-mcp-twitter",
+        "predicate": "in-context-of",
+        "object": "social-media"
+      },
+      {
+        "subject_triple": "T1-claude-sonnet",
+        "predicate": "in-context-of",
+        "object": "content-generation"
+      },
+      {
+        "subject_triple": "T1-chainlink",
+        "predicate": "in-context-of",
+        "object": "defi"
+      },
+      {
+        "subject_triple": "T1-1inch",
+        "predicate": "in-context-of",
+        "object": "defi"
+      },
+      {
+        "subject_triple": "T1-privy",
+        "predicate": "in-context-of",
+        "object": "web3-building"
+      },
+      {
+        "subject_triple": "T1-brand-voice",
+        "predicate": "in-context-of",
+        "object": "content-creation"
+      }
+    ],
+    "category_triples": [
+      {
+        "subject": "content-automation",
+        "predicate": "belongs-to",
+        "object": "productivity"
+      },
+      {
+        "subject": "social-media",
+        "predicate": "belongs-to",
+        "object": "communication"
+      },
+      {
+        "subject": "content-generation",
+        "predicate": "belongs-to",
+        "object": "creativity"
+      },
+      {
+        "subject": "content-creation",
+        "predicate": "belongs-to",
+        "object": "creativity"
+      },
+      {
+        "subject": "defi",
+        "predicate": "belongs-to",
+        "object": "finance"
+      },
+      {
+        "subject": "web3-building",
+        "predicate": "belongs-to",
+        "object": "infrastructure"
+      },
+      {
+        "subject": "mcp",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "sdk",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "api",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "package",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "skill",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "model",
+        "predicate": "belongs-to",
+        "object": "tool"
+      }
+    ]
+  },
 
   "use_case_stacks": {
     "w4-notion-to-twitter": {

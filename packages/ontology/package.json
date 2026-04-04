@@ -14,10 +14,21 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "download:favicons": "tsx src/seed/1-download-favicons.ts",
+    "upload:favicons": "tsx src/seed/2-upload-favicons.ts",
+    "seed:intuition": "tsx src/seed/seed-intuition.ts",
+    "seed:test": "tsx src/seed/seed-intuition.ts --test",
+    "seed:full": "tsx src/seed/seed-intuition.ts --full"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.4",
+    "pinata": "^2.5.5"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.4.0"
   }
 }
