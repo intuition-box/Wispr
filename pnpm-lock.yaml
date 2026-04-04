@@ -103,6 +103,9 @@ importers:
       '@wispr/ontology':
         specifier: workspace:*
         version: link:../../packages/ontology
+      '@wispr/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       next:
         specifier: ^14.2.0
         version: 14.2.35(@babel/core@7.29.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

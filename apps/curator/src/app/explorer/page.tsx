@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button, brand } from "@wispr/ui";
 
 type CompType = "all" | "tool" | "skill" | "model" | "package";
 
@@ -98,7 +99,7 @@ export default function ExplorerPage() {
       {/* Header */}
       <div className="sticky top-0 z-10 bg-bg/65 backdrop-blur-xl border-b border-border px-5 py-3">
         <h1 className="text-xl font-bold text-text-primary">Explorer</h1>
-        <p className="text-sm text-text-muted mt-0.5">
+        <p className="text-sm text-text-muted mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
           {COMPONENTS.length} components · {COMMUNITY_SETS.length} community bundles
         </p>
       </div>
@@ -129,17 +130,22 @@ export default function ExplorerPage() {
           {/* Filters */}
           <div className="flex gap-2 px-5 py-3 border-b border-border overflow-x-auto">
             {FILTERS.map((f) => (
-              <button
+              <Button
                 key={f.value}
+                variant={filter === f.value ? "primary" : "ghost"}
+                size="sm"
                 onClick={() => setFilter(f.value)}
-                className={`px-4 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap border transition-all
-                  ${filter === f.value
-                    ? "bg-accent text-white border-accent shadow-[0_0_12px_rgba(74,155,244,0.3)]"
-                    : "bg-transparent text-text-secondary border-border hover:bg-hover hover:text-text-primary"
-                  }`}
+                style={{
+                  borderRadius: "9999px",
+                  whiteSpace: "nowrap",
+                  ...(filter === f.value
+                    ? { background: "var(--color-accent)", color: "#fff", border: "1px solid var(--color-accent)", boxShadow: "0 0 12px rgba(25, 144, 255, 0.3)" }
+                    : { background: "transparent", color: "var(--color-text-secondary)", border: "1px solid var(--color-border)" }
+                  ),
+                }}
               >
                 {f.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -185,16 +191,22 @@ export default function ExplorerPage() {
                         <span className="text-sm">👥</span> {comp.curators}
                       </span>
                     </div>
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={(e) => { e.stopPropagation(); toggleStake(comp.id); }}
-                      className={`px-3.5 py-1 rounded-full text-xs font-semibold border transition-all
-                        ${isStaked
-                          ? "border-green/40 text-green bg-green/10 shadow-[0_0_8px_rgba(34,197,94,0.15)]"
-                          : "border-border text-text-secondary hover:border-amber/50 hover:text-amber hover:bg-amber/5"
-                        }`}
+                      style={{
+                        borderRadius: "9999px",
+                        fontSize: "12px",
+                        padding: "4px 14px",
+                        ...(isStaked
+                          ? { borderColor: "rgba(34, 197, 94, 0.4)", color: "var(--color-green)", background: "rgba(34, 197, 94, 0.1)", boxShadow: "0 0 8px rgba(34, 197, 94, 0.15)" }
+                          : { borderColor: "var(--color-border)", color: "var(--color-text-secondary)" }
+                        ),
+                      }}
                     >
                       {isStaked ? "Staked ✓" : "Stake"}
-                    </button>
+                    </Button>
                   </div>
 
                   {/* Tags */}
@@ -261,9 +273,21 @@ export default function ExplorerPage() {
                 <span className="text-xs text-text-muted">
                   Stake to unlock full bundle
                 </span>
-                <button className="px-4 py-1.5 rounded-full text-xs font-bold border border-amber/40 text-amber bg-amber/8 hover:bg-amber/15 transition-colors shadow-[0_0_8px_rgba(255,204,111,0.1)]">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  style={{
+                    borderRadius: "9999px",
+                    borderColor: "rgba(255, 204, 111, 0.4)",
+                    color: "var(--color-amber)",
+                    background: "rgba(255, 204, 111, 0.08)",
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    boxShadow: "0 0 8px rgba(255, 204, 111, 0.1)",
+                  }}
+                >
                   Stake $TRUST
-                </button>
+                </Button>
               </div>
             </div>
           ))}
