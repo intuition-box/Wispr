@@ -11,21 +11,27 @@ const trustData: Record<string, { trustScore: number; curatorCount: number }> = 
   "privy-embedded-wallet": { trustScore: 9.1, curatorCount: 26 },
 };
 
-// Resolve atom type from "is-best-of" triples
+// Resolve atom type from "is-best-of" base triples
 function getAtomType(atomId: string): "tool" | "skill" | "model" {
-  const triple = ontology.triples.find(
+  const triple = ontology.triples.base_triples.find(
     (t) => t.subject === atomId && t.predicate === "is-best-of"
   );
   return (triple?.object as "tool" | "skill" | "model") ?? "tool";
 }
 
-// Resolve atom context from "in-context-of" triples
+// Resolve atom context from "in-context-of" nested triples
 function getAtomContext(atomId: string): string | undefined {
-  const triple = ontology.triples.find(
-    (t) => t.subject === atomId && t.predicate === "in-context-of"
+  // First find the base triple ID for this atom
+  const baseTriple = ontology.triples.base_triples.find(
+    (t) => t.subject === atomId
   );
-  if (!triple) return undefined;
-  const contextAtom = ontology.atoms.find((a) => a.id === triple.object);
+  if (!baseTriple) return undefined;
+  // Then find the nested triple that references it
+  const nested = ontology.triples.nested_triples.find(
+    (t) => t.subject_triple === baseTriple.id && t.predicate === "in-context-of"
+  );
+  if (!nested) return undefined;
+  const contextAtom = ontology.atoms.find((a) => a.id === nested.object);
   return contextAtom?.name;
 }
 
