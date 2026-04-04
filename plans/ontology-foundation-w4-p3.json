@@ -3,8 +3,8 @@
   "description": "Minimal ontology foundation for 2 use cases: W4 (Notion to Twitter) + P3 (DeFi Rebalancing)",
   "use_cases": ["w4-notion-to-twitter", "p3-defi-rebalancing"],
   "stats": {
-    "totalAtoms": 24,
-    "totalTriples": 20
+    "totalAtoms": 28,
+    "totalTriples": 26
   },
   "atoms": [
     {
@@ -52,7 +52,27 @@
     {
       "id": "tool",
       "name": "Tool",
-      "description": "External tools, MCPs, SDKs, APIs"
+      "description": "Top-level category for all curateable components"
+    },
+    {
+      "id": "mcp",
+      "name": "MCP",
+      "description": "Model Context Protocol server - integrates external services with LLMs"
+    },
+    {
+      "id": "sdk",
+      "name": "SDK",
+      "description": "Software Development Kit - library or framework for building applications"
+    },
+    {
+      "id": "api",
+      "name": "API",
+      "description": "Application Programming Interface - external data or service endpoint"
+    },
+    {
+      "id": "package",
+      "name": "Package",
+      "description": "Reusable software package or library"
     },
     {
       "id": "skill",
@@ -141,13 +161,13 @@
         "id": "T1-mcp-notion",
         "subject": "mcp-notion",
         "predicate": "is-best-of",
-        "object": "tool"
+        "object": "mcp"
       },
       {
         "id": "T1-mcp-twitter",
         "subject": "mcp-twitter",
         "predicate": "is-best-of",
-        "object": "tool"
+        "object": "mcp"
       },
       {
         "id": "T1-claude-sonnet",
@@ -159,19 +179,19 @@
         "id": "T1-chainlink",
         "subject": "chainlink-data-feeds",
         "predicate": "is-best-of",
-        "object": "tool"
+        "object": "api"
       },
       {
         "id": "T1-1inch",
         "subject": "1inch-fusion-plus-sdk",
         "predicate": "is-best-of",
-        "object": "tool"
+        "object": "sdk"
       },
       {
         "id": "T1-privy",
         "subject": "privy-embedded-wallet",
         "predicate": "is-best-of",
-        "object": "tool"
+        "object": "sdk"
       },
       {
         "id": "T1-brand-voice",
@@ -247,6 +267,36 @@
         "subject": "web3-building",
         "predicate": "belongs-to",
         "object": "infrastructure"
+      },
+      {
+        "subject": "mcp",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "sdk",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "api",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "package",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "skill",
+        "predicate": "belongs-to",
+        "object": "tool"
+      },
+      {
+        "subject": "model",
+        "predicate": "belongs-to",
+        "object": "tool"
       }
     ]
   },
