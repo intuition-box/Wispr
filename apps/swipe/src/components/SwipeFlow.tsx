@@ -13,6 +13,7 @@ import { ProfileCard } from "@/components/ProfileCard";
 import { WalletConnect } from "@/components/WalletConnect";
 import { PublishButton } from "@/components/PublishButton";
 import { ComponentSwipeCard } from "@/components/ComponentSwipeCard";
+import { Logo } from "@wispr/ui";
 
 export default function SwipeFlow() {
   const { state, currentQuestion, profile, progress, swipe, reset } =
@@ -87,14 +88,14 @@ export default function SwipeFlow() {
           >
             {/* Header */}
             <div className="text-center space-y-2">
-              <motion.span
-                className="inline-block text-4xl"
+              <motion.div
+                className="inline-block"
                 initial={{ scale: 0, rotate: -20 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ delay: 0.2, type: "spring", stiffness: 400, damping: 15 }}
               >
-                🗳️
-              </motion.span>
+                <Logo variant="icon" theme="dark" width={48} height={53} />
+              </motion.div>
               <h1 className="font-display text-[26px] text-ink font-bold">
                 Your picks for {voting.useCase.label}
               </h1>
@@ -337,14 +338,14 @@ export default function SwipeFlow() {
               className="flex flex-col items-center gap-7 w-full max-w-[400px]"
             >
               <div className="text-center">
-                <motion.span
-                  className="inline-block text-4xl mb-3"
+                <motion.div
+                  className="inline-block mb-3"
                   initial={{ scale: 0, rotate: -20 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ delay: 0.3, type: "spring", stiffness: 400, damping: 15 }}
                 >
-                  🎉
-                </motion.span>
+                  <Logo variant="icon" theme="dark" width={48} height={53} />
+                </motion.div>
                 <h1 className="font-display text-[32px] text-ink font-bold">
                   Bravo!
                 </h1>
