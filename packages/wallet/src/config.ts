@@ -6,9 +6,16 @@ export const intuitionChain = defineChain({
   nativeCurrency: { name: "TRUST", symbol: "TRUST", decimals: 18 },
   rpcUrls: {
     default: { http: ["https://rpc.intuition.systems/http"] },
+    public: { http: ["https://rpc.intuition.systems/http"] },
   },
   blockExplorers: {
-    default: { name: "Explorer", url: "https://explorer.intuition.systems" },
+    default: { name: "Intuition Explorer", url: "https://explorer.intuition.systems" },
+  },
+  contracts: {
+    multicall3: {
+      address: "0x31E7C4ef16e1c3c149D2F0a62517d621bDa6D037",
+      blockCreated: 117543,
+    },
   },
 });
 
