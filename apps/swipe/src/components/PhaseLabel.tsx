@@ -5,13 +5,13 @@ interface PhaseLabelProps {
   phase: SwipePhase;
 }
 
-const PHASE_CONFIG: Record<Exclude<SwipePhase, "result">, { step: string; label: string; emoji: string }> = {
+const PHASE_CONFIG: Record<Exclude<SwipePhase, "result" | "components">, { step: string; label: string; emoji: string }> = {
   role: { step: "1/2", label: "Role Detection", emoji: "🎯" },
   maturity: { step: "2/2", label: "AI Maturity", emoji: "🧠" },
 };
 
 export function PhaseLabel({ phase }: PhaseLabelProps) {
-  if (phase === "result") return null;
+  if (phase === "result" || phase === "components") return null;
   const config = PHASE_CONFIG[phase];
 
   return (

@@ -2,14 +2,12 @@ import type { Profile } from "@wispr/ontology";
 import type { WalletConnection } from "@/hooks/useWalletConnection";
 
 /**
- * Publish a user profile as Intuition triples on-chain.
+ * Publish a user profile as Intuition triples on-chain (V2 batch API).
  *
- * Creates atoms for the user address, role, and AI level,
+ * Creates atoms for the user address, role, AI level, and predicates,
  * then creates two triples:
  *   [user] --has role--> [role]
  *   [user] --has AI level--> [level]
- *
- * Returns the transaction hash of the last triple creation.
  */
 export async function publishProfile(
   wallet: WalletConnection,
@@ -18,69 +16,77 @@ export async function publishProfile(
   const { ethers } = await import("ethers");
   const { multiVault, address } = wallet;
 
-  const encoder = new TextEncoder();
-
   // Get costs
   const atomCost: bigint = await multiVault.getAtomCost();
   const tripleCost: bigint = await multiVault.getTripleCost();
 
-  // Create atoms
-  const userAtomData = encoder.encode(address.toLowerCase());
-  const roleAtomData = encoder.encode(`wispr:role:${profile.role}`);
-  const levelAtomData = encoder.encode(`wispr:ai-level:${profile.level}`);
-  const predicateRoleData = encoder.encode("wispr:has-role");
-  const predicateLevelData = encoder.encode("wispr:has-ai-level");
+  // Prepare atom data as hex-encoded bytes
+  const toHex = (s: string) => ethers.hexlify(ethers.toUtf8Bytes(s));
 
-  // Batch create all 5 atoms
-  const atomTx1 = await multiVault.createAtom(userAtomData, { value: atomCost });
-  await atomTx1.wait();
+  const atomDatas = [
+    toHex(address.toLowerCase()),
+    toHex(`wispr:role:${profile.role}`),
+    toHex(`wispr:ai-level:${profile.level}`),
+    toHex("wispr:has-role"),
+    toHex("wispr:has-ai-level"),
+  ];
 
-  const atomTx2 = await multiVault.createAtom(roleAtomData, { value: atomCost });
-  await atomTx2.wait();
+  // Check which atoms already exist, only create missing ones
+  const atomIds: string[] = [];
+  const toCreate: string[] = [];
+  const toCreateAssets: bigint[] = [];
 
-  const atomTx3 = await multiVault.createAtom(levelAtomData, { value: atomCost });
-  await atomTx3.wait();
+  for (const data of atomDatas) {
+    const atomId: string = await multiVault.calculateAtomId(data);
+    atomIds.push(atomId);
+    const exists: boolean = await multiVault.isTermCreated(atomId);
+    if (!exists) {
+      toCreate.push(data);
+      toCreateAssets.push(atomCost);
+    }
+  }
 
-  const atomTx4 = await multiVault.createAtom(predicateRoleData, { value: atomCost });
-  await atomTx4.wait();
+  // Batch create missing atoms
+  if (toCreate.length > 0) {
+    const totalAtomCost = atomCost * BigInt(toCreate.length);
+    const atomTx = await multiVault.createAtoms(toCreate, toCreateAssets, {
+      value: totalAtomCost,
+    });
+    await atomTx.wait();
+  }
 
-  const atomTx5 = await multiVault.createAtom(predicateLevelData, { value: atomCost });
-  await atomTx5.wait();
+  const [userAtomId, roleAtomId, levelAtomId, predicateRoleId, predicateLevelId] = atomIds;
 
-  // Calculate atom IDs for triple creation
-  const userAtomId = BigInt(
-    ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["bytes"], [userAtomData]))
+  // Check which triples need to be created
+  const tripleDefs = [
+    { subject: userAtomId, predicate: predicateRoleId, object: roleAtomId },
+    { subject: userAtomId, predicate: predicateLevelId, object: levelAtomId },
+  ];
+
+  const triplesToCreate: typeof tripleDefs = [];
+  for (const t of tripleDefs) {
+    const tripleId: string = await multiVault.calculateTripleId(t.subject, t.predicate, t.object);
+    const exists: boolean = await multiVault.isTermCreated(tripleId);
+    if (!exists) triplesToCreate.push(t);
+  }
+
+  if (triplesToCreate.length === 0) {
+    // Everything already published — return a no-op result
+    return {
+      txHash: "0x0",
+      explorerUrl: `https://explorer.intuition.systems/address/${address}`,
+    };
+  }
+
+  const totalTripleCost = tripleCost * BigInt(triplesToCreate.length);
+  const tripleTx = await multiVault.createTriples(
+    triplesToCreate.map((t) => t.subject),
+    triplesToCreate.map((t) => t.predicate),
+    triplesToCreate.map((t) => t.object),
+    triplesToCreate.map(() => tripleCost),
+    { value: totalTripleCost }
   );
-  const roleAtomId = BigInt(
-    ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["bytes"], [roleAtomData]))
-  );
-  const levelAtomId = BigInt(
-    ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["bytes"], [levelAtomData]))
-  );
-  const predicateRoleId = BigInt(
-    ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["bytes"], [predicateRoleData]))
-  );
-  const predicateLevelId = BigInt(
-    ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(["bytes"], [predicateLevelData]))
-  );
-
-  // Create triples: [user] --has role--> [role]
-  const tripleTx1 = await multiVault.createTriple(
-    userAtomId,
-    predicateRoleId,
-    roleAtomId,
-    { value: tripleCost }
-  );
-  await tripleTx1.wait();
-
-  // Create triple: [user] --has AI level--> [level]
-  const tripleTx2 = await multiVault.createTriple(
-    userAtomId,
-    predicateLevelId,
-    levelAtomId,
-    { value: tripleCost }
-  );
-  const receipt = await tripleTx2.wait();
+  const receipt = await tripleTx.wait();
 
   const txHash = receipt.hash;
   return {
