@@ -1,6 +1,7 @@
 "use client";
 
 import type { Profile } from "@wispr/ontology";
+import { Logo } from "@wispr/ui";
 
 interface ProfileCardProps {
   profile: Profile;
@@ -36,7 +37,7 @@ const ROLE_EMOJI: Record<string, string> = {
 const LEVEL_STYLE: Record<string, string> = {
   beginner: "bg-green-soft text-green",
   intermediate: "bg-accent-soft text-accent",
-  advanced: "bg-amber/15 text-[#C69B20]",
+  advanced: "bg-pear-soft text-pear",
   expert: "bg-red-soft text-red",
 };
 
@@ -49,13 +50,18 @@ export function ProfileCard({ profile }: ProfileCardProps) {
   return (
     <div className="w-full max-w-[380px] mx-auto bg-card rounded-3xl border border-line shadow-md p-8 flex flex-col items-center gap-5 noise relative overflow-hidden">
       {/* Decorative gradient */}
-      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-accent/5 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-pear/5 to-transparent pointer-events-none" />
 
-      <div className="relative z-10 w-20 h-20 rounded-2xl bg-bg flex items-center justify-center border border-line shadow-xs">
+      {/* Brand watermark */}
+      <div className="absolute top-3 right-3 opacity-30">
+        <Logo variant="icon" theme="dark" width={32} height={35} />
+      </div>
+
+      <div className="relative z-10 w-20 h-20 rounded-2xl bg-bg-raised flex items-center justify-center border border-line shadow-xs">
         <span className="text-4xl">{emoji}</span>
       </div>
       <div className="relative z-10 text-center">
-        <h2 className="font-display text-[22px] text-ink mb-3">
+        <h2 className="font-display text-[22px] text-ink mb-3 font-bold">
           {roleLabel}
         </h2>
         <span className={`inline-flex items-center px-4 py-2 rounded-full text-[13px] font-bold tracking-wide ${levelStyle}`}>
