@@ -59,3 +59,17 @@ h1, h2, h3, h4, h5, h6 {
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+/* Page header */
+.page-header {
+  background: linear-gradient(135deg, #d4ff47 0%, #1990ff 100%);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-title {
+  font-family: 'Montserrat', 'Inter', 'Helvetica Neue', sans-serif;
+  font-size: 81px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #1d2050;
+}
