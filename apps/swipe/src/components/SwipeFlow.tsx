@@ -215,7 +215,7 @@ export default function SwipeFlow() {
                       </button>
 
                       <a
-                        href="https://app.wispear.ai/"
+                        href={`https://app.wispear.ai/dashboard/${wallet.address}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full flex items-center justify-center gap-2 bg-bg-raised border border-line hover:border-line-strong text-ink-secondary hover:text-ink font-semibold text-[14px] py-3.5 rounded-2xl shadow-xs hover:shadow-sm transition-all duration-200"
