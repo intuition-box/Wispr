@@ -13,6 +13,7 @@
     "@reown/appkit": "^1.0.0",
     "@reown/appkit-adapter-ethers": "^1.0.0",
     "@wispr/ontology": "workspace:*",
+    "@wispr/ui": "workspace:*",
     "ethers": "^6.0.0",
     "motion": "^11.0.0",
     "next": "^14.2.0",

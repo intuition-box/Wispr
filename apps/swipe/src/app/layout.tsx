@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Wispr Profile",
-  description: "Discover your AI profile in 60 seconds",
+  title: "WisPear — Discover your AI profile",
+  description: "Collective wisdom, whispered to your agent. Discover your role and AI maturity level in 60 seconds.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "Wispr",
+    statusBarStyle: "black-translucent",
+    title: "WisPear",
   },
 };
 
@@ -17,7 +17,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: "cover",
-  themeColor: "#4A9BF4",
+  themeColor: "#0c0e22",
 };
 
 export default function RootLayout({

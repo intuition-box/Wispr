@@ -143,6 +143,9 @@ importers:
       '@wispr/ontology':
         specifier: workspace:*
         version: link:../../packages/ontology
+      '@wispr/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       ethers:
         specifier: ^6.0.0
         version: 6.16.0

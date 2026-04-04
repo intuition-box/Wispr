@@ -1,20 +1,28 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @theme {
-  /* Backgrounds */
-  --color-bg: #F6F5F2;
-  --color-card: #FFFFFF;
-  --color-glass: rgba(255, 255, 255, 0.72);
+  /* Backgrounds — deep purple neutrals */
+  --color-bg: #0c0e22;
+  --color-bg-raised: #121433;
+  --color-card: #1d2050;
+  --color-glass: rgba(29, 32, 80, 0.72);
 
-  /* Hero gradient */
-  --color-hero-from: #E8E0D0;
-  --color-hero-to: #C8D8C0;
+  /* Hero gradient — pear to accent */
+  --color-hero-from: #121433;
+  --color-hero-via: #1d2050;
+  --color-hero-to: #0c0e22;
 
-  /* Accent */
-  --color-accent: #4A9BF4;
-  --color-accent-hover: #3B8AE0;
-  --color-accent-soft: rgba(74, 155, 244, 0.10);
+  /* Primary — Pear green */
+  --color-pear: #aaff2b;
+  --color-pear-hover: #8ecc00;
+  --color-pear-soft: rgba(170, 255, 43, 0.10);
+
+  /* Accent — Electric blue */
+  --color-accent: #1990ff;
+  --color-accent-hover: #0070dd;
+  --color-accent-soft: rgba(25, 144, 255, 0.10);
+  --color-cyan: #00ffff;
 
   /* Semantic */
   --color-green: #22C55E;
@@ -23,26 +31,28 @@
   --color-red-soft: rgba(239, 68, 68, 0.10);
   --color-amber: #FFCC6F;
 
-  /* Text */
-  --color-ink: #1A1A1A;
-  --color-ink-secondary: #6B6B6B;
-  --color-ink-muted: #A0A0A0;
-  --color-ink-inverse: #FFFFFF;
+  /* Text — light on dark */
+  --color-ink: #f5f5f7;
+  --color-ink-secondary: #c4c4cc;
+  --color-ink-muted: #8888a0;
+  --color-ink-inverse: #06070f;
 
   /* Borders */
-  --color-line: rgba(0, 0, 0, 0.06);
-  --color-line-strong: rgba(0, 0, 0, 0.10);
+  --color-line: rgba(255, 255, 255, 0.06);
+  --color-line-strong: rgba(255, 255, 255, 0.12);
 
   /* Shadows */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.10);
-  --shadow-glow: 0 0 0 1px rgba(74, 155, 244, 0.15), 0 4px 16px rgba(74, 155, 244, 0.12);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 0 1px rgba(170, 255, 43, 0.20), 0 4px 24px rgba(170, 255, 43, 0.15);
+  --shadow-glow-accent: 0 0 0 1px rgba(25, 144, 255, 0.20), 0 4px 24px rgba(25, 144, 255, 0.15);
 
   /* Font */
-  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-display: 'Montserrat', 'Inter', 'Helvetica Neue', sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 @layer base {
@@ -100,6 +110,11 @@
   50% { opacity: 0.6; }
 }
 
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(170, 255, 43, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(170, 255, 43, 0.30); }
+}
+
 .animate-fade-up {
   animation: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -116,6 +131,10 @@
   animation: pulse-soft 2s ease-in-out infinite;
 }
 
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
 /* Stagger children */
 .stagger > :nth-child(1) { animation-delay: 0ms; }
 .stagger > :nth-child(2) { animation-delay: 80ms; }
@@ -125,7 +144,7 @@
 .stagger > :nth-child(6) { animation-delay: 400ms; }
 .stagger > :nth-child(7) { animation-delay: 480ms; }
 
-/* Glass effect */
+/* Glass effect — dark variant */
 .glass {
   background: var(--color-glass);
   backdrop-filter: blur(20px) saturate(180%);
@@ -137,7 +156,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  opacity: 0.03;
+  opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   pointer-events: none;
   border-radius: inherit;

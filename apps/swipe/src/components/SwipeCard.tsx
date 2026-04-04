@@ -54,7 +54,7 @@ export const SwipeCard = forwardRef<HTMLDivElement, SwipeCardProps>(
         }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className={`absolute inset-0 flex flex-col items-center justify-center p-8 select-none touch-pan-y rounded-3xl bg-card border border-line shadow-md noise ${
-          isFront ? "cursor-grab active:cursor-grabbing" : "opacity-60"
+          isFront ? "cursor-grab active:cursor-grabbing" : "opacity-40"
         }`}
       >
         {isFront && (

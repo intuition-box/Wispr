@@ -105,7 +105,7 @@ export default function SwipeFlow() {
                 >
                   🎉
                 </motion.span>
-                <h1 className="font-display text-[32px] text-ink">
+                <h1 className="font-display text-[32px] text-ink font-bold">
                   Bravo!
                 </h1>
               </div>

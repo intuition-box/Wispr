@@ -18,7 +18,7 @@ export function PublishButton({
   if (status === "publishing") {
     return (
       <div className="flex flex-col items-center gap-3 py-2">
-        <div className="w-7 h-7 border-2 border-amber border-t-transparent rounded-full animate-spin" />
+        <div className="w-7 h-7 border-2 border-pear border-t-transparent rounded-full animate-spin" />
         <span className="text-[13px] text-ink-muted">Publishing on-chain...</span>
       </div>
     );
@@ -68,7 +68,7 @@ export function PublishButton({
   return (
     <button
       onClick={onPublish}
-      className="flex items-center gap-2 bg-accent hover:bg-accent-hover text-ink-inverse font-semibold text-[14px] px-7 py-3.5 rounded-2xl shadow-glow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+      className="flex items-center gap-2 bg-accent hover:bg-accent-hover text-white font-semibold text-[14px] px-7 py-3.5 rounded-2xl shadow-glow-accent hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
     >
       <span>⛓️</span>
       Publish on-chain
