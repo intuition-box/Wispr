@@ -50,17 +50,17 @@
       "url": "whisper.xyz/skills/brand-voice"
     },
     {
-      "id": "type-tool",
+      "id": "tool",
       "name": "tool",
       "description": "External tools, MCPs, SDKs, APIs"
     },
     {
-      "id": "type-skill",
+      "id": "skill",
       "name": "skill",
       "description": "Domain-specific AI services and capabilities"
     },
     {
-      "id": "type-model",
+      "id": "model",
       "name": "model",
       "description": "LLM models for reasoning and generation"
     },
@@ -99,37 +99,37 @@
     {
       "subject": "mcp-notion",
       "predicate": "is-best-of",
-      "object": "type-tool"
+      "object": "tool"
     },
     {
       "subject": "mcp-twitter",
       "predicate": "is-best-of",
-      "object": "type-tool"
+      "object": "tool"
     },
     {
       "subject": "claude-sonnet-4-5",
       "predicate": "is-best-of",
-      "object": "type-model"
+      "object": "model"
     },
     {
       "subject": "chainlink-data-feeds",
       "predicate": "is-best-of",
-      "object": "type-tool"
+      "object": "tool"
     },
     {
       "subject": "1inch-fusion-plus-sdk",
       "predicate": "is-best-of",
-      "object": "type-tool"
+      "object": "tool"
     },
     {
       "subject": "privy-embedded-wallet",
       "predicate": "is-best-of",
-      "object": "type-tool"
+      "object": "tool"
     },
     {
       "subject": "brand-voice-skill",
       "predicate": "is-best-of",
-      "object": "type-skill"
+      "object": "skill"
     },
     {
       "subject": "mcp-notion",
