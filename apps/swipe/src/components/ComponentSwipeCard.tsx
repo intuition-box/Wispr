@@ -5,12 +5,27 @@ import type { ComponentInfo } from "@/data/componentCatalog";
 
 const SWIPE_THRESHOLD = 100;
 
-const TYPE_BADGE_STYLE: Record<string, string> = {
-  mcp: "bg-accent-soft text-accent",
-  skill: "bg-pear-soft text-pear",
-  model: "bg-red-soft text-red",
-  sdk: "bg-green-soft text-green",
-  api: "bg-accent-soft text-accent",
+const TYPE_COLORS: Record<string, { badge: string; strip: string }> = {
+  mcp: {
+    badge: "bg-accent-soft text-accent shadow-[inset_0_1px_0_rgba(25,144,255,0.12)]",
+    strip: "bg-gradient-to-r from-accent/40 via-accent/20 to-transparent",
+  },
+  skill: {
+    badge: "bg-pear-soft text-pear shadow-[inset_0_1px_0_rgba(170,255,43,0.12)]",
+    strip: "bg-gradient-to-r from-pear/40 via-pear/20 to-transparent",
+  },
+  model: {
+    badge: "bg-[rgba(168,85,247,0.10)] text-[#c084fc] shadow-[inset_0_1px_0_rgba(168,85,247,0.12)]",
+    strip: "bg-gradient-to-r from-[#a855f7]/40 via-[#a855f7]/20 to-transparent",
+  },
+  sdk: {
+    badge: "bg-green-soft text-green shadow-[inset_0_1px_0_rgba(34,197,94,0.12)]",
+    strip: "bg-gradient-to-r from-green/40 via-green/20 to-transparent",
+  },
+  api: {
+    badge: "bg-[rgba(255,204,111,0.10)] text-amber shadow-[inset_0_1px_0_rgba(255,204,111,0.12)]",
+    strip: "bg-gradient-to-r from-amber/40 via-amber/20 to-transparent",
+  },
 };
 
 interface ComponentSwipeCardProps {
@@ -39,7 +54,7 @@ export const ComponentSwipeCard = forwardRef<HTMLDivElement, ComponentSwipeCardP
       else if (info.offset.x < -SWIPE_THRESHOLD) onSwipe("dislike");
     }
 
-    const badgeStyle = TYPE_BADGE_STYLE[component.type] ?? "bg-accent-soft text-accent";
+    const colors = TYPE_COLORS[component.type] ?? TYPE_COLORS.mcp;
 
     return (
       <motion.div
@@ -62,58 +77,64 @@ export const ComponentSwipeCard = forwardRef<HTMLDivElement, ComponentSwipeCardP
           transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
         }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className={`absolute inset-0 flex flex-col items-center justify-center p-8 select-none touch-pan-y rounded-3xl bg-card border border-line shadow-md noise ${
+        className={`absolute inset-0 flex flex-col select-none touch-pan-y rounded-3xl bg-card border border-line shadow-md noise overflow-hidden ${
           isFront ? "cursor-grab active:cursor-grabbing" : "opacity-40"
         }`}
       >
+        {/* Type accent strip at top */}
+        <div className={`h-[3px] w-full ${colors.strip}`} />
+
         {isFront && (
-          <motion.div className="absolute inset-0 pointer-events-none rounded-3xl overflow-hidden">
+          <motion.div className="absolute inset-0 pointer-events-none rounded-3xl overflow-hidden z-20">
             <motion.div
-              className="absolute inset-0 bg-green/5 rounded-3xl"
+              className="absolute inset-0 bg-green/5"
               style={{ opacity: likeOpacity }}
             />
             <motion.span
-              className="absolute top-6 right-5 text-[13px] font-black tracking-widest px-3 py-1.5 rounded-xl border-[2.5px] text-green border-green"
+              className="absolute top-5 right-4 text-[11px] font-black tracking-[0.15em] px-3 py-1.5 rounded-lg border-2 text-green border-green bg-green/10"
               style={{ opacity: likeOpacity, rotate: 12 }}
             >
-              USEFUL
+              AGREE
             </motion.span>
 
             <motion.div
-              className="absolute inset-0 bg-red/5 rounded-3xl"
+              className="absolute inset-0 bg-red/5"
               style={{ opacity: dislikeOpacity }}
             />
             <motion.span
-              className="absolute top-6 left-5 text-[13px] font-black tracking-widest px-3 py-1.5 rounded-xl border-[2.5px] text-red border-red"
+              className="absolute top-5 left-4 text-[11px] font-black tracking-[0.15em] px-3 py-1.5 rounded-lg border-2 text-red border-red bg-red/10"
               style={{ opacity: dislikeOpacity, rotate: -12 }}
             >
-              SKIP
+              DISAGREE
             </motion.span>
           </motion.div>
         )}
 
-        <div className="relative z-10 flex flex-col items-center gap-4 max-w-[300px]">
-          <span className="text-3xl">{component.typeEmoji}</span>
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-8 gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-[28px] leading-none">{component.typeEmoji}</span>
+            <span
+              className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-[0.12em] uppercase ${colors.badge}`}
+            >
+              {component.type}
+            </span>
+          </div>
 
-          <span
-            className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase ${badgeStyle}`}
-          >
-            {component.type}
-          </span>
-
-          <h3 className="text-[18px] font-bold text-ink text-center leading-tight">
+          <h3 className="text-[20px] font-display font-bold text-ink text-center leading-tight">
             {component.name}
           </h3>
 
-          <p className="text-[13px] text-ink-secondary text-center leading-[1.5]">
+          <p className="text-[13px] text-ink-secondary text-center leading-[1.55] max-w-[280px]">
             {component.description}
           </p>
         </div>
 
         {isFront && (
-          <span className="relative z-10 mt-5 text-[11px] text-ink-muted tracking-wide uppercase">
-            Swipe or tap below
-          </span>
+          <div className="relative z-10 pb-5 text-center">
+            <span className="text-[10px] text-ink-muted/60 tracking-[0.1em] uppercase">
+              Swipe or tap below
+            </span>
+          </div>
         )}
       </motion.div>
     );

@@ -39,13 +39,18 @@ export function useComponentVoting(role: Role) {
     [currentComponent]
   );
 
+  const skip = useCallback(() => {
+    if (!currentComponent) return;
+    setCurrentIndex((i) => i + 1);
+  }, [currentComponent]);
+
   const submit = useCallback(
     async (wallet: WalletConnection) => {
       const forVotes = votes.filter((v) => v.direction === "for");
       if (forVotes.length === 0) {
         setSubmitState({
           status: "error",
-          message: "No components marked as useful",
+          message: "No components to signal — agree with at least one",
         });
         return;
       }
@@ -79,6 +84,7 @@ export function useComponentVoting(role: Role) {
     votes,
     submitState,
     swipe,
+    skip,
     submit,
   };
 }
