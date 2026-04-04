@@ -81,11 +81,42 @@ function useBlueprint(): CurateItem[] {
 }
 
 type Vote = "support" | "oppose" | null;
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@wispr/ui";
+
+const MOCK_ATOM = {
+  id: "chainlink-data-feeds",
+  name: "Chainlink Data Feeds",
+  type: "api" as const,
+  url: "https://docs.chain.link/data-feeds",
+  description: "Real-time on-chain price oracles for crypto assets. Provides tamper-proof, decentralized price data for DeFi protocols.",
+  autonomy: "high" as const,
+};
+
+const TYPES = [
+  { value: "mcp", icon: "🔌", label: "MCP" },
+  { value: "skill", icon: "🧠", label: "Skill" },
+  { value: "package", icon: "📦", label: "Package" },
+  { value: "api", icon: "⚡", label: "API" },
+  { value: "model", icon: "🤖", label: "Model" },
+  { value: "agent", icon: "🛠️", label: "Agent" },
+];
+
+const AUTONOMY = [
+  { value: "low", label: "Low", description: "Needs human approval" },
+  { value: "medium", label: "Medium", description: "Semi-autonomous" },
+  { value: "high", label: "High", description: "Fully autonomous" },
+];
 
 export default function CuratePage() {
   const { isConnected } = useWalletConnection();
   const items = useBlueprint();
   const [votes, setVotes] = useState<Record<string, Vote>>({});
+  const router = useRouter();
+  const [saving, setSaving] = useState(false);
+  const [type, setType] = useState<string>(MOCK_ATOM.type);
+  const [autonomy, setAutonomy] = useState<string>(MOCK_ATOM.autonomy);
 
   const handleVote = (tripleId: string, vote: Vote) => {
     setVotes((prev) => ({
@@ -235,6 +266,33 @@ export default function CuratePage() {
             </button>
           </div>
         )}
+        {/* Save */}
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={handleSave}
+          disabled={saving}
+          style={{
+            width: "100%",
+            borderRadius: "12px",
+            fontWeight: 700,
+            fontSize: "15px",
+            background: saving ? "rgba(212,255,71,0.4)" : "#d4ff47",
+            color: saving ? "rgba(6,7,15,0.5)" : "#06070f",
+            cursor: saving ? "wait" : "pointer",
+            boxShadow: saving ? "none" : "0 0 24px rgba(212,255,71,0.2)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          {saving ? (
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+              <span style={{ width: "16px", height: "16px", border: "2px solid rgba(6,7,15,0.3)", borderTopColor: "#06070f", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
+              Saving on-chain...
+            </span>
+          ) : (
+            "Save atom"
+          )}
+        </Button>
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { Button } from "@wispr/ui";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -151,9 +152,6 @@ function BlueprintMessage({ content, latencyMs, model }: { content: string; late
                   <p className="text-sm font-semibold text-text-primary truncate">{c.name}</p>
                   {c.description && <p className="text-[11px] text-text-muted truncate">{c.description}</p>}
                 </div>
-                {c.trustScore != null && (
-                  <span className="text-xs font-bold shrink-0" style={{ color: "var(--color-amber)" }}>★ {c.trustScore}</span>
-                )}
               </div>
             );
           })}
@@ -239,13 +237,6 @@ function DepositButtons({ componentName }: { componentName: string }) {
         </div>
       )}
 
-      {atom && atom !== "loading" && (
-        <a href={`https://app.intuition.systems/explore?a=${atom.termId}`} target="_blank" rel="noopener noreferrer"
-          className="text-[10px] font-mono px-1.5 py-1 rounded-lg transition-all hover:opacity-70"
-          style={{ background: "rgba(255,255,255,0.05)", color: "var(--color-text-muted)", border: "1px solid rgba(255,255,255,0.08)" }}>
-          #{atom.termId}
-        </a>
-      )}
     </div>
   );
 }
@@ -292,21 +283,27 @@ function ChatModal({ conversationId, onClose }: { conversationId: string; onClos
           <div className="flex items-center gap-2">
             <div className="flex rounded-lg overflow-hidden border border-border">
               {(["chat", "stack"] as const).map((t) => (
-                <button key={t} onClick={() => setTab(t)}
-                  className="px-3 py-1 text-xs font-semibold transition-colors"
-                  style={tab === t
-                    ? { background: "var(--color-accent)", color: "#fff" }
-                    : { background: "transparent", color: "var(--color-text-secondary)" }
-                  }
+                <Button key={t} variant={tab === t ? "primary" : "ghost"} size="sm"
+                  onClick={() => setTab(t)}
+                  style={{
+                    borderRadius: 0,
+                    border: "none",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    padding: "4px 12px",
+                    ...(tab === t
+                      ? { background: "var(--color-accent)", color: "#fff" }
+                      : { background: "transparent", color: "var(--color-text-secondary)" }),
+                  }}
                 >
                   {t === "chat" ? "💬 Chat" : "🔧 Stack"}
-                </button>
+                </Button>
               ))}
             </div>
-            <button onClick={onClose}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-hover transition-all">
+            <Button variant="ghost" size="sm" onClick={onClose}
+              style={{ borderRadius: "8px", border: "none", color: "var(--color-text-muted)", padding: "4px 8px", minWidth: "28px" }}>
               ✕
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -377,11 +374,6 @@ function ChatModal({ conversationId, onClose }: { conversationId: string; onClos
                     <p className="text-sm font-semibold text-text-primary truncate">{comp.componentName}</p>
                     <p className="text-[11px] text-text-muted font-mono truncate">{comp.componentId}</p>
                   </div>
-                  {comp.trustScoreAtTime != null && (
-                    <span className="text-xs font-bold shrink-0" style={{ color: "var(--color-amber)" }}>
-                      ★ {comp.trustScoreAtTime.toFixed(1)}
-                    </span>
-                  )}
                   <DepositButtons componentName={comp.componentName} />
                 </div>
               );
