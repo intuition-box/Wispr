@@ -71,7 +71,7 @@ export default function ChatPage() {
             <p className="text-sm text-muted-foreground mt-2 max-w-md">
               Describe what you want to build.
             </p>
-            <div className="flex gap-2 mt-6">
+            <div className="grid grid-cols-2 gap-2 mt-6 max-w-md">
               <button
                 onClick={() =>
                   setInput(
@@ -91,6 +91,26 @@ export default function ChatPage() {
                 className="text-xs text-muted-foreground bg-secondary hover:bg-secondary/80 rounded-lg px-3 py-2 transition-colors"
               >
                 DeFi portfolio rebalancer
+              </button>
+              <button
+                onClick={() =>
+                  setInput(
+                    "I want my GitHub pull requests to receive automatic reviews as soon as they're opened"
+                  )
+                }
+                className="text-xs text-muted-foreground bg-secondary hover:bg-secondary/80 rounded-lg px-3 py-2 transition-colors"
+              >
+                Auto PR reviews
+              </button>
+              <button
+                onClick={() =>
+                  setInput(
+                    "I want to receive every morning only job offers that match my profile"
+                  )
+                }
+                className="text-xs text-muted-foreground bg-secondary hover:bg-secondary/80 rounded-lg px-3 py-2 transition-colors"
+              >
+                Job matching emails
               </button>
             </div>
           </div>

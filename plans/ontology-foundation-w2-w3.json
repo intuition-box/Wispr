@@ -1,0 +1,204 @@
+{
+  "version": "1.0.0-w2-w3",
+  "description": "Ontology foundation for 2 use cases: W2 (GitHub PR Review) + W3 (Job Scraper). Extends w4-p3 ontology.",
+  "use_cases": ["w2-github-pr-review", "w3-job-scraper"],
+  "extends": "ontology-foundation-w4-p3.json",
+  "shared_atoms": [
+    "claude-sonnet-4-5",
+    "mcp", "skill", "model",
+    "is-best-of", "in-context-of", "belongs-to",
+    "productivity"
+  ],
+  "stats": {
+    "newAtoms": 11,
+    "newTriples": 17
+  },
+  "atoms": [
+    {
+      "id": "mcp-github",
+      "name": "MCP GitHub",
+      "description": "Model Context Protocol server for GitHub - reads PRs, diffs, issues, and posts comments",
+      "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/github"
+    },
+    {
+      "id": "code-review-skill",
+      "name": "Code Review Skill",
+      "description": "AI skill that analyzes code diffs, detects bugs, and suggests improvements",
+      "url": "https://whisper.xyz/skills/code-review"
+    },
+    {
+      "id": "firecrawl-mcp",
+      "name": "Firecrawl MCP",
+      "description": "Model Context Protocol server for Firecrawl - scrapes and crawls web pages",
+      "url": "https://github.com/mendableai/firecrawl-mcp-server"
+    },
+    {
+      "id": "embeddings-matching-skill",
+      "name": "Embeddings Matching Skill",
+      "description": "AI skill that compares content using vector embeddings and scores semantic similarity",
+      "url": "https://whisper.xyz/skills/embeddings-matching"
+    },
+    {
+      "id": "mcp-gmail",
+      "name": "MCP Gmail",
+      "description": "Model Context Protocol server for Gmail - sends emails and manages inbox",
+      "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/gmail"
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "name": "Claude Haiku 4.5",
+      "description": "Anthropic's Claude Haiku 4.5 - fast and economical for batch processing tasks",
+      "url": "https://docs.anthropic.com/en/docs/about-claude/models"
+    },
+    {
+      "id": "code-analysis",
+      "name": "Code Analysis",
+      "description": "Code review, linting, and quality analysis"
+    },
+    {
+      "id": "ai-agents",
+      "name": "AI Agents",
+      "description": "AI agent orchestration and tooling"
+    },
+    {
+      "id": "data-scraping",
+      "name": "Data Scraping",
+      "description": "Web scraping and data extraction"
+    },
+    {
+      "id": "batch-processing",
+      "name": "Batch Processing",
+      "description": "High-volume batch data processing"
+    },
+    {
+      "id": "automation",
+      "name": "Automation",
+      "description": "Workflow automation and scheduling"
+    }
+  ],
+  "triples": {
+    "base_triples": [
+      {
+        "id": "T1-mcp-github",
+        "subject": "mcp-github",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      },
+      {
+        "id": "T1-code-review",
+        "subject": "code-review-skill",
+        "predicate": "is-best-of",
+        "object": "skill"
+      },
+      {
+        "id": "T1-firecrawl",
+        "subject": "firecrawl-mcp",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      },
+      {
+        "id": "T1-embeddings",
+        "subject": "embeddings-matching-skill",
+        "predicate": "is-best-of",
+        "object": "skill"
+      },
+      {
+        "id": "T1-mcp-gmail",
+        "subject": "mcp-gmail",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      },
+      {
+        "id": "T1-claude-haiku",
+        "subject": "claude-haiku-4-5",
+        "predicate": "is-best-of",
+        "object": "model"
+      }
+    ],
+    "nested_triples": [
+      {
+        "subject_triple": "T1-mcp-github",
+        "predicate": "in-context-of",
+        "object": "code-analysis"
+      },
+      {
+        "subject_triple": "T1-code-review",
+        "predicate": "in-context-of",
+        "object": "code-analysis"
+      },
+      {
+        "subject_triple": "T1-firecrawl",
+        "predicate": "in-context-of",
+        "object": "data-scraping"
+      },
+      {
+        "subject_triple": "T1-embeddings",
+        "predicate": "in-context-of",
+        "object": "ai-agents"
+      },
+      {
+        "subject_triple": "T1-mcp-gmail",
+        "predicate": "in-context-of",
+        "object": "automation"
+      },
+      {
+        "subject_triple": "T1-claude-haiku",
+        "predicate": "in-context-of",
+        "object": "batch-processing"
+      }
+    ],
+    "category_triples": [
+      {
+        "subject": "code-analysis",
+        "predicate": "belongs-to",
+        "object": "productivity"
+      },
+      {
+        "subject": "data-scraping",
+        "predicate": "belongs-to",
+        "object": "productivity"
+      },
+      {
+        "subject": "ai-agents",
+        "predicate": "belongs-to",
+        "object": "productivity"
+      },
+      {
+        "subject": "batch-processing",
+        "predicate": "belongs-to",
+        "object": "productivity"
+      },
+      {
+        "subject": "automation",
+        "predicate": "belongs-to",
+        "object": "productivity"
+      }
+    ]
+  },
+
+  "use_case_stacks": {
+    "w2-github-pr-review": {
+      "components": [
+        "mcp-github",
+        "code-review-skill",
+        "claude-sonnet-4-5"
+      ],
+      "infrastructure": [
+        "GitHub webhook trigger (fires on PR opened event)"
+      ],
+      "flow": "PR opened → webhook → MCP GitHub reads diff → Claude Sonnet + Code Review Skill → comment posted on PR"
+    },
+    "w3-job-scraper": {
+      "components": [
+        "firecrawl-mcp",
+        "embeddings-matching-skill",
+        "mcp-gmail",
+        "claude-haiku-4-5"
+      ],
+      "infrastructure": [
+        "Daily cron job at 08:00 (Vercel Cron, GitHub Actions, etc.)"
+      ],
+      "flow": "Cron 08:00 → Firecrawl MCP scrapes job boards → Embeddings Matching Skill scores vs profile → threshold filter → MCP Gmail sends matches"
+    }
+  }
+}

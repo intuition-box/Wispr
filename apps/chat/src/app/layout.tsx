@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { WalletProvider } from "@wispr/wallet";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -18,9 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
-        <WalletProvider>
-          {children}
-        </WalletProvider>
+        {children}
       </body>
     </html>
   );

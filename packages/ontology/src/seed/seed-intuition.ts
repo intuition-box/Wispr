@@ -63,8 +63,10 @@ interface TripleData {
 }
 
 // Load ontology data from JSON using absolute path from cwd
-// When running from packages/ontology: ../../plans/ontology-foundation-w4-p3.json
-const ONTOLOGY_PATH = resolve(process.cwd(), "../../plans/ontology-foundation-w4-p3.json");
+// Accepts --file flag to specify which ontology to seed, defaults to w4-p3
+const fileArg = process.argv.find(a => a.startsWith("--file="));
+const ontologyFile = fileArg ? fileArg.split("=")[1] : "ontology-foundation-w4-p3.json";
+const ONTOLOGY_PATH = resolve(process.cwd(), `../../plans/${ontologyFile}`);
 const ontology = JSON.parse(readFileSync(ONTOLOGY_PATH, "utf-8"));
 
 // Load IPFS mapping (created by upload-favicons script)
@@ -369,6 +371,20 @@ async function main() {
   // Create atoms in batches of 20
   const BATCH_SIZE = 20;
   const createdAtomIds: Map<string, string> = new Map();
+
+  // Load previously deployed atom IDs (from w4-p3 or other seeds)
+  const previousDeployedPath = resolve(process.cwd(), "src/seed/deployed.json");
+  try {
+    const deployed = JSON.parse(readFileSync(previousDeployedPath, "utf-8"));
+    if (deployed.atoms) {
+      for (const [id, termId] of Object.entries(deployed.atoms)) {
+        createdAtomIds.set(id, termId as string);
+      }
+      console.log(`📂 Loaded ${Object.keys(deployed.atoms).length} existing atom IDs from deployed.json\n`);
+    }
+  } catch {
+    // No previous deployment, that's fine
+  }
 
   // Store existing atom IDs (keyed by ontology id, e.g. "mcp-notion")
   existing.forEach((a) => {

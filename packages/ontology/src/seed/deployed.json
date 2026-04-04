@@ -27,40 +27,42 @@
     "infrastructure": "0xe224ece897b4404274a40e687549a4e156483d3edf3ea82998feea6cb9feaf15",
     "is-best-of": "0x8fd780ca7db1d0a8a574a0b8dcffb29b77b4cbdfec610f96cf12a01229fad2a6",
     "in-context-of": "0xa88b9975be0f56da24b2638a6a386d6ea3479a1ef6f04e08255bc7ca40d631c0",
-    "belongs-to": "0x58b62f1115190e5bd9f5c673d56db570fa73b230eb7803a6ea2e57195e01ec27"
+    "belongs-to": "0x58b62f1115190e5bd9f5c673d56db570fa73b230eb7803a6ea2e57195e01ec27",
+    "mcp-github": "0xadf544737f548d9b057b58606016b27e3be99a54cf55128083afe78fc1a85bad",
+    "code-review-skill": "0x41b502aee5d54674b49fba27579c0d00eb1bb178f97a860c400c43d04472f92c",
+    "firecrawl-mcp": "0x8c440d5017a0bb5978388059398c39f73698ba4a93811b293e2a84f3fbd96dd3",
+    "embeddings-matching-skill": "0x0ec84d948f958f451b66f392f40ed5d6455fc1554c6853ba5bac1441e10f825d",
+    "mcp-gmail": "0x3bf263939c8d136589ea84a24c6a00bfcf3f15cfce1c2ae795d698b45fc97b37",
+    "claude-haiku-4-5": "0x35cb11f4a04de74c479b39448d1ab6e97dc74d71d20a1502b4a6ee86e52e0dca",
+    "code-analysis": "0x5d60a671e8aca90e2058625cc5572f9992f8225efed35f67c6c08018472d96de",
+    "ai-agents": "0x4e49d60b3ef0d6b65fb42ed100e6ea5216a6d7a7e50f6b20cbf8706413fd6e7f",
+    "data-scraping": "0x96b8d6c2b38fcf8505f24b3aea3208bd1675e77401dc515d04b6bbcee55d0f6b",
+    "batch-processing": "0x5d7f010b6ef9ea73a01d520708697075856ff68b226478ba1656bc62ccbc0f55",
+    "automation": "0x859a488d88a86962617d93cd5be3ca8d6de57ef712e1d185dd95b0dd37b4def0"
   },
   "triples": {
     "base": {
-      "mcp-notion → is-best-of → mcp": "0x895dc560b80a8bca62eda1ba8255ce46dc979271b71e390d5b86545fd01f3227",
-      "mcp-twitter → is-best-of → mcp": "0xb24d8a39c54fd544cc0546132b5aa7fcd794b60f95ab39399fcd0903551bd032",
-      "claude-sonnet-4-5 → is-best-of → model": "0xd24a5ea792b700c3d4988e4117eb533613df0515c861984f02e26e35d3139ee7",
-      "chainlink-data-feeds → is-best-of → api": "0xfcf17c3ceca270b4b29e65b0a4d305ad023493502e4d9b17335ac54af1de3942",
-      "1inch-fusion-plus-sdk → is-best-of → sdk": "0x391cfb80aaa9b7fcc4e0f0d21d30d8f6a9daac4396049ed30d3c9d143f0df49f",
-      "privy-embedded-wallet → is-best-of → sdk": "0xc1af4b322a5530c5748601a7134c4d1b727daf75d1fdac9734510e3674a86fde",
-      "brand-voice-skill → is-best-of → skill": "0x4b8d3be4773d5b170c5d3d54ef495dfefe7d237db8b86521cc9bb906a15f60ea"
+      "T1-mcp-github": "0x72d0abe6d7377b9fc663a08e288aa57a1a6b177726ee28e9c227a462a95b93dc",
+      "T1-code-review": "0x8204d10f10c84ab9cf1cd8f19647cb5f235c25aae786d6b24ae46e8b94331b98",
+      "T1-firecrawl": "0x4ae2f0f4b9469ce6fc8fda8353afdb53dd9bf15d7fce9759a8a33c6ec7116ada",
+      "T1-embeddings": "0x7f0810e8a7cd669bc4a5e6e60ecdf5b4167a1b95c3cd1723b18a6fd35d5d587f",
+      "T1-mcp-gmail": "0x07496946a9968d13477201abbcc40f976439b70820794d96e945dd9d074f3b22",
+      "T1-claude-haiku": "0xea93546cd0ae0cde0c315223732f9e0956a3bd549732ce6e64e7c779889fc609"
     },
     "nested": {
-      "(mcp-notion → is-best-of → mcp) → in-context-of → content-automation": "0x4394df113951f12a82a774f2bc4e885dcd8f860b72d470d71ce517fb2fdb089f",
-      "(mcp-twitter → is-best-of → mcp) → in-context-of → social-media": "0x92987cafb84ba8ca933c75cabde60ec8257aaa66b35051a0f2ba5f8ccd04804c",
-      "(claude-sonnet-4-5 → is-best-of → model) → in-context-of → content-generation": "0x6931064929d2fa7565d6b1a727ed2848e78454bb2c6420ab0971dae3c215b190",
-      "(chainlink-data-feeds → is-best-of → api) → in-context-of → defi": "0x721dc495731836d0d29ce4eb152f190b9798cee952f11b494b2e817e2e5f2584",
-      "(1inch-fusion-plus-sdk → is-best-of → sdk) → in-context-of → defi": "0x4775c1681177f5b30ae6b2f14acfa4206eead7b41939c3de06420e491645ce43",
-      "(privy-embedded-wallet → is-best-of → sdk) → in-context-of → web3-building": "0x01fc4e0056735dd785e041c3bb321ff7eca8150c0dda39471301c3f4010cdb38",
-      "(brand-voice-skill → is-best-of → skill) → in-context-of → content-creation": "0x552d194af42b893f4a773e0bcd4613433c9409eff8e172d28047c807b4369ba3"
+      "T1-mcp-github→code-analysis": "0x53a0a6e15bc91dbe0f5ff00346a0b3bf0a5520f96b21ec6fdaa6dcbde18bc874",
+      "T1-code-review→code-analysis": "0xfb31c8c8292dae5dce2a729f410dc07d0e082c77591c4e0eabea1de877d5e19d",
+      "T1-firecrawl→data-scraping": "0xb29fb0294b9884e24dd10336543bf94a450ef468f76fecc0df8c494b276cbe8a",
+      "T1-embeddings→ai-agents": "0xc26a53491bd9a19a7dc5e767b2cd7aadb951440d9b1c81847e311172585e8ae2",
+      "T1-mcp-gmail→automation": "0x7fe5b05935d7260662a5b5a4b38b4e61d3fa432809d39f9e9b7dbcc94b5d35cc",
+      "T1-claude-haiku→batch-processing": "0xf4a9f713b5458be19835f31639c1cc3be9829b45f0615640ec685a286e7fa7d1"
     },
     "category": {
-      "content-automation → belongs-to → productivity": "0x80896b241aaf48139f5e5cd30a1f1418eaefa4e920950615ddd0a17f2990cfa4",
-      "social-media → belongs-to → communication": "0x1c21541c3738a48747679b6707984b221502461a93368cec9f3863a268e24517",
-      "content-generation → belongs-to → creativity": "0x613cf10ff20705b37e7368b7d592d1e4079d9b379ea82c444d7cb5f6ea049811",
-      "content-creation → belongs-to → creativity": "0xb24d0ebb40d3f73d3396449a512ef9b5dfe3619a89e28f2d37671560df8b4952",
-      "defi → belongs-to → finance": "0x7af447b2e6b742db4039f6547ae6feeaa8b5a35c721a66c4f289fa140c96aeea",
-      "web3-building → belongs-to → infrastructure": "0x24423993a9ffeb8f04964140df1e89ee84c4d1ac7d6bf14be250ed78152b757b",
-      "mcp → belongs-to → tool": "0xd24445ccd3bc68fbad1fa1d65078b696267eb2be908228d10aaaee0c1ec00c18",
-      "sdk → belongs-to → tool": "0x0301ceeba01a2273a4b25448297cfdbbeaaea58bfe8d887b43f07e17db709d89",
-      "api → belongs-to → tool": "0x0163fe36aef41a3176f02e590d6148d84a43dcad551f4344196f69af8a2c0892",
-      "package → belongs-to → tool": "0x57bca131dffda8b6b4ccb6519df163564ee31968f68a0504ab1cbccb4a3bb09a",
-      "skill → belongs-to → tool": "0x47c8e8d02ae9fc70d816f8787bb759d30b76f2291a2204cd22490acca8e81c19",
-      "model → belongs-to → tool": "0x2d0022feb69c27eea87723805c7cf4e0787eee054d953cbd14c0d1b814d74cad"
+      "code-analysis→productivity": "0xb14f44c509d118a432147cec47d87f55d8261ccd1236bdf14669d921a8cfb380",
+      "data-scraping→productivity": "0x099d41cfd097b95f52e3bc08e6f91fdd0aa6ba13f4cf9ea3fd7883897b43dd24",
+      "ai-agents→productivity": "0x2d2c51ff45a8fe8b3087646a381dca09a0f332bb71f694890446e7dc8c9520ed",
+      "batch-processing→productivity": "0xe7d0c5bde63b72870f4d9640b11a899a6342067d9d20bd783745b1038d1f2876",
+      "automation→productivity": "0x64b578df16de86021417356f6a55a8ca141ec1d6e8c456102a8ed5380d1797d4"
     }
   }
 }
