@@ -7,3 +7,4 @@ dist/
 .claude/
 *.tsbuildinfo
 next-env.d.ts
+pnpm-lock.yaml
