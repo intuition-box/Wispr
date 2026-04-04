@@ -50,11 +50,12 @@ export default function AtomDetailPage() {
 
   return (
     <>
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-bg/65 backdrop-blur-xl border-b border-border px-5 py-3">
-        <Link href="/explorer" className="text-xs text-text-muted hover:text-pear transition-colors">
-          ← Back to Explorer
+      {/* Header — atom name as page title */}
+      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
+        <Link href="/curate" className="text-xs text-text-muted hover:text-pear transition-colors mb-2 inline-block">
+          ← Back to Curate
         </Link>
+        <h1 className="page-title">{atom.name}</h1>
       </div>
 
       {/* Two-column layout */}
@@ -62,35 +63,29 @@ export default function AtomDetailPage() {
 
         {/* Left — Main content */}
         <div className="flex-1 min-w-0 flex flex-col gap-8">
-          {/* Identity */}
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-surface-2 border border-border flex items-center justify-center text-2xl shrink-0">
-              {atom.typeIcon}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-bold text-text-primary">{atom.name}</h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded border uppercase tracking-wider bg-accent-soft text-accent border-accent/20">
-                  {atom.type}
+          {/* Description + pills + URL */}
+          <div className="flex flex-col gap-3">
+            <p className="text-[14px] text-text-secondary leading-relaxed">
+              {atom.description}
+            </p>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-pear-soft text-pear border border-pear/20">
+                {atom.type}
+              </span>
+              {atom.contexts.map((ctx) => (
+                <span key={ctx} className="text-[11px] font-semibold px-3 py-1 rounded-full bg-accent-soft text-accent border border-accent/20">
+                  {ctx.replace(/-/g, " ")}
                 </span>
-              </div>
-              <p className="text-[14px] text-text-secondary mt-2 leading-relaxed">
-                {atom.description}
-              </p>
-              <a
-                href={atom.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[13px] text-accent hover:text-pear transition-colors mt-2"
-              >
-                {atom.url} ↗
-              </a>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-[11px] text-text-muted font-mono bg-surface px-2 py-0.5 rounded border border-border">
-                  {atom.hash}
-                </span>
-              </div>
+              ))}
             </div>
+            <a
+              href={atom.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] text-accent hover:text-pear transition-colors"
+            >
+              {atom.url} ↗
+            </a>
           </div>
 
           {/* Chart + Stats side by side */}

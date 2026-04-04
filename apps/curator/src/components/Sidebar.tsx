@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo, brand } from "@wispr/ui";
+import { useWalletConnection } from "@wispr/wallet";
 
 const NAV_ITEMS = [
   { href: "/explorer", icon: "🧭", label: "Explorer", external: false },
@@ -13,6 +14,7 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { address, isConnected, disconnect, connect } = useWalletConnection();
 
   return (
     <aside className="w-[260px] shrink-0 sticky top-0 h-screen flex flex-col border-r border-border px-3 py-5">
@@ -68,18 +70,40 @@ export function Sidebar() {
 
       <div className="mt-auto" />
 
-      {/* Profile */}
-      <div className="flex items-center gap-2.5 px-3 py-3 rounded-full mt-3 hover:bg-hover transition-colors cursor-pointer">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-purple/20 border border-border-light flex items-center justify-center text-sm font-bold text-accent shrink-0">
-          SC
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <div className="text-sm font-semibold text-text-primary truncate">
-            sam.eth
+      {/* Wallet */}
+      {isConnected && address ? (
+        <div
+          onClick={disconnect}
+          className="group flex items-center gap-2.5 px-3 py-3 rounded-full mt-3 hover:bg-red-soft transition-colors cursor-pointer"
+        >
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-pear/20 border border-border-light flex items-center justify-center text-sm font-bold text-accent shrink-0 group-hover:from-red/20 group-hover:to-red/10 group-hover:text-red group-hover:border-red/30 transition-all">
+            {address.slice(2, 4).toUpperCase()}
           </div>
-          <div className="text-xs text-text-muted truncate">0x1a2b...9f3c</div>
+          <div className="flex-1 overflow-hidden">
+            <div className="text-sm font-semibold text-text-primary truncate group-hover:hidden">
+              {address.slice(0, 6)}...{address.slice(-4)}
+            </div>
+            <div className="text-xs text-text-muted truncate group-hover:hidden">Connected</div>
+            <div className="text-sm font-semibold text-red hidden group-hover:block">
+              Disconnect wallet
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div
+          onClick={connect}
+          className="flex items-center gap-2.5 px-3 py-3 rounded-full mt-3 hover:bg-hover transition-colors cursor-pointer"
+        >
+          <div className="w-10 h-10 rounded-full bg-surface-2 border border-border flex items-center justify-center text-lg shrink-0">
+            🔗
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <div className="text-sm font-semibold text-text-primary truncate">
+              Connect wallet
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }
