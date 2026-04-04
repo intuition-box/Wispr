@@ -1,3 +1,4 @@
+import { Hono } from "hono";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   extract,
@@ -7,13 +8,15 @@ import {
   type RankedComponent,
 } from "@wispr/agent";
 
+const chat = new Hono();
+
 const anthropic = new Anthropic();
 
-export async function POST(req: Request) {
-  const { message } = await req.json();
+chat.post("/chat", async (c) => {
+  const { message } = await c.req.json();
 
   if (!message || typeof message !== "string") {
-    return Response.json({ error: "message required" }, { status: 400 });
+    return c.json({ error: "message required" }, 400);
   }
 
   let claims, components;
@@ -27,7 +30,7 @@ export async function POST(req: Request) {
   } catch (err) {
     await closeIntuitionClient();
     console.error("[wispr] pipeline failed:", err);
-    return Response.json({ error: (err as Error).message }, { status: 500 });
+    return c.json({ error: (err as Error).message }, 500);
   }
 
   const intuitionContext = buildContext(components);
@@ -44,21 +47,23 @@ export async function POST(req: Request) {
     ],
   });
 
-  const text = response.content[0].type === "text" ? response.content[0].text : "";
+  const text =
+    response.content[0].type === "text" ? response.content[0].text : "";
 
   // Extract JSON from response
-  const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/) || text.match(/(\{[\s\S]*\})/);
+  const jsonMatch =
+    text.match(/```json\n([\s\S]*?)\n```/) || text.match(/(\{[\s\S]*\})/);
   if (!jsonMatch) {
-    return Response.json({ error: "No blueprint generated" }, { status: 500 });
+    return c.json({ error: "No blueprint generated" }, 500);
   }
 
   try {
     const blueprint = JSON.parse(jsonMatch[1]);
-    return Response.json(blueprint);
+    return c.json(blueprint);
   } catch {
-    return Response.json({ error: "Invalid blueprint JSON" }, { status: 500 });
+    return c.json({ error: "Invalid blueprint JSON" }, 500);
   }
-}
+});
 
 function buildContext(components: RankedComponent[]): string {
   if (components.length === 0) {
@@ -129,3 +134,5 @@ Rules:
 Wispear Registry v0.1:
 - content-automation: mcp-notion, mcp-twitter, brand-voice-skill, claude-sonnet-4-5
 - defi: chainlink-data-feeds, 1inch-fusion-plus-sdk, privy-embedded-wallet`;
+
+export default chat;

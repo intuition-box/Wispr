@@ -37,7 +37,7 @@ interface WalletProviderProps {
 }
 
 export function WalletProvider({ children, environmentId }: WalletProviderProps) {
-  const envId = environmentId ?? process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID ?? "36dd1aa9-d136-4506-ad6b-12535d4a3ce3";
+  const envId = environmentId ?? import.meta.env?.VITE_DYNAMIC_ENVIRONMENT_ID ?? "36dd1aa9-d136-4506-ad6b-12535d4a3ce3";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

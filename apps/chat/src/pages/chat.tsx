@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -153,60 +151,3 @@ export default function ChatPage() {
     </main>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    maxWidth: 720,
-    margin: "80px auto",
-    padding: "0 24px",
-    fontFamily: "system-ui, sans-serif",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 700,
-    margin: 0,
-  },
-  subtitle: {
-    color: "#666",
-    marginTop: 8,
-    marginBottom: 32,
-  },
-  inputRow: {
-    display: "flex",
-    gap: 12,
-    alignItems: "flex-end",
-  },
-  textarea: {
-    flex: 1,
-    padding: "12px 16px",
-    fontSize: 16,
-    border: "1px solid #ddd",
-    borderRadius: 8,
-    resize: "vertical",
-    fontFamily: "inherit",
-  },
-  button: {
-    padding: "12px 20px",
-    fontSize: 20,
-    background: "#000",
-    color: "#fff",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer",
-  },
-  response: {
-    marginTop: 32,
-    padding: "20px 24px",
-    background: "#f9f9f9",
-    borderRadius: 8,
-    border: "1px solid #eee",
-  },
-  pre: {
-    margin: 0,
-    whiteSpace: "pre-wrap",
-    wordBreak: "break-word",
-    fontFamily: "inherit",
-    fontSize: 15,
-    lineHeight: 1.6,
-  },
-};
