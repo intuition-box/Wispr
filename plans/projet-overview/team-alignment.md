@@ -1,4 +1,4 @@
-# Wispr — Team Alignment
+# Wispear — Team Alignment
 
 > The trust-scored discovery engine for AI agent components.
 > Describe your need. Get a blueprint. Every recommendation is backed by experts with skin in the game.
@@ -20,9 +20,9 @@ Current state:
 
 ## The Vision
 
-**Wispr** is where agentic users' collective intelligence becomes the context for AI responses.
+**Wispear** is where agentic users' collective intelligence becomes the context for AI responses.
 
-Before generating, Wispr queries a **living knowledge graph** built by practitioners who've shipped. The AI receives **pre-resolved context**: which components work, validated by real humans on-chain. It doesn't explore. It executes.
+Before generating, Wispear queries a **living knowledge graph** built by practitioners who've shipped. The AI receives **pre-resolved context**: which components work, validated by real humans on-chain. It doesn't explore. It executes.
 
 This is not a chatbot with a better prompt. It's a new paradigm — AI learns through continuous community attestation, not training.
 
@@ -96,7 +96,7 @@ After profiling, the user lands on a **single text field**.
 
 > "I want to build a Next.js app with Google auth and an admin dashboard"
 
-The Wispr Agent:
+The Wispear Agent:
 1. **Extracts semantic claims** from the intent (framework, features, constraints)
 2. **Queries the Intuition knowledge graph** filtered by profile context + reputation threshold
 3. **Composes an executable blueprint** — not a list, but a plan: which tools, in what order, why, with what cost and risk
@@ -115,11 +115,11 @@ The generated blueprint is both visual and actionable:
 - **Packages** — install command, one-click copy
 - **LLMs** — recommended models with reasoning
 - **One-shot install prompt** — single command to configure your local environment
-- **Publish on-chain** — Intuition triples + ENS subname `{name}.wispr.eth`
+- **Publish on-chain** — Intuition triples + ENS subname `{name}.wispear.eth`
 
 Trust scores "breathe" — they fluctuate in real-time as curators stake/unstake. Click any component to see who staked and how much — visible skin in the game.
 
-If the user is unsatisfied → **CTA "Contribute to Wispr"** → become a curator. The app doubles as the entry point for the curator persona.
+If the user is unsatisfied → **CTA "Contribute to Wispear"** → become a curator. The app doubles as the entry point for the curator persona.
 
 ---
 
@@ -244,15 +244,15 @@ More adoption → reputation compounds further
 
 ---
 
-## Wispr Skill — Direct LLM Access
+## Wispear Skill — Direct LLM Access
 
-Equivalent of `find-skill` (skills.sh / Vercel Labs) but powered by Wispr's knowledge graph. Allows an LLM to **dynamically load the right skills and resources based on context** — no manual configuration needed. Same Wispr Agent on the backend, exposed as an installable skill/MCP.
+Equivalent of `find-skill` (skills.sh / Vercel Labs) but powered by Wispear's knowledge graph. Allows an LLM to **dynamically load the right skills and resources based on context** — no manual configuration needed. Same Wispear Agent on the backend, exposed as an installable skill/MCP.
 
 ---
 
 ## Feedback API
 
-Collects feedback throughout the course of a project (called by the Wispr Skill during usage). No web3 transaction required — accessible to everyone. Free to consult for curators to broaden or reassess their recommendations. Closes the feedback loop: intent → recommendation → real usage → feedback → better curation.
+Collects feedback throughout the course of a project (called by the Wispear Skill during usage). No web3 transaction required — accessible to everyone. Free to consult for curators to broaden or reassess their recommendations. Closes the feedback loop: intent → recommendation → real usage → feedback → better curation.
 
 ---
 
@@ -260,12 +260,12 @@ Collects feedback throughout the course of a project (called by the Wispr Skill 
 
 | # | Component | Description |
 |---|---|---|
-| 1 | **Novice App — "Wispr Chat"** | AI chatbox → intent → animated blueprint + one-shot install + curator CTA |
-| 2 | **Wispr Agent** | Standalone: extracts semantic claims, queries Intuition graph, composes blueprint |
-| 3 | **Wispr Skill / MCP** | Dynamic component loader for LLMs — direct access without the app |
+| 1 | **Novice App — "Wispear Chat"** | AI chatbox → intent → animated blueprint + one-shot install + curator CTA |
+| 2 | **Wispear Agent** | Standalone: extracts semantic claims, queries Intuition graph, composes blueprint |
+| 3 | **Wispear Skill / MCP** | Dynamic component loader for LLMs — direct access without the app |
 | 4 | **Feedback API** | Collects usage feedback, consultable by curators, no web3 required |
 | 5 | **Ontology & Seed Data** | Initial knowledge graph schema + 10-15 pre-seeded components |
-| 6 | **Curator App — "Wispr Onboarding"** | Swipe profiling + curation dashboard + battle/bundle comparison |
+| 6 | **Curator App — "Wispear Onboarding"** | Swipe profiling + curation dashboard + battle/bundle comparison |
 
 ---
 
@@ -285,7 +285,7 @@ Swipe 8 questions → describe your need → executable blueprint ready. No API 
 
 ---
 
-## What Wispr Is Not
+## What Wispear Is Not
 
 - **Not a tool search engine.** Reputation is an internal signal serving generation, not a product in itself.
 - **Not a review platform.** Curators are practitioners identified on-chain, not anonymous reviewers.
@@ -298,7 +298,7 @@ Swipe 8 questions → describe your need → executable blueprint ready. No API 
 
 > "AI agents don't have an intelligence problem — they have a discovery, composition, and trust problem."
 >
-> **Wispr is the trust-scored discovery engine for AI agent components.**
+> **Wispear is the trust-scored discovery engine for AI agent components.**
 >
 > Describe your need in plain English. Our AI queries a community-curated knowledge graph on Intuition Protocol where real experts stake $TRUST on the tools they recommend. You get an executable blueprint in under a minute — not a list of tools, but a plan: what to use, in what order, and why.
 >

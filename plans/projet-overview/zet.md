@@ -14,13 +14,13 @@ Even if an agent's reputation could be relevant at a given moment, it won't hold
 | Partner | Usage |
 |---|---|
 | **Intuition Protocol** | Knowledge graph + on-chain attestations + recommendation via MCP (TVL-based) |
-| **ENS** | Portable identity — `{name}.wispr.eth` |
+| **ENS** | Portable identity — `{name}.wispear.eth` |
 | **0G** | Decentralized LLM database — source for recommending specific LLMs as components |
 | **Reown** | Multi-chain wallet connection |
 
 ## Value Proposition
 
-**Wispr** is a recommendation engine for agentic components. It matchmakes the best components to use in a given context. Instead of evaluating an agent as a whole, Wispr evaluates and recommends each building block: which LLM, which MCP server, which API, which skill to use for a specific use case.
+**Wispear** is a recommendation engine for agentic components. It matchmakes the best components to use in a given context. Instead of evaluating an agent as a whole, Wispear evaluates and recommends each building block: which LLM, which MCP server, which API, which skill to use for a specific use case.
 
 ## How It Works
 
@@ -31,7 +31,7 @@ Examples of published preferences:
 - "For web3 → EthSkill"
 - "For SVGs → Gemini 3.1 Pro"
 
-These contextual preferences feed the knowledge graph. Wispr then aggregates these signals to recommend the best components for the user's context.
+These contextual preferences feed the knowledge graph. Wispear then aggregates these signals to recommend the best components for the user's context.
 
 ## Personas
 
@@ -41,31 +41,31 @@ These contextual preferences feed the knowledge graph. Wispr then aggregates the
 
 ### 2. AI Novices — users without configuration
 - **Role**: don't have AI components configured or established preferences
-- **Usage**: express an intent to Wispr ("I want to build X"), Wispr returns a list of recommended components so they can configure their local environment (Claude, Caudex, etc.) with the right tools
+- **Usage**: express an intent to Wispear ("I want to build X"), Wispear returns a list of recommended components so they can configure their local environment (Claude, Caudex, etc.) with the right tools
 
 ## Project Components
 
-### 1. Novice App — "Wispr Chat"
+### 1. Novice App — "Wispear Chat"
 - **Home screen**: an AI chatbox
 - The user expresses their intent in natural language (e.g., "I want to build a web platform for sharing cooking recipes")
-- The Wispr agent responds with a recommended component preset, delivered as 2 outcomes:
+- The Wispear agent responds with a recommended component preset, delivered as 2 outcomes:
   - **Animated visual gallery** — component blocks build up in real-time as the AI decides (not a static list, a visible construction process). Trust scores "breathe" (fluctuate live as curators stake/unstake). Click any component to see who staked and how much — visible skin in the game.
   - **One-shot prompt** to install these components in a single command in their local environment
-- **CTA "Contribute to Wispr"** — if the user is unsatisfied with results, they're invited to become a curator. The novice app doubles as an entry point for the curator persona
+- **CTA "Contribute to Wispear"** — if the user is unsatisfied with results, they're invited to become a curator. The novice app doubles as an entry point for the curator persona
 
-### 2. Wispr Agent (standalone component)
+### 2. Wispear Agent (standalone component)
 - Receives the novice user's intent
 - **Extracts semantic claims** from that intent (e.g., "web platform" → web domain, "recipes" → content, "sharing" → social)
 - **Queries the Intuition knowledge graph** with these claims to surface the top recommended components for that context
 - Returns results to the novice app
 
-### 3. Wispr Skill — dynamic component loader for LLMs
-- Equivalent of `find-skill` (skills.sh / Vercel Labs) but powered by Wispr's knowledge graph
+### 3. Wispear Skill — dynamic component loader for LLMs
+- Equivalent of `find-skill` (skills.sh / Vercel Labs) but powered by Wispear's knowledge graph
 - Allows an LLM to **dynamically load the right skills and resources based on context** — no manual configuration needed
-- The LLM asks Wispr Skill what it needs, Wispr queries the graph and returns the best components to load on the fly
+- The LLM asks Wispear Skill what it needs, Wispear queries the graph and returns the best components to load on the fly
 
-### 4. Wispr Feedback API
-- Collects feedback throughout the course of a project (called by the Wispr skill during usage)
+### 4. Wispear Feedback API
+- Collects feedback throughout the course of a project (called by the Wispear skill during usage)
 - No web3 transaction required — accessible to everyone (web2 and web3)
 - **Free to consult for curators**: they can use it to broaden or reassess their component recommendations
 - Closes the feedback loop: intent → recommendation → real usage → feedback → better curation
@@ -74,7 +74,7 @@ These contextual preferences feed the knowledge graph. Wispr then aggregates the
 - Definition of the knowledge graph ontology (component categories, context types, relations)
 - Seed data for the hackathon: an initial dataset of components and preferences so the graph isn't empty at launch
 
-### 6. Curator App — "Wispr Onboarding"
+### 6. Curator App — "Wispear Onboarding"
 - **Tinder-style UX** (yes/no, swipe) to quickly profile the curator:
   - Domain expertise (web, design, project management, etc.)
   - AI expertise level
@@ -98,7 +98,7 @@ Intuition Protocol **is** the knowledge graph. It's the foundational data layer 
 **P0 — Hackathon Demo:**
 - Swipe onboarding (curator profiling)
 - Chat interface (novice intent → recommendations)
-- Wispr Agent (semantic claim extraction + Intuition graph query)
+- Wispear Agent (semantic claim extraction + Intuition graph query)
 - Animated visual gallery of recommended components
 - One-shot install prompt export
 - Curator CTA from novice app
@@ -106,9 +106,9 @@ Intuition Protocol **is** the knowledge graph. It's the foundational data layer 
 - On-chain attestations via Intuition
 
 **P1 — Post-hackathon:**
-- Wispr Skill for direct LLM access
+- Wispear Skill for direct LLM access
 - Battle feature
-- ENS identity (`{name}.wispr.eth`)
+- ENS identity (`{name}.wispear.eth`)
 - $TRUST staking mechanics
 - Feedback API
 
