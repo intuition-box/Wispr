@@ -188,22 +188,40 @@ export default function SwipeFlow() {
                   )}
 
                   {voting.submitState.status === "success" && (
-                    <div className="w-full flex flex-col items-center gap-3 bg-green/5 rounded-2xl p-5 border border-green/10">
-                      <div className="flex items-center gap-2 text-green font-bold text-[14px]">
-                        <span>✓</span> Votes recorded on-chain
+                    <div className="w-full flex flex-col items-center gap-5">
+                      <div className="w-full flex flex-col items-center gap-3 bg-green/5 rounded-2xl p-5 border border-green/10">
+                        <div className="flex items-center gap-2 text-green font-bold text-[14px]">
+                          <span>✓</span> Wisdom recorded on-chain
+                        </div>
+                        <a
+                          href={voting.submitState.explorerUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[12px] text-accent hover:underline font-medium"
+                        >
+                          View on Explorer →
+                        </a>
+                        <span className="text-[11px] text-ink-muted font-mono bg-bg rounded-lg px-3 py-1.5">
+                          {voting.submitState.txHash.slice(0, 10)}...
+                          {voting.submitState.txHash.slice(-8)}
+                        </span>
                       </div>
+
+                      <button
+                        onClick={handleStartOver}
+                        className="w-full flex items-center justify-center gap-2 bg-pear hover:bg-pear-hover text-ink-inverse font-bold text-[15px] py-4 rounded-2xl shadow-glow transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+                      >
+                        Share more wisdom →
+                      </button>
+
                       <a
-                        href={voting.submitState.explorerUrl}
+                        href="https://app.wispear.ai/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[12px] text-accent hover:underline font-medium"
+                        className="w-full flex items-center justify-center gap-2 bg-bg-raised border border-line hover:border-line-strong text-ink-secondary hover:text-ink font-semibold text-[14px] py-3.5 rounded-2xl shadow-xs hover:shadow-sm transition-all duration-200"
                       >
-                        View on Explorer →
+                        Track your wisdom PNL →
                       </a>
-                      <span className="text-[11px] text-ink-muted font-mono bg-bg rounded-lg px-3 py-1.5">
-                        {voting.submitState.txHash.slice(0, 10)}...
-                        {voting.submitState.txHash.slice(-8)}
-                      </span>
                     </div>
                   )}
 
@@ -223,12 +241,14 @@ export default function SwipeFlow() {
                 </>
               )}
 
-              <button
-                onClick={handleStartOver}
-                className="text-[13px] text-ink-muted hover:text-ink-secondary transition-colors bg-transparent"
-              >
-                ← Start over
-              </button>
+              {voting.submitState.status !== "success" && (
+                <button
+                  onClick={handleStartOver}
+                  className="text-[13px] text-ink-muted hover:text-ink-secondary transition-colors bg-transparent"
+                >
+                  ← Start over
+                </button>
+              )}
             </motion.div>
           </motion.div>
         </div>
