@@ -129,7 +129,7 @@ async function uploadFaviconToIPFS(domain: string): Promise<string> {
 
     // Upload to Pinata
     const file = new File([buffer], `${domain}-favicon.png`, { type: "image/png" });
-    const upload = await pinata.upload.file(file);
+    const upload = await pinata.upload.public.file(file);
 
     const ipfsUri = `https://gateway.pinata.cloud/ipfs/${upload.cid}`;
     return ipfsUri;
@@ -198,7 +198,7 @@ async function pinAtomToIntuition(atom: AtomData): Promise<string> {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const result = await response.json();
+    const result = await response.json() as { data?: { pinThing?: { uri?: string } }; errors?: unknown[] };
 
     if (result.errors) {
       throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
@@ -512,41 +512,11 @@ async function main() {
       if (receipt && receipt.status === 1) {
         console.log(`✅ Base triples created successfully!\n`);
 
-        // Extract triple IDs from transaction logs
-        // The contract returns bytes32[] — parse from return data via logs
-        // TripleCreated event: keccak256("TripleCreated(bytes32,bytes32,bytes32,bytes32)")
-        const tripleCreatedTopic = ethers.id("TripleCreated(bytes32,bytes32,bytes32,bytes32)");
-        const tripleIds: string[] = [];
-
-        for (const log of receipt.logs) {
-          if (log.topics[0] === tripleCreatedTopic) {
-            // topics[1] = tripleId (the term ID of the triple itself)
-            tripleIds.push(log.topics[1]);
-          }
-        }
-
-        // Fallback: if no events found, try to decode return data
-        if (tripleIds.length === 0) {
-          console.warn("   ⚠️  No TripleCreated events found, trying TermCreated...");
-          const termCreatedTopic = ethers.id("TermCreated(bytes32)");
-          for (const log of receipt.logs) {
-            if (log.topics[0] === termCreatedTopic) {
-              tripleIds.push(log.topics[1]);
-            }
-          }
-        }
-
-        console.log(`   Found ${tripleIds.length} triple ID(s) in logs`);
-
         for (let i = 0; i < tripleMetadata.length; i++) {
           const metadata = tripleMetadata[i];
-          const tripleId = tripleIds[i];
-          if (tripleId) {
-            baseTripleIds.set(metadata.id, tripleId);
-            console.log(`   ${metadata.id}: ${tripleId}`);
-          } else {
-            console.warn(`   ⚠️  No triple ID found for ${metadata.id}`);
-          }
+          const tripleId = await contract.calculateTripleId(subjectIds[i], predicateIds[i], objectIds[i]);
+          baseTripleIds.set(metadata.id, tripleId);
+          console.log(`   ${metadata.id}: ${tripleId}`);
         }
       } else {
         console.error(`❌ Base triples creation failed!\n`);
@@ -570,10 +540,8 @@ async function main() {
 
   console.log(`📝 ${nestedTriples.length} nested triples to create\n`);
 
-  const nestedSubjectIds: string[] = [];
-  const nestedPredicateIds: string[] = [];
-  const nestedObjectIds: string[] = [];
-  const nestedAssets: bigint[] = [];
+  const nestedTripleIds = new Map<string, string>(); // Maps "T1-id→context-id" → termId
+  const nestedToCreate: Array<{ key: string; subjectTripleId: string; predicateId: string; objectId: string }> = [];
 
   for (const triple of nestedTriples) {
     const subjectTripleId = baseTripleIds.get(triple.subject_triple);
@@ -585,31 +553,29 @@ async function main() {
       continue;
     }
 
-    const nestedTermId = await contract.calculateTripleId(subjectTripleId, predicateId, objectId);
-    const nestedExists = await contract.isTermCreated(nestedTermId);
-    if (nestedExists) {
+    const termId = await contract.calculateTripleId(subjectTripleId, predicateId, objectId);
+    const key = `${triple.subject_triple}→${triple.object}`;
+
+    if (await contract.isTermCreated(termId)) {
       console.log(`   ✅ Already exists: (${triple.subject_triple}) → ${triple.predicate} → ${triple.object}`);
+      nestedTripleIds.set(key, termId);
       continue;
     }
 
     console.log(`   (${triple.subject_triple}) → ${triple.predicate} → ${triple.object}`);
-
-    nestedSubjectIds.push(subjectTripleId);
-    nestedPredicateIds.push(predicateId);
-    nestedObjectIds.push(objectId);
-    nestedAssets.push(tripleCost);
+    nestedToCreate.push({ key, subjectTripleId, predicateId, objectId });
   }
 
-  if (nestedSubjectIds.length > 0) {
-    const totalCost = tripleCost * BigInt(nestedSubjectIds.length);
+  if (nestedToCreate.length > 0) {
+    const totalCost = tripleCost * BigInt(nestedToCreate.length);
     console.log(`\n💸 Cost: ${ethers.formatEther(totalCost)} TRUST`);
 
     try {
       const tx = await contract.createTriples(
-        nestedSubjectIds,
-        nestedPredicateIds,
-        nestedObjectIds,
-        nestedAssets,
+        nestedToCreate.map(t => t.subjectTripleId),
+        nestedToCreate.map(t => t.predicateId),
+        nestedToCreate.map(t => t.objectId),
+        nestedToCreate.map(() => tripleCost),
         { value: totalCost }
       );
 
@@ -618,6 +584,10 @@ async function main() {
 
       if (receipt && receipt.status === 1) {
         console.log(`✅ Nested triples created successfully!\n`);
+        for (const t of nestedToCreate) {
+          const termId = await contract.calculateTripleId(t.subjectTripleId, t.predicateId, t.objectId);
+          nestedTripleIds.set(t.key, termId);
+        }
       } else {
         console.error(`❌ Nested triples creation failed!\n`);
       }
@@ -633,17 +603,14 @@ async function main() {
 
   let categoryTriples = ontology.triples.category_triples;
 
-  // In test mode, only create category triple for content-automation
   if (isTestMode) {
     categoryTriples = categoryTriples.filter((t: any) => t.subject === "content-automation");
   }
 
   console.log(`📝 ${categoryTriples.length} category triples to create\n`);
 
-  const categorySubjectIds: string[] = [];
-  const categoryPredicateIds: string[] = [];
-  const categoryObjectIds: string[] = [];
-  const categoryAssets: bigint[] = [];
+  const categoryTripleIds = new Map<string, string>(); // Maps "subject→object" → termId
+  const categoryToCreate: Array<{ key: string; subjectId: string; predicateId: string; objectId: string }> = [];
 
   for (const triple of categoryTriples) {
     const subjectId = createdAtomIds.get(triple.subject);
@@ -655,31 +622,29 @@ async function main() {
       continue;
     }
 
-    const catTermId = await contract.calculateTripleId(subjectId, predicateId, objectId);
-    const catExists = await contract.isTermCreated(catTermId);
-    if (catExists) {
+    const termId = await contract.calculateTripleId(subjectId, predicateId, objectId);
+    const key = `${triple.subject}→${triple.object}`;
+
+    if (await contract.isTermCreated(termId)) {
       console.log(`   ✅ Already exists: ${triple.subject} → ${triple.predicate} → ${triple.object}`);
+      categoryTripleIds.set(key, termId);
       continue;
     }
 
     console.log(`   ${triple.subject} → ${triple.predicate} → ${triple.object}`);
-
-    categorySubjectIds.push(subjectId);
-    categoryPredicateIds.push(predicateId);
-    categoryObjectIds.push(objectId);
-    categoryAssets.push(tripleCost);
+    categoryToCreate.push({ key, subjectId, predicateId, objectId });
   }
 
-  if (categorySubjectIds.length > 0) {
-    const totalCost = tripleCost * BigInt(categorySubjectIds.length);
+  if (categoryToCreate.length > 0) {
+    const totalCost = tripleCost * BigInt(categoryToCreate.length);
     console.log(`\n💸 Cost: ${ethers.formatEther(totalCost)} TRUST`);
 
     try {
       const tx = await contract.createTriples(
-        categorySubjectIds,
-        categoryPredicateIds,
-        categoryObjectIds,
-        categoryAssets,
+        categoryToCreate.map(t => t.subjectId),
+        categoryToCreate.map(t => t.predicateId),
+        categoryToCreate.map(t => t.objectId),
+        categoryToCreate.map(() => tripleCost),
         { value: totalCost }
       );
 
@@ -688,6 +653,10 @@ async function main() {
 
       if (receipt && receipt.status === 1) {
         console.log(`✅ Category triples created successfully!\n`);
+        for (const t of categoryToCreate) {
+          const termId = await contract.calculateTripleId(t.subjectId, t.predicateId, t.objectId);
+          categoryTripleIds.set(t.key, termId);
+        }
       } else {
         console.error(`❌ Category triples creation failed!\n`);
       }
@@ -696,26 +665,31 @@ async function main() {
     }
   }
 
+  // === Save deployed.json with all atom and triple IDs ===
+  const deployed: Record<string, any> = {
+    atoms: Object.fromEntries(createdAtomIds),
+    triples: {
+      base: Object.fromEntries(baseTripleIds),
+      nested: Object.fromEntries(nestedTripleIds),
+      category: Object.fromEntries(categoryTripleIds),
+    }
+  };
+
+  const deployedPath = resolve(process.cwd(), "src/seed/deployed.json");
+  writeFileSync(deployedPath, JSON.stringify(deployed, null, 2));
+  console.log(`\n💾 Deployed addresses saved to: ${deployedPath}\n`);
+
   console.log("\n🎉 Ontology seed complete!");
 
+  console.log("\n✅ Next steps:");
+  console.log("   1. Verify atoms on https://portal.intuition.systems");
   if (isTestMode) {
-    console.log("\n📊 Test Summary:");
-    console.log("   Complete chain created for mcp-notion:");
-    console.log("   • Atoms: 7 (component + type + predicates + context + category)");
-    console.log("   • Tier 1: mcp-notion → is-best-of → tool");
-    console.log("   • Tier 2: (T1) → in-context-of → content-automation");
-    console.log("   • Tier 3: content-automation → belongs-to → productivity");
-    console.log("\n✅ Next steps:");
-    console.log("   1. Verify atoms on https://portal.intuition.systems");
-    console.log("   2. Check that mcp-notion has Notion favicon (IPFS)");
-    console.log("   3. Verify nested triple structure");
-    console.log("   4. Run 'pnpm seed:full' to create complete ontology\n");
+    console.log("   2. Run 'pnpm seed:full' to create complete ontology\n");
   } else {
-    console.log("\n✅ Next steps:");
-    console.log("   1. Verify atoms on https://portal.intuition.systems");
     console.log("   2. Test MCP search_atoms to verify discovery");
     console.log("   3. Test Wispear chatbot blueprint generation\n");
   }
+
 }
 
 main().catch((error) => {
