@@ -1,11 +1,35 @@
 "use client";
 
-import { type ReactNode } from "react";
+import { type ReactNode, useState, useEffect } from "react";
 import {
   DynamicContextProvider,
   DynamicWidget,
+  mergeNetworks,
 } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
+import { WagmiProvider } from "wagmi";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import { wagmiConfig } from "./wagmi";
+import { intuitionChain } from "./config";
+
+const queryClient = new QueryClient();
+
+const intuitionNetwork = {
+  chainId: intuitionChain.id,
+  networkId: intuitionChain.id,
+  name: intuitionChain.name,
+  vanityName: "Intuition",
+  chainName: intuitionChain.name,
+  rpcUrls: intuitionChain.rpcUrls.default.http.slice(),
+  blockExplorerUrls: [intuitionChain.blockExplorers?.default?.url].filter(
+    Boolean,
+  ) as string[],
+  nativeCurrency: intuitionChain.nativeCurrency,
+  testnet: false,
+  iconUrls: [],
+};
 
 interface WalletProviderProps {
   children: ReactNode;
@@ -14,15 +38,29 @@ interface WalletProviderProps {
 
 export function WalletProvider({ children, environmentId }: WalletProviderProps) {
   const envId = environmentId ?? process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID ?? "36dd1aa9-d136-4506-ad6b-12535d4a3ce3";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <DynamicContextProvider
       settings={{
         environmentId: envId,
         walletConnectors: [EthereumWalletConnectors],
+        overrides: {
+          evmNetworks: () => [intuitionNetwork]
+        },
       }}
     >
-      {children}
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <DynamicWagmiConnector>{children}</DynamicWagmiConnector>
+        </QueryClientProvider>
+      </WagmiProvider>
     </DynamicContextProvider>
   );
 }
