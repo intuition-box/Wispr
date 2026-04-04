@@ -2,10 +2,10 @@
 nixPkgs = ["...", "nodejs_20"]
 
 [phases.install]
-cmds = ["npm i -g bun", "cd /app && bun install"]
+cmds = ["npm i -g bun serve", "cd /app && bun install"]
 
 [phases.build]
 cmds = ["cd /app && bun run --filter @wispr/swipe build"]
 
 [start]
-cmd = "npx serve apps/swipe/dist -s -l 3000"
+cmd = "serve apps/swipe/dist -s -l 3002"
