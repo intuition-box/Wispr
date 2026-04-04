@@ -65,32 +65,32 @@
       "description": "LLM models for reasoning and generation"
     },
     {
-      "id": "context-content-automation",
+      "id": "content-automation",
       "name": "content-automation",
       "description": "Automated content management and workflows"
     },
     {
-      "id": "context-social-media",
+      "id": "social-media",
       "name": "social-media",
       "description": "Social media platforms and publishing"
     },
     {
-      "id": "context-content-generation",
+      "id": "content-generation",
       "name": "content-generation",
       "description": "AI-powered content generation"
     },
     {
-      "id": "context-defi",
+      "id": "defi",
       "name": "defi",
       "description": "Decentralized finance protocols and applications"
     },
     {
-      "id": "context-web3-building",
+      "id": "web3-building",
       "name": "web3-building",
       "description": "Web3 development and infrastructure"
     },
     {
-      "id": "context-content-creation",
+      "id": "content-creation",
       "name": "content-creation",
       "description": "Content creation and writing"
     }
@@ -134,37 +134,37 @@
     {
       "subject": "mcp-notion",
       "predicate": "in-context-of",
-      "object": "context-content-automation"
+      "object": "content-automation"
     },
     {
       "subject": "mcp-twitter",
       "predicate": "in-context-of",
-      "object": "context-social-media"
+      "object": "social-media"
     },
     {
       "subject": "claude-sonnet-4-5",
       "predicate": "in-context-of",
-      "object": "context-content-generation"
+      "object": "content-generation"
     },
     {
       "subject": "chainlink-data-feeds",
       "predicate": "in-context-of",
-      "object": "context-defi"
+      "object": "defi"
     },
     {
       "subject": "1inch-fusion-plus-sdk",
       "predicate": "in-context-of",
-      "object": "context-defi"
+      "object": "defi"
     },
     {
       "subject": "privy-embedded-wallet",
       "predicate": "in-context-of",
-      "object": "context-web3-building"
+      "object": "web3-building"
     },
     {
       "subject": "brand-voice-skill",
       "predicate": "in-context-of",
-      "object": "context-content-creation"
+      "object": "content-creation"
     }
   ],
 

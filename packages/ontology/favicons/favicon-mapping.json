@@ -1,0 +1,30 @@
+{
+  "mcp-notion": {
+    "domain": "notion.so",
+    "downloaded": true
+  },
+  "mcp-twitter": {
+    "domain": "twitter.com",
+    "downloaded": true
+  },
+  "claude-sonnet-4-5": {
+    "domain": "docs.anthropic.com",
+    "downloaded": true
+  },
+  "chainlink-data-feeds": {
+    "domain": "docs.chain.link",
+    "downloaded": true
+  },
+  "1inch-fusion-plus-sdk": {
+    "domain": "docs.1inch.io",
+    "downloaded": true
+  },
+  "privy-embedded-wallet": {
+    "domain": "docs.privy.io",
+    "downloaded": true
+  },
+  "brand-voice-skill": {
+    "domain": "whisper.xyz",
+    "downloaded": true
+  }
+}

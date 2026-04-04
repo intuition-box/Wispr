@@ -24,7 +24,7 @@ import { PinataSDK } from "pinata";
 // Load environment variables from current directory (packages/ontology)
 config({ path: resolve(process.cwd(), ".env") });
 
-// Initialize Pinata client
+// Initialize Pinata for favicon uploads
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT!,
 });
@@ -33,6 +33,7 @@ const pinata = new PinataSDK({
 const CHAIN_ID = 1155;
 const RPC_URL = "https://rpc.intuition.systems/http";
 const MULTIVAULT_ADDRESS = "0x6E35cF57A41fA15eA0EaE9C33e751b01A784Fe7e";
+const INTUITION_GRAPHQL_URL = "https://mainnet.intuition.sh/v1/graphql";
 
 // MultiVault ABI (minimal for atom/triple creation)
 const MULTIVAULT_ABI = [
@@ -46,6 +47,7 @@ const MULTIVAULT_ABI = [
 
 // Atom definition
 interface AtomData {
+  id: string;       // Atom ID from ontology (e.g., "mcp-notion")
   label: string;
   description: string;
   url?: string;
@@ -63,29 +65,154 @@ interface TripleData {
 const ONTOLOGY_PATH = resolve(process.cwd(), "../../plans/ontology-foundation-w4-p3.json");
 const ontology = JSON.parse(readFileSync(ONTOLOGY_PATH, "utf-8"));
 
-// Helper: Upload atom metadata to IPFS via Pinata and return ipfs:// URI
-async function uploadAtomToIPFS(atom: AtomData): Promise<string> {
-  const metadata = {
+// Load IPFS mapping (created by upload-favicons script)
+const IPFS_MAPPING_PATH = resolve(process.cwd(), "favicons/ipfs-mapping.json");
+let ipfsMapping: Record<string, string> = {};
+try {
+  ipfsMapping = JSON.parse(readFileSync(IPFS_MAPPING_PATH, "utf-8"));
+} catch {
+  console.warn("⚠️  No IPFS mapping found. Run 'pnpm download:favicons' and 'pnpm upload:favicons' first.");
+}
+
+// Helper: Extract the correct domain for the favicon based on component name and URL
+function getFaviconDomain(atom: AtomData): string | null {
+  // Special case: MCPs should use the service they integrate with, not the repo host (e.g., GitHub)
+  if (atom.label.toLowerCase().startsWith("mcp ")) {
+    const serviceName = atom.label.toLowerCase().replace("mcp ", "").trim();
+
+    // Map MCP names to their service domains
+    const mcpServiceMap: Record<string, string> = {
+      "notion": "notion.so",
+      "twitter": "twitter.com",
+      "x": "twitter.com",
+      "github": "github.com",
+      "slack": "slack.com",
+      "linear": "linear.app",
+      "figma": "figma.com",
+      "google drive": "drive.google.com",
+      "gmail": "gmail.com",
+      "calendar": "calendar.google.com",
+    };
+
+    const mappedDomain = mcpServiceMap[serviceName];
+    if (mappedDomain) {
+      return mappedDomain;
+    }
+  }
+
+  // For non-MCP components, extract domain from URL
+  if (!atom.url) return null;
+  try {
+    const urlObj = new URL(atom.url.startsWith("http") ? atom.url : `https://${atom.url}`);
+    return urlObj.hostname.replace("www.", "");
+  } catch {
+    return null;
+  }
+}
+
+// Helper: Download favicon and upload to Pinata IPFS
+async function uploadFaviconToIPFS(domain: string): Promise<string> {
+  try {
+    // Try Google's favicon service first (most reliable)
+    const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=256`;
+
+    // Fetch the favicon
+    const response = await fetch(faviconUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch favicon: ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
+    const buffer = Buffer.from(await blob.arrayBuffer());
+
+    // Upload to Pinata
+    const file = new File([buffer], `${domain}-favicon.png`, { type: "image/png" });
+    const upload = await pinata.upload.file(file);
+
+    const ipfsUri = `https://gateway.pinata.cloud/ipfs/${upload.cid}`;
+    return ipfsUri;
+  } catch (error) {
+    console.warn(`   ⚠️  Failed to upload favicon for ${domain}:`, error);
+    // Fallback to placeholder
+    return "https://via.placeholder.com/256x256.png?text=Wispear";
+  }
+}
+
+// Helper: Get logo URL for a component (from IPFS mapping or fallback)
+async function getLogoUrl(atom: AtomData): Promise<string> {
+  // First, check if we have an IPFS URI from the mapping
+  if (ipfsMapping[atom.id]) {
+    return ipfsMapping[atom.id];
+  }
+
+  // Fallback: Try to download and upload on-the-fly (if not in mapping)
+  const domain = getFaviconDomain(atom);
+  if (domain) {
+    console.warn(`   ⚠️  No IPFS mapping for ${atom.id}, downloading on-the-fly...`);
+    return await uploadFaviconToIPFS(domain);
+  }
+
+  // Final fallback: Wispear placeholder
+  return "https://via.placeholder.com/256x256.png?text=Wispear";
+}
+
+// Helper: Pin atom metadata via Intuition GraphQL service
+async function pinAtomToIntuition(atom: AtomData): Promise<string> {
+  const mutation = `
+    mutation PinThing($name: String!, $description: String!, $image: String!, $url: String) {
+      pinThing(thing: {
+        name: $name
+        description: $description
+        image: $image
+        url: $url
+      }) {
+        uri
+      }
+    }
+  `;
+
+  const logoUrl = await getLogoUrl(atom);
+
+  const variables = {
     name: atom.label,
     description: atom.description,
-    ...(atom.url && { external_url: atom.url }),
+    image: logoUrl,
+    url: atom.url || null,
   };
 
   try {
-    const upload = await pinata.upload.json(metadata);
-    // Pinata SDK v1 returns { cid } instead of { IpfsHash }
-    const cid = upload.cid || upload.IpfsHash;
+    const response = await fetch(INTUITION_GRAPHQL_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: mutation,
+        variables,
+      }),
+    });
 
-    if (!cid) {
-      console.error(`   ❌ Upload response:`, upload);
-      throw new Error("No CID returned from Pinata");
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    const ipfsUri = `ipfs://${cid}`;
-    console.log(`   📌 Pinned to IPFS: ${ipfsUri}`);
-    return ipfsUri;
+    const result = await response.json();
+
+    if (result.errors) {
+      throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
+    }
+
+    const uri = result.data?.pinThing?.uri;
+
+    if (!uri) {
+      console.error(`   ❌ Response:`, result);
+      throw new Error("No URI returned from Intuition GraphQL");
+    }
+
+    console.log(`   📌 Pinned via Intuition: ${uri}`);
+    return uri;
   } catch (error) {
-    console.error(`   ❌ Failed to upload ${atom.label} to IPFS:`, error);
+    console.error(`   ❌ Failed to pin ${atom.label}:`, error);
     throw error;
   }
 }
@@ -136,15 +263,7 @@ async function main() {
     process.exit(1);
   }
 
-  // Check for Pinata JWT
-  if (!process.env.PINATA_JWT) {
-    console.error("❌ PINATA_JWT not found in .env file");
-    console.error("   Get your JWT from https://pinata.cloud and add: PINATA_JWT=...");
-    process.exit(1);
-  }
-
-  console.log("✅ PRIVATE_KEY found in .env");
-  console.log("✅ PINATA_JWT found in .env\n");
+  console.log("✅ PRIVATE_KEY found in .env\n");
 
   // Setup provider with custom polling interval
   const provider = new ethers.JsonRpcProvider(RPC_URL, CHAIN_ID, {
@@ -171,6 +290,7 @@ async function main() {
 
   // Prepare atoms from ontology
   let atoms: AtomData[] = ontology.atoms.map((atom: any) => ({
+    id: atom.id,
     label: atom.name,
     description: atom.description || "",
     url: atom.url,
@@ -184,8 +304,8 @@ async function main() {
     console.log(`📝 Total atoms to create: ${atoms.length}\n`);
   }
 
-  // Prepare atom data with IDs (upload to IPFS first)
-  console.log("📌 Uploading atoms to IPFS...\n");
+  // Prepare atom data with IDs (pin via Intuition GraphQL first)
+  console.log("📌 Pinning atoms via Intuition GraphQL...\n");
 
   const atomsWithData = [];
 
@@ -193,8 +313,8 @@ async function main() {
     const atom = atoms[index];
     console.log(`[${index + 1}/${atoms.length}] ${atom.label}`);
 
-    // Upload to IPFS and get ipfs:// URI
-    const uri = await uploadAtomToIPFS(atom);
+    // Pin via Intuition GraphQL and get URI
+    const uri = await pinAtomToIntuition(atom);
     const hexData = ethers.hexlify(ethers.toUtf8Bytes(uri));
     const atomId = await contract.calculateAtomId(hexData);
 
@@ -209,9 +329,9 @@ async function main() {
       exists,
     });
 
-    // Add delay to avoid rate limiting (both Pinata and RPC)
+    // Add delay to avoid rate limiting
     if (index < atoms.length - 1) {
-      await delay(1000); // 1s between uploads
+      await delay(800); // 800ms between uploads
     }
   }
 
