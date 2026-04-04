@@ -2,7 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 
 const INTUITION_MCP_URL =
-  process.env.INTUITION_MCP_URL ?? "http://localhost:3001/mcp";
+  process.env.INTUITION_MCP_URL ?? "http://localhost:3003/mcp";
 
 let _client: Client | null = null;
 let _connecting: Promise<Client> | null = null;
@@ -23,6 +23,9 @@ async function connect(): Promise<Client> {
 }
 
 export async function getIntuitionClient(): Promise<Client> {
+  // Reuse existing connected client
+  if (_client) return _client;
+
   // Deduplicate concurrent connection attempts
   if (_connecting) return _connecting;
 

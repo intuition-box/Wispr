@@ -1,34 +1,28 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlueprintCard } from "@/components/blueprint-card";
-import { mockBlueprintW4, mockBlueprintP3 } from "@/lib/mock-blueprint";
+import { ImproveChoiceCard } from "@/components/improve-choice-card";
 import type { Blueprint } from "@/lib/mock-blueprint";
-
-// Simulate agent response — picks blueprint based on keywords
-function matchBlueprint(input: string): Blueprint {
-  const lower = input.toLowerCase();
-  if (
-    lower.includes("defi") ||
-    lower.includes("rebalance") ||
-    lower.includes("portfolio") ||
-    lower.includes("swap")
-  ) {
-    return mockBlueprintP3;
-  }
-  return mockBlueprintW4;
-}
 
 interface Message {
   role: "user" | "agent";
   content?: string;
   blueprint?: Blueprint;
+  improveChoice?: Blueprint;
 }
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+  }
 
   async function submit() {
     const text = input.trim();
@@ -37,6 +31,7 @@ export default function ChatPage() {
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setLoading(true);
+    scrollToBottom();
 
     try {
       const res = await fetch("/api/chat", {
@@ -56,7 +51,43 @@ export default function ChatPage() {
       ]);
     } finally {
       setLoading(false);
+      scrollToBottom();
     }
+  }
+
+  function handleImprove(blueprint: Blueprint) {
+    setMessages((prev) => [
+      ...prev,
+      { role: "agent", improveChoice: blueprint },
+    ]);
+    scrollToBottom();
+  }
+
+  function handleSwapTool(blueprint: Blueprint, componentId: string) {
+    const comp = blueprint.stack.components.find((c) => c.id === componentId);
+    const toolName = comp?.name ?? componentId;
+
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: `I want to replace ${toolName}` },
+      {
+        role: "agent",
+        content: `Noted! Replacing ${toolName} — this will be published on-chain once the feature is live.`,
+      },
+    ]);
+    scrollToBottom();
+  }
+
+  function handleAddNew(blueprint: Blueprint) {
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: "I want to add a new tool" },
+      {
+        role: "agent",
+        content: "Noted! Adding a new tool — this will be published on-chain once the feature is live.",
+      },
+    ]);
+    scrollToBottom();
   }
 
   return (
@@ -65,7 +96,7 @@ export default function ChatPage() {
       <div className="flex-1 overflow-y-auto px-4 pt-12 pb-4 space-y-6">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <h1 className="text-2xl font-bold tracking-tight">Wispr</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Wispear</h1>
             <p className="text-sm text-muted-foreground mt-2 max-w-md">
               Describe what you want to build.
             </p>
@@ -107,7 +138,19 @@ export default function ChatPage() {
                 {msg.content && (
                   <p className="text-sm text-muted-foreground">{msg.content}</p>
                 )}
-                {msg.blueprint && <BlueprintCard blueprint={msg.blueprint} />}
+                {msg.blueprint && (
+                  <BlueprintCard
+                    blueprint={msg.blueprint}
+                    onImprove={() => handleImprove(msg.blueprint!)}
+                  />
+                )}
+                {msg.improveChoice && (
+                  <ImproveChoiceCard
+                    blueprint={msg.improveChoice}
+                    onSwapTool={(id) => handleSwapTool(msg.improveChoice!, id)}
+                    onAddNew={() => handleAddNew(msg.improveChoice!)}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -119,6 +162,8 @@ export default function ChatPage() {
             Composing blueprint…
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Input bar */}
