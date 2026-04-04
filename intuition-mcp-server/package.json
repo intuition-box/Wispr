@@ -16,7 +16,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "tsc && node --experimental-specifier-resolution=node dist/test.js",
-    "start:http": "PORT=3001 SERVER_MODE=http node --experimental-specifier-resolution=node dist/index.js",
+    "start:http": "PORT=3003 SERVER_MODE=http node --experimental-specifier-resolution=node dist/index.js",
     "start:stdio": "SERVER_MODE=stdio node --experimental-specifier-resolution=node dist/index.js",
     "codegen": "graphql-codegen --config codegen.ts"
   },
