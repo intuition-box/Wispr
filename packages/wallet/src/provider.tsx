@@ -52,8 +52,7 @@ export function WalletProvider({ children, environmentId }: WalletProviderProps)
         environmentId: envId,
         walletConnectors: [EthereumWalletConnectors],
         overrides: {
-          evmNetworks: (dashboardNetworks: any[]) =>
-            mergeNetworks([intuitionNetwork], dashboardNetworks),
+          evmNetworks: () => [intuitionNetwork]
         },
       }}
     >
