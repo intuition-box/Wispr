@@ -216,17 +216,17 @@ export default function AtomDetailPage() {
                 </thead>
                 <tbody>
                   {[
-                    { curator: "vitalik.eth", action: "Stake", amount: "340", tx: "0x8f2a...c41d", time: "2h ago" },
-                    { curator: "aave-whale.eth", action: "Stake", amount: "280", tx: "0x1b7e...9a23", time: "5h ago" },
-                    { curator: "defi-chad.eth", action: "Stake", amount: "150", tx: "0xd4c1...3f88", time: "8h ago" },
-                    { curator: "sam.eth", action: "Stake", amount: "120", tx: "0xa9f3...7b12", time: "1d ago" },
-                    { curator: "0xbuilder.eth", action: "Stake", amount: "95", tx: "0x5e82...d4a7", time: "1d ago" },
-                    { curator: "lens-dev.eth", action: "Unstake", amount: "60", tx: "0x7c19...e5f0", time: "2d ago" },
-                    { curator: "anon-whale.eth", action: "Stake", amount: "200", tx: "0x3a6d...1c9e", time: "2d ago" },
-                    { curator: "mcp-maxi.eth", action: "Stake", amount: "175", tx: "0xb8f4...a2d6", time: "3d ago" },
+                    { wisPearer: "vitalik.eth", action: "Stake", amount: "340", tx: "0x8f2a...c41d", time: "2h ago" },
+                    { wisPearer: "aave-whale.eth", action: "Stake", amount: "280", tx: "0x1b7e...9a23", time: "5h ago" },
+                    { wisPearer: "defi-chad.eth", action: "Stake", amount: "150", tx: "0xd4c1...3f88", time: "8h ago" },
+                    { wisPearer: "sam.eth", action: "Stake", amount: "120", tx: "0xa9f3...7b12", time: "1d ago" },
+                    { wisPearer: "0xbuilder.eth", action: "Stake", amount: "95", tx: "0x5e82...d4a7", time: "1d ago" },
+                    { wisPearer: "lens-dev.eth", action: "Unstake", amount: "60", tx: "0x7c19...e5f0", time: "2d ago" },
+                    { wisPearer: "anon-whale.eth", action: "Stake", amount: "200", tx: "0x3a6d...1c9e", time: "2d ago" },
+                    { wisPearer: "mcp-maxi.eth", action: "Stake", amount: "175", tx: "0xb8f4...a2d6", time: "3d ago" },
                   ].map((row, i) => (
                     <tr key={i} className="border-b border-border/50 last:border-none hover:bg-hover/50 transition-colors">
-                      <td className="px-4 py-2.5 text-text-primary font-medium">{row.curator}</td>
+                      <td className="px-4 py-2.5 text-text-primary font-medium">{row.wisPearer}</td>
                       <td className="px-4 py-2.5">
                         <span className={`text-[11px] font-bold px-2 py-0.5 rounded ${
                           row.action === "Stake" ? "bg-pear-soft text-pear" : "bg-red-soft text-red"
@@ -277,22 +277,22 @@ export default function AtomDetailPage() {
             </div>
           </div>
 
-          {/* Top Curators */}
+          {/* Top WisPearers */}
           <div className="bg-surface rounded-xl border border-border p-4">
             <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-              <span className="text-base">👑</span> Top Curators
+              <span className="text-base">👑</span> Top WisPearers
             </h3>
             <div className="flex flex-col gap-2.5">
-              {TOP_CURATORS.map((curator) => (
-                <div key={curator.name} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-hover transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
+              {TOP_CURATORS.map((wisPearer) => (
+                <div key={wisPearer.name} className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-hover transition-all duration-200 cursor-pointer hover:-translate-y-0.5">
                   <div className="w-8 h-8 rounded-full bg-surface-2 border border-border flex items-center justify-center text-[11px] font-bold text-pear shrink-0">
-                    {curator.avatar}
+                    {wisPearer.avatar}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold text-text-primary truncate">{curator.name}</div>
-                    <div className="text-[11px] text-text-muted">{curator.atoms} atoms staked</div>
+                    <div className="text-[13px] font-semibold text-text-primary truncate">{wisPearer.name}</div>
+                    <div className="text-[11px] text-text-muted">{wisPearer.atoms} atoms staked</div>
                   </div>
-                  <span className="text-[12px] font-bold text-pear shrink-0">{curator.totalStaked}</span>
+                  <span className="text-[12px] font-bold text-pear shrink-0">{wisPearer.totalStaked}</span>
                 </div>
               ))}
             </div>
@@ -323,7 +323,7 @@ export default function AtomDetailPage() {
                 <a href={`https://warpcast.com/~/compose?text=${encodeURIComponent(`I just staked $TRUST on ${atom.name} via @wispear 🍐⛓️`)}&embeds[]=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
                   <span className="text-lg">🟪</span> Farcaster
                 </a>
-                <a href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${atom.name} on WisPear — backed by curators 🍐`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
+                <a href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${atom.name} on WisPear — backed by wisPearers 🍐`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
                   <span className="text-lg">✈️</span> Telegram
                 </a>
                 <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">

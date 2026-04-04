@@ -25,7 +25,7 @@ interface CurateItem {
     label: string;
   } | null;
   trustScore: number;
-  curatorCount: number;
+  wisPearerCount: number;
 }
 
 const TYPE_ICONS: Record<string, string> = {
@@ -44,25 +44,25 @@ const DEMO_ITEMS: CurateItem[] = [
     component: { id: "mcp-notion", name: "MCP Notion", description: "Model Context Protocol server for Notion — reads databases, pages, and syncs workspace content with your AI agent.", url: "https://github.com/makenotion/notion-mcp-server" },
     baseTriple: { id: "T1-mcp-notion", subject: "mcp-notion", predicate: "is-best-of", object: "mcp", label: "MCP Notion is-best-of mcp" },
     nestedTriple: { subjectTriple: "T1-mcp-notion", predicate: "in-context-of", object: "content-automation", label: "(MCP Notion is-best-of mcp) in-context-of content-automation" },
-    trustScore: 9.1, curatorCount: 25,
+    trustScore: 9.1, wisPearerCount: 25,
   },
   {
     component: { id: "brand-voice-skill", name: "Brand Voice Skill", description: "AI service that analyzes your writing style from existing content and applies it to new drafts.", url: "https://wispear.ai/skills/brand-voice" },
     baseTriple: { id: "T1-brand-voice", subject: "brand-voice-skill", predicate: "is-best-of", object: "skill", label: "Brand Voice Skill is-best-of skill" },
     nestedTriple: { subjectTriple: "T1-brand-voice", predicate: "in-context-of", object: "content-creation", label: "(Brand Voice Skill is-best-of skill) in-context-of content-creation" },
-    trustScore: 8.8, curatorCount: 10,
+    trustScore: 8.8, wisPearerCount: 10,
   },
   {
     component: { id: "mcp-twitter", name: "MCP Twitter", description: "Model Context Protocol server for Twitter — posts tweets, threads, and manages social presence.", url: "https://github.com/EnesCinr/twitter-mcp" },
     baseTriple: { id: "T1-mcp-twitter", subject: "mcp-twitter", predicate: "is-best-of", object: "mcp", label: "MCP Twitter is-best-of mcp" },
     nestedTriple: { subjectTriple: "T1-mcp-twitter", predicate: "in-context-of", object: "social-media", label: "(MCP Twitter is-best-of mcp) in-context-of social-media" },
-    trustScore: 8.5, curatorCount: 16,
+    trustScore: 8.5, wisPearerCount: 16,
   },
   {
     component: { id: "claude-sonnet-4-5", name: "Claude Sonnet 4.5", description: "Anthropic's Claude Sonnet 4.5 — long-form generation, advanced reasoning, and precise tone control.", url: "https://docs.anthropic.com/en/docs/about-claude/models" },
     baseTriple: { id: "T1-claude-sonnet", subject: "claude-sonnet-4-5", predicate: "is-best-of", object: "model", label: "Claude Sonnet 4.5 is-best-of model" },
     nestedTriple: { subjectTriple: "T1-claude-sonnet", predicate: "in-context-of", object: "content-generation", label: "(Claude Sonnet 4.5 is-best-of model) in-context-of content-generation" },
-    trustScore: 9.4, curatorCount: 42,
+    trustScore: 9.4, wisPearerCount: 42,
   },
 ];
 
@@ -172,17 +172,20 @@ export default function CuratePage() {
                   {item.component.description}
                 </p>
 
-                {/* Context + trust */}
-                <div className="flex items-center justify-between">
-                  {context && (
-                    <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-accent-soft text-accent border border-accent/20">
+                {/* Context */}
+                {context && (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Context</span>
+                    <span className="text-[12px] font-semibold px-3 py-1.5 rounded-full bg-accent-soft text-accent border border-accent/20 self-start">
                       {context.replace(/-/g, " ")}
                     </span>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold text-amber">★ {item.trustScore.toFixed(1)}</span>
-                    <span className="text-[10px] text-text-muted">{item.curatorCount} curators</span>
                   </div>
+                )}
+
+                {/* Trust */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-semibold text-amber">★ {item.trustScore.toFixed(1)}</span>
+                  <span className="text-[11px] font-medium text-white">{item.wisPearerCount} wisPearers</span>
                 </div>
 
                 {/* View details */}

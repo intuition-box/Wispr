@@ -6,6 +6,7 @@ import { Logo, brand } from "@wispr/ui";
 import { useWalletConnection } from "@wispr/wallet";
 
 const NAV_ITEMS = [
+  { href: "/dashboard", icon: "📊", label: "Dashboard", external: false },
   { href: "/explorer", icon: "🧭", label: "Explorer", external: false },
   { href: "/curate", icon: "🍐", label: "Curate", external: false },
   { href: "/chat", icon: "💬", label: "Chat", external: true },

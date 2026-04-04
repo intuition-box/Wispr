@@ -1,4 +1,4 @@
-// Curator onboarding — explicit opt-in
+// WisPearer onboarding — explicit opt-in
 //   - Expertise domains declaration
 //   - Tools used in production today
 //   - Identity links (ENS, GitHub, Farcaster)
@@ -6,5 +6,5 @@
 // Every answer = on-chain Triple immediately
 
 export default function OnboardingPage() {
-  return <main>Curator onboarding — TODO</main>;
+  return <main>WisPearer onboarding — TODO</main>;
 }
