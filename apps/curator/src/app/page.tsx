@@ -1,6 +1,5 @@
-// Curator entry — requires wallet connection
-// Routes: /onboarding, /dashboard, /explorer, /battle
+import { redirect } from "next/navigation";
 
 export default function CuratorHome() {
-  return <main>Wispr Curator — TODO</main>;
+  redirect("/explorer");
 }
