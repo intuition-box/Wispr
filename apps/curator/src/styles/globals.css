@@ -1,16 +1,24 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap');
 
 @theme {
-  --color-bg: #000000;
-  --color-surface: #111214;
-  --color-surface-2: #18191C;
-  --color-hover: #1E2024;
-  --color-border: #27292D;
-  --color-border-light: #32353A;
+  /* Backgrounds — from tokens.colors.neutral */
+  --color-bg: #06070f;
+  --color-surface: #0c0e22;
+  --color-surface-2: #121433;
+  --color-hover: #1d2050;
+  --color-border: #2d2d52;
+  --color-border-light: #4a4a6a;
 
-  --color-accent: #4A9BF4;
-  --color-accent-soft: rgba(74, 155, 244, 0.10);
+  /* Accent — from tokens.colors.accent */
+  --color-accent: #1990ff;
+  --color-accent-soft: rgba(25, 144, 255, 0.10);
+
+  /* Pear — from tokens.colors.pear */
+  --color-pear: #d4ff47;
+  --color-pear-soft: rgba(212, 255, 71, 0.10);
+
+  /* Semantic */
   --color-green: #22C55E;
   --color-green-soft: rgba(34, 197, 94, 0.10);
   --color-red: #EF4444;
@@ -20,9 +28,10 @@
   --color-purple: #A855F7;
   --color-purple-soft: rgba(168, 85, 247, 0.10);
 
-  --color-text-primary: #E7E9EA;
-  --color-text-secondary: #71767B;
-  --color-text-muted: #536471;
+  /* Text — from tokens.colors.neutral lighter shades */
+  --color-text-primary: #e8e8ec;
+  --color-text-secondary: #8888a0;
+  --color-text-muted: #4a4a6a;
 }
 
 *, *::before, *::after {
@@ -41,6 +50,10 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', 'Inter', 'Helvetica Neue', sans-serif;
 }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Logo, brand } from "@wispr/ui";
 
 const NAV_ITEMS = [
   { href: "/explorer", icon: "🔍", label: "Explorer" },
@@ -15,12 +16,10 @@ export function Sidebar() {
   return (
     <aside className="w-[260px] shrink-0 sticky top-0 h-screen flex flex-col border-r border-border px-3 py-5">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-3 mb-4">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent to-green flex items-center justify-center text-base">
-          🍐
-        </div>
-        <span className="text-lg font-extrabold text-text-primary tracking-tight">
-          Wispear
+      <div className="flex items-center gap-2 px-3 mb-4">
+        <Logo variant="icon" theme="dark" width={32} height={35} />
+        <span className="text-lg font-extrabold text-text-primary tracking-tight" style={{ fontFamily: "'Montserrat', 'Inter', sans-serif" }}>
+          {brand.name}
         </span>
       </div>
 
@@ -48,7 +47,7 @@ export function Sidebar() {
       <div className="mt-auto flex justify-center px-3 py-3">
         <img
           src="/character.png"
-          alt="Wispear"
+          alt={brand.name}
           className="w-28 opacity-60 hover:opacity-100 transition-opacity duration-300"
         />
       </div>
