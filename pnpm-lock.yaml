@@ -152,6 +152,9 @@ importers:
       '@wispr/ontology':
         specifier: workspace:*
         version: link:../../packages/ontology
+      '@wispr/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@wispr/wallet':
         specifier: workspace:*
         version: link:../../packages/wallet
