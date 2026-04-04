@@ -1,4 +1,3 @@
-"use client";
 
 import { useReducer, useMemo } from "react";
 import type { Profile } from "@wispr/ontology";

@@ -1,4 +1,3 @@
-"use client";
 
 interface PublishButtonProps {
   status: "idle" | "publishing" | "success" | "error";

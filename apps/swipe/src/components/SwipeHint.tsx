@@ -1,4 +1,3 @@
-"use client";
 
 interface SwipeHintProps {
   direction: "like" | "dislike";

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useSwipeEngine } from "@/hooks/useSwipeEngine";

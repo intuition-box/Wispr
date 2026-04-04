@@ -1,4 +1,3 @@
-"use client";
 
 import type { SwipeDirection } from "@/types/swipe";
 

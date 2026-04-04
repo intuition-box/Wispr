@@ -1,6 +1,4 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import { Hero } from "@/components/Hero";
 
 const STEPS = [
@@ -32,11 +30,11 @@ const ROLES = [
 ];
 
 export default function LandingPage() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col min-h-screen bg-bg">
-      <Hero onStart={() => router.push("/swipe")} />
+      <Hero onStart={() => navigate("/swipe")} />
 
       {/* How it works */}
       <section className="px-7 pt-8 pb-10 max-w-[480px] mx-auto w-full">
@@ -104,7 +102,7 @@ export default function LandingPage() {
       <div className="sticky bottom-0 px-7 py-5 max-w-[480px] mx-auto w-full">
         <div className="glass rounded-2xl p-4 border border-line shadow-lg">
           <button
-            onClick={() => router.push("/swipe")}
+            onClick={() => navigate("/swipe")}
             className="w-full bg-pear hover:bg-pear-hover text-ink-inverse font-semibold text-[15px] py-4 rounded-xl transition-all duration-300 shadow-glow hover:shadow-lg active:scale-[0.98]"
           >
             Start the quiz →

@@ -1,4 +1,3 @@
-"use client";
 
 import type { SwipePhase } from "@/types/swipe";
 

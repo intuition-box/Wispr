@@ -1,4 +1,3 @@
-"use client";
 
 import { AnimatePresence } from "motion/react";
 import type { QuestionNode, SwipeDirection } from "@/types/swipe";

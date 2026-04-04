@@ -1,4 +1,3 @@
-"use client";
 
 import type { Profile } from "@wispr/ontology";
 import { Logo } from "@wispr/ui";
