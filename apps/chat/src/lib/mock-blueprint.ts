@@ -1,4 +1,5 @@
 import ontology from "../../../../plans/ontology-foundation-w4-p3.json";
+import ipfsMapping from "../../../../packages/ontology/favicons/ipfs-mapping.json";
 
 // Trust data mocked — normally comes from Intuition graph (TVL, curator stakes)
 const trustData: Record<string, { trustScore: number; curatorCount: number }> = {
@@ -40,6 +41,7 @@ export interface BlueprintComponent {
   name: string;
   description: string;
   url?: string;
+  imageUrl?: string;
   type: "tool" | "skill" | "model";
   context?: string;
   trustScore: number;
@@ -79,6 +81,7 @@ function buildStackComponents(componentIds: string[]): BlueprintComponent[] {
       url: atom.url,
       type: getAtomType(id),
       context: getAtomContext(id),
+      imageUrl: (ipfsMapping as Record<string, string>)[id],
       trustScore: trust.trustScore,
       curatorCount: trust.curatorCount,
     };

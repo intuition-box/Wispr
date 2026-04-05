@@ -3,10 +3,10 @@
 import { Button } from "@wispr/ui";
 
 const TRENDING = [
-  { category: "DeFi", name: "Chainlink Data Feeds", trust: "2.4k $TRUST · 31 curators" },
-  { category: "MCP Server", name: "GitHub MCP", trust: "1.8k $TRUST · 24 curators" },
-  { category: "Package", name: "viem", trust: "1.2k $TRUST · 19 curators" },
-  { category: "LLM", name: "Claude Sonnet 4", trust: "3.1k $TRUST · 42 curators" },
+  { category: "DeFi", name: "Chainlink Data Feeds", trust: "2.4k $TRUST · 31 wisPearers" },
+  { category: "MCP Server", name: "GitHub MCP", trust: "1.8k $TRUST · 24 wisPearers" },
+  { category: "Package", name: "viem", trust: "1.2k $TRUST · 19 wisPearers" },
+  { category: "LLM", name: "Claude Sonnet 4", trust: "3.1k $TRUST · 42 wisPearers" },
 ];
 
 const VALIDATIONS = [

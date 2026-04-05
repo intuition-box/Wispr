@@ -15,7 +15,8 @@
     "clean": "turbo run clean"
   },
   "overrides": {
-    "esbuild": "0.25.12"
+    "esbuild": "0.25.12",
+    "lucide-react": "^1.7.0"
   },
   "dependencies": {
     "lucide-react": "^1.7.0"

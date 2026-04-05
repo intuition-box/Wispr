@@ -10,6 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@0xintuition/protocol": "^2.0.2",
+    "@0xintuition/sdk": "^2.0.2",
+    "@wispr/feedback-api": "workspace:*",
     "@wispr/ontology": "workspace:*",
     "@wispr/ui": "workspace:*",
     "@wispr/wallet": "workspace:*",

@@ -4,7 +4,7 @@ import { Sidebar } from "../components/Sidebar";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Wispear Curator",
+  title: "WisPear",
   description: "Stake $TRUST on the tools you vouch for",
 };
 

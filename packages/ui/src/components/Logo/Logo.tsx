@@ -49,9 +49,9 @@ const PearIcon: React.FC<{ theme: "dark" | "light"; id?: string }> = ({ theme, i
   );
 };
 
-const Wordmark: React.FC<{ theme: "dark" | "light"; x?: number; y?: number }> = ({
+const Wordmark: React.FC<{ theme: "dark" | "light"; x?: number | string; y?: number }> = ({
   theme,
-  x = 0,
+  x = "50%",
   y = 0,
 }) => {
   const isDark = theme === "dark";
@@ -62,6 +62,7 @@ const Wordmark: React.FC<{ theme: "dark" | "light"; x?: number; y?: number }> = 
     <text
       x={x}
       y={y}
+      textAnchor="middle"
       fontFamily="'Montserrat', 'Inter', 'Helvetica Neue', 'Segoe UI', sans-serif"
       fontSize="85"
       fontWeight="900"
@@ -96,7 +97,7 @@ export const Logo: React.FC<LogoProps> = ({ variant, theme, width, height }) => 
   if (variant === "wordmark") {
     return (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 100" width={w} height={h} role="img" aria-label={`Wispear wordmark (${theme})`}>
-        <Wordmark theme={theme} x={0} y={78} />
+        <Wordmark theme={theme} y={78} />
       </svg>
     );
   }

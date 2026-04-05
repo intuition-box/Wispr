@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Copy,
   Check,
@@ -10,15 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Blueprint, BlueprintComponent } from "@/lib/mock-blueprint";
 
-// --- Trust score color ---
-
-function trustColor(score: number) {
-  if (score >= 8.5) return "text-trust-high";
-  if (score >= 7) return "text-trust-mid";
-  return "text-trust-low";
-}
-
-// --- Category badge colors (based on context name) ---
 
 const categoryColors: Record<string, string> = {
   "content-automation": "border-blue-500/40 text-blue-400",
@@ -34,107 +25,177 @@ function categoryStyle(context?: string) {
   return categoryColors[context] ?? "border-muted-foreground/30 text-muted-foreground";
 }
 
-// --- Component card ---
-
-function ComponentCard({ component }: { component: BlueprintComponent }) {
+function ComponentCard({
+  component,
+}: {
+  component: BlueprintComponent;
+}) {
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-border/50 bg-card/60 p-4 gap-3">
-      {/* Top: category badge + trust score */}
-      <div>
-        <div className="flex items-start justify-between mb-2">
-          <span
-            className={`text-[11px] font-medium border rounded-full px-2 py-0.5 ${categoryStyle(component.context)}`}
-          >
-            {component.context
-              ? component.context.charAt(0).toUpperCase() + component.context.slice(1).replace(/-/g, " ")
-              : component.type}
-          </span>
-          <span className={`text-lg font-bold leading-none ${trustColor(component.trustScore)}`}>
-            {component.trustScore.toFixed(1)}
-          </span>
-        </div>
+    <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm p-4 space-y-2">
+      <div className="flex items-start gap-3">
+        {/* Image */}
+        {component.imageUrl ? (
+          <img
+            src={component.imageUrl}
+            alt={component.name}
+            className="h-9 w-9 rounded-lg object-cover shrink-0 mt-0.5"
+          />
+        ) : (
+          <div className="h-9 w-9 rounded-lg bg-white/[0.06] shrink-0 mt-0.5" />
+        )}
 
-        {/* Name + description */}
-        <h4 className="font-semibold text-sm leading-tight">{component.name}</h4>
-        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-          {component.description}
-        </p>
-      </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-pear bg-pear/10 border border-pear/20 rounded px-1.5 py-0.5">
+                {component.type}
+              </span>
+              <h4 className="font-semibold text-sm leading-tight">
+                {component.name}
+              </h4>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+              <Users className="h-3.5 w-3.5" />
+              {component.curatorCount} wispearers
+            </div>
+          </div>
 
-      {/* Bottom: curators + type */}
-      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-        <div className="flex items-center gap-1">
-          <Users className="h-3 w-3" />
-          {component.curatorCount} curators
+          <p className="text-xs text-muted-foreground line-clamp-2 mt-1.5">
+            {component.description}
+          </p>
+
+          <div className="flex items-center mt-2">
+            <span
+              className={`text-[11px] font-medium border rounded-full px-2 py-0.5 ${categoryStyle(component.context)}`}
+            >
+              {component.context
+                ? component.context.charAt(0).toUpperCase() +
+                  component.context.slice(1).replace(/-/g, " ")
+                : "General"}
+            </span>
+          </div>
         </div>
-        <span>{component.type}</span>
       </div>
     </div>
   );
 }
 
-// --- Main Blueprint Card ---
-
 export function BlueprintCard({
   blueprint,
-  onImprove,
+  onCurate,
 }: {
   blueprint: Blueprint;
-  onImprove?: () => void;
+  onCurate?: () => void;
 }) {
-  const avgTrust =
-    blueprint.stack.components.reduce((sum, c) => sum + c.trustScore, 0) /
-    blueprint.stack.components.length;
+  const [visibleCount, setVisibleCount] = useState(0);
+  const [bordered, setBordered] = useState(false);
+  const [showCtas, setShowCtas] = useState(false);
 
   const [copied, setCopied] = useState(false);
 
+  const n = blueprint.stack.components.length;
+
+  useEffect(() => {
+    // Reveal cards one by one
+    if (visibleCount < n) {
+      const delay = visibleCount === 0 ? 400 : 300;
+      const timer = setTimeout(() => setVisibleCount((c) => c + 1), delay);
+      return () => clearTimeout(timer);
+    }
+
+    // All cards visible → show border
+    if (!bordered) {
+      const timer = setTimeout(() => setBordered(true), 300);
+      return () => clearTimeout(timer);
+    }
+
+    // Border visible → show CTAs
+    if (!showCtas) {
+      const timer = setTimeout(() => setShowCtas(true), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [visibleCount, bordered, showCtas, n]);
+
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 space-y-5 w-full">
+    <div className="space-y-5 w-full">
       {/* ── Header ── */}
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="font-bold text-base">{blueprint.title}</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {blueprint.stack.components.length} components · resolved in{" "}
-            {blueprint.resolvedIn} · avg. trust {avgTrust.toFixed(1)}
-          </p>
-        </div>
-        <div className="flex gap-1.5 shrink-0">
-          {blueprint.domains.map((d) => (
-            <Badge key={d} variant="outline" className="text-[10px] px-2 py-0.5">
-              {d}
-            </Badge>
-          ))}
+      <div className="animate-fade-slide-up">
+        <div className="block sm:flex sm:items-start sm:justify-between sm:gap-3">
+          <div>
+            <h3 className="font-bold text-base" style={{ fontFamily: "var(--font-heading)" }}>
+              {blueprint.title}
+            </h3>
+          </div>
+          <div className="flex gap-1.5 mt-2 sm:mt-0 sm:shrink-0">
+            {blueprint.domains.map((d) => (
+              <Badge
+                key={d}
+                variant="outline"
+                className="text-[10px] px-2 py-0.5"
+              >
+                {d}
+              </Badge>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* ── Component grid ── */}
-      <div className="grid grid-cols-2 gap-2.5">
-        {blueprint.stack.components.map((c, i) => {
-          const isLast =
-            blueprint.stack.components.length % 2 !== 0 &&
-            i === blueprint.stack.components.length - 1;
-          return (
-            <div key={c.id} className={isLast ? "col-span-2" : ""}>
-              <ComponentCard component={c} />
-            </div>
-          );
-        })}
-      </div>
+      {/* ── Intro text ── */}
+      <p className="text-sm text-muted-foreground animate-fade-slide-up" style={{ animationDelay: "200ms" }}>
+        Here&apos;s the stack that gets you there:
+      </p>
 
-      {/* ── Execution flow (inline) ── */}
-      <div className="rounded-xl border border-border/50 bg-card/60 px-4 py-3">
-        <p className="text-sm text-muted-foreground">
-          {blueprint.stack.flow}
-        </p>
+      {/* ── Timeline with cards ── */}
+      <div
+        className={`rounded-2xl p-4 transition-all duration-500 ${
+          bordered
+            ? "border border-pear/20"
+            : "border border-transparent"
+        }`}
+      >
+        <div className="relative">
+          {blueprint.stack.components.map((comp, i) => {
+            const isLast = i === n - 1;
+            const isVisible = i < visibleCount;
+
+            return (
+              <div
+                key={comp.id}
+                className={`relative pl-6 ${
+                  isVisible ? "animate-fade-slide-up" : "opacity-0 h-0 overflow-hidden"
+                }`}
+              >
+                {/* Timeline line */}
+                {!isLast && isVisible && (
+                  <div className="absolute left-[5px] top-[14px] bottom-0 w-px bg-pear/30" />
+                )}
+
+                {/* Timeline dot */}
+                {isVisible && (
+                  <div className="absolute left-0 top-[6px] h-[11px] w-[11px] rounded-full border-2 border-pear/50 bg-background" />
+                )}
+
+                {/* Card */}
+                <div className={isLast ? "" : "pb-4"}>
+                  <ComponentCard component={comp} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* ── CTAs ── */}
-      <div className="flex gap-2.5">
+      <div
+        className={`flex gap-2.5 transition-opacity duration-500 ${
+          showCtas ? "opacity-100" : "opacity-0"
+        }`}
+      >
         <Button
           variant="outline"
           className="flex-1 gap-2 text-sm"
           size="sm"
+          disabled={!showCtas}
           onClick={() => {
             navigator.clipboard.writeText(blueprint.systemPrompt);
             setCopied(true);
@@ -151,7 +212,8 @@ export function BlueprintCard({
         <Button
           className="flex-1 gap-2 text-sm bg-accent hover:bg-accent/90 text-accent-foreground"
           size="sm"
-          onClick={onImprove}
+          disabled={!showCtas}
+          onClick={onCurate}
         >
           <Users className="h-3.5 w-3.5" />
           Curate

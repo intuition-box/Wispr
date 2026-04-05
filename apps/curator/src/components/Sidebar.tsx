@@ -9,6 +9,8 @@ const NAV_ITEMS = [
   { href: "/explorer", icon: "🧭", label: "Explorer", external: false },
   { href: "/curate", icon: "🍐", label: "Wispear", external: false },
   { href: "/curate/new", icon: "➕", label: "Add New", external: false },
+  { href: "/activity", icon: "📊", label: "Activity", external: false },
+  { href: "/dashboard", icon: "📈", label: "Dashboard", external: false },
   { href: "/chat", icon: "💬", label: "Chat", external: true },
   { href: "/onboarding", icon: "⚙️", label: "Settings", external: false },
 ];

@@ -27,7 +27,7 @@ export function WalletConnect() {
           className="flex items-center gap-2 font-semibold text-[14px] px-10 py-3.5 rounded-2xl shadow-glow hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
           style={{ backgroundColor: "#d4ff47", color: "#06070f", paddingLeft: "40px", paddingRight: "40px" }}
         >
-          Connect Wallet
+          Connect
         </button>
         {error && (
           <span className="text-[12px] text-red text-center max-w-[280px]">
