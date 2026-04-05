@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Send } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlueprintCard } from "@/components/blueprint-card";
 import { LoadingTips } from "@/components/loading-tips";
@@ -33,10 +33,26 @@ interface Message {
   blueprint?: Blueprint;
 }
 
+function getOrCreateSessionId(): string {
+  const key = "wispr_session_id";
+  let id = localStorage.getItem(key);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(key, id);
+  }
+  return id;
+}
+
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  const sessionId = useRef<string>("");
+  const conversationId = useRef<string>(crypto.randomUUID());
+
+  useEffect(() => {
+    sessionId.current = getOrCreateSessionId();
+  }, []);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const hasMessages = messages.length > 0 || loading;
@@ -60,7 +76,11 @@ export default function ChatPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          message: text,
+          sessionId: sessionId.current,
+          conversationId: conversationId.current,
+        }),
       });
 
       if (!res.ok) throw new Error(await res.text());
@@ -340,3 +360,4 @@ export default function ChatPage() {
     </div>
   );
 }
+

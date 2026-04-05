@@ -12,9 +12,14 @@
 //   GET  /feedback/curator/:id  Get feedback relevant to a curator's staked components
 
 import { Hono } from "hono";
+import { feedback } from "./routes/feedback";
 
 const app = new Hono();
 
-// TODO: mount routes
+app.route("/feedback", feedback);
 
 export { app };
+
+// DB exports — for direct import in other packages (chat, skill, etc.)
+export { db } from "./db";
+export * from "./db/schema";

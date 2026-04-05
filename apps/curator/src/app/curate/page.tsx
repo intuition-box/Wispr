@@ -3,42 +3,20 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useWalletConnection, WalletConnect } from "@wispr/wallet";
+import { Button } from "@wispr/ui";
 
 interface CurateItem {
-  component: {
-    id: string;
-    name: string;
-    description: string;
-    url: string;
-  };
-  baseTriple: {
-    id: string;
-    subject: string;
-    predicate: string;
-    object: string;
-    label: string;
-  };
-  nestedTriple: {
-    subjectTriple: string;
-    predicate: string;
-    object: string;
-    label: string;
-  } | null;
+  component: { id: string; name: string; description: string; url: string };
+  baseTriple: { id: string; subject: string; predicate: string; object: string; label: string };
+  nestedTriple: { subjectTriple: string; predicate: string; object: string; label: string } | null;
   trustScore: number;
   wisPearerCount: number;
 }
 
 const TYPE_ICONS: Record<string, string> = {
-  mcp: "🔌",
-  skill: "🧠",
-  model: "🤖",
-  api: "⚡",
-  sdk: "⚡",
-  package: "📦",
-  agent: "🛠️",
+  mcp: "🔌", skill: "🧠", model: "🤖", api: "⚡", sdk: "⚡", package: "📦", agent: "🛠️",
 };
 
-// Demo payload matching BLUEPRINT_HANDOFF spec
 const DEMO_ITEMS: CurateItem[] = [
   {
     component: { id: "mcp-notion", name: "MCP Notion", description: "Model Context Protocol server for Notion — reads databases, pages, and syncs workspace content with your AI agent.", url: "https://github.com/makenotion/notion-mcp-server" },
@@ -66,21 +44,18 @@ const DEMO_ITEMS: CurateItem[] = [
   },
 ];
 
+type Vote = "support" | "oppose" | null;
+
 function useBlueprint(): CurateItem[] {
   const searchParams = useSearchParams();
-
   return useMemo(() => {
     const raw = searchParams.get("blueprint");
     if (raw) {
-      try {
-        return JSON.parse(atob(raw)) as CurateItem[];
-      } catch { /* fallback */ }
+      try { return JSON.parse(atob(raw)) as CurateItem[]; } catch { /* fallback */ }
     }
     return DEMO_ITEMS;
   }, [searchParams]);
 }
-
-type Vote = "support" | "oppose" | null;
 
 export default function CuratePage() {
   const { isConnected } = useWalletConnection();
@@ -88,10 +63,7 @@ export default function CuratePage() {
   const [votes, setVotes] = useState<Record<string, Vote>>({});
 
   const handleVote = (tripleId: string, vote: Vote) => {
-    setVotes((prev) => ({
-      ...prev,
-      [tripleId]: prev[tripleId] === vote ? null : vote,
-    }));
+    setVotes((prev) => ({ ...prev, [tripleId]: prev[tripleId] === vote ? null : vote }));
   };
 
   const supportCount = Object.values(votes).filter((v) => v === "support").length;
@@ -99,12 +71,9 @@ export default function CuratePage() {
 
   return (
     <>
-      {/* Header */}
-      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
-        <h1 className="page-title">Curate</h1>
-        <p className="text-sm text-text-secondary mt-1">
-          Vote on contextual claims for each component
-        </p>
+      <div className="sticky top-0 z-10 bg-bg/65 backdrop-blur-xl border-b border-border px-5 py-3">
+        <h1 className="text-3xl font-bold text-text-primary tracking-tight">Curate</h1>
+        <p className="text-sm text-text-secondary mt-1">Vote on contextual claims for each component</p>
       </div>
 
       <div className="relative w-full px-5 py-6">
@@ -120,30 +89,22 @@ export default function CuratePage() {
           </div>
         )}
 
-        {/* Summary + Add new */}
+        {/* Summary */}
         <div className={`flex items-center justify-between mb-5 ${!isConnected ? "blur-sm" : ""}`}>
           <div className="flex items-center gap-4">
-            {supportCount > 0 && (
-              <span className="text-sm font-semibold text-pear">✓ {supportCount} supported</span>
-            )}
-            {opposeCount > 0 && (
-              <span className="text-sm font-semibold text-red">✕ {opposeCount} opposed</span>
-            )}
+            {supportCount > 0 && <span className="text-sm font-semibold text-pear">✓ {supportCount} supported</span>}
+            {opposeCount > 0 && <span className="text-sm font-semibold text-red">✕ {opposeCount} opposed</span>}
           </div>
-          <a
-            href="/curate/new"
-            className="text-[13px] font-semibold text-accent hover:text-text-primary transition-colors"
-          >
+          <a href="/curate/new" className="text-[13px] font-semibold text-accent hover:text-text-primary transition-colors">
             + Add new component
           </a>
         </div>
 
-        {/* Components */}
+        {/* Components grid */}
         <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 ${!isConnected ? "blur-sm pointer-events-none" : ""}`}>
           {items.map((item) => {
             const tripleId = item.nestedTriple?.subjectTriple ?? item.baseTriple.id;
             const vote = votes[tripleId] ?? null;
-            const claimLabel = item.nestedTriple?.label ?? item.baseTriple.label;
             const context = item.nestedTriple?.object ?? null;
             const typeIcon = TYPE_ICONS[item.baseTriple.object] ?? "📦";
 
@@ -151,14 +112,11 @@ export default function CuratePage() {
               <div
                 key={item.component.id}
                 className={`bg-surface rounded-xl border p-4 flex flex-col gap-3 transition-all duration-200 ${
-                  vote === "support"
-                    ? "border-pear/40 shadow-[0_0_16px_rgba(212,255,71,0.1)]"
-                    : vote === "oppose"
-                    ? "border-red/30 opacity-60"
-                    : "border-border hover:border-border-light"
+                  vote === "support" ? "border-pear/40 shadow-[0_0_16px_rgba(212,255,71,0.1)]"
+                  : vote === "oppose" ? "border-red/30 opacity-60"
+                  : "border-border hover:border-border-light"
                 }`}
               >
-                {/* Name + icon + pills */}
                 <div className="flex items-center gap-3">
                   <span className="text-lg">{typeIcon}</span>
                   <span className="text-[14px] font-bold text-text-primary truncate flex-1">{item.component.name}</span>
@@ -167,12 +125,8 @@ export default function CuratePage() {
                   </span>
                 </div>
 
-                {/* Description */}
-                <p className="text-[12px] text-text-secondary leading-relaxed line-clamp-2">
-                  {item.component.description}
-                </p>
+                <p className="text-[12px] text-text-secondary leading-relaxed line-clamp-2">{item.component.description}</p>
 
-                {/* Context */}
                 {context && (
                   <div className="flex flex-col gap-1.5">
                     <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Context</span>
@@ -182,57 +136,44 @@ export default function CuratePage() {
                   </div>
                 )}
 
-                {/* Trust */}
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] font-semibold text-amber">★ {item.trustScore.toFixed(1)}</span>
                   <span className="text-[11px] font-medium text-white">{item.wisPearerCount} wisPearers</span>
                 </div>
 
-                {/* View details */}
-                <a
-                  href={`/curate/${item.component.id}`}
-                  className="text-[12px] font-semibold text-accent hover:text-text-primary transition-colors"
-                >
+                <a href={`/curate/${item.component.id}`} className="text-[12px] font-semibold text-accent hover:text-text-primary transition-colors">
                   View details →
                 </a>
 
-                {/* Vote buttons */}
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={() => handleVote(tripleId, "support")}
                     className={`flex-1 h-9 rounded-lg flex items-center justify-center text-[12px] font-semibold gap-1 transition-all duration-200 ${
-                      vote === "support"
-                        ? "bg-pear text-bg border border-pear"
-                        : "bg-transparent border border-pear/40 text-pear hover:bg-pear hover:text-bg"
+                      vote === "support" ? "bg-pear text-bg border border-pear" : "bg-transparent border border-pear/40 text-pear hover:bg-pear hover:text-bg"
                     }`}
-                  >
-                    ✓ Support
-                  </button>
+                  >✓ Support</button>
                   <button
                     onClick={() => handleVote(tripleId, "oppose")}
                     className={`flex-1 h-9 rounded-lg flex items-center justify-center text-[12px] font-semibold gap-1 transition-all duration-200 ${
-                      vote === "oppose"
-                        ? "bg-red text-white border border-red"
-                        : "bg-transparent border border-red/40 text-red hover:bg-red hover:text-white"
+                      vote === "oppose" ? "bg-red text-white border border-red" : "bg-transparent border border-red/40 text-red hover:bg-red hover:text-white"
                     }`}
-                  >
-                    ✕ Oppose
-                  </button>
+                  >✕ Oppose</button>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Submit votes */}
+        {/* Submit */}
         {isConnected && Object.keys(votes).length > 0 && (
           <div className="mt-6 flex justify-center">
-            <button
-              className="bg-pear font-bold text-[14px] px-8 py-3.5 rounded-xl shadow-[0_0_24px_rgba(212,255,71,0.2)] hover:shadow-[0_0_32px_rgba(212,255,71,0.3)] transition-all duration-300"
-              style={{ color: "#06070f" }}
+            <Button
+              variant="primary"
+              size="lg"
+              style={{ borderRadius: "12px", fontWeight: 700, fontSize: "14px", background: "#d4ff47", color: "#06070f", boxShadow: "0 0 24px rgba(212,255,71,0.2)", padding: "12px 32px" }}
             >
               Submit {Object.keys(votes).length} vote{Object.keys(votes).length > 1 ? "s" : ""} on-chain
-            </button>
+            </Button>
           </div>
         )}
       </div>
