@@ -17,9 +17,9 @@ export default function ExplorerPage() {
               Live feed — whispers from the community
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green/10 border border-green/20">
             <span className="w-2 h-2 bg-green rounded-full animate-pulse" />
-            <span className="text-[12px] text-text-muted">Live</span>
+            <span className="text-[12px] font-semibold text-green">Live</span>
           </div>
         </div>
       </div>
@@ -33,9 +33,13 @@ export default function ExplorerPage() {
 
       {/* Feed */}
       {!loading && (
-        <div className="flex flex-col px-5 py-4">
+        <div className="flex flex-col gap-3 px-5 py-4">
           {deposits.map((deposit, i) => (
-            <FeedItem key={deposit.id} deposit={deposit} isNew={i === 0 && deposit.timeAgo === "just now"} />
+            <FeedCard
+              key={deposit.id}
+              deposit={deposit}
+              isNew={i === 0 && deposit.timeAgo === "just now"}
+            />
           ))}
         </div>
       )}
@@ -43,41 +47,59 @@ export default function ExplorerPage() {
   );
 }
 
-function FeedItem({ deposit, isNew }: { deposit: FeedDeposit; isNew: boolean }) {
+function FeedCard({ deposit, isNew }: { deposit: FeedDeposit; isNew: boolean }) {
+  const initials = deposit.sender.slice(0, 2).toUpperCase();
+
   return (
     <div
-      className={`flex items-start gap-3 px-4 py-3.5 border-b border-border/40 transition-all duration-500 ${
-        isNew ? "bg-pear/5" : "hover:bg-surface/50"
+      className={`rounded-xl border p-4 transition-all duration-700 ${
+        isNew
+          ? "bg-pear/5 border-pear/30 shadow-[0_0_16px_rgba(212,255,71,0.08)]"
+          : "bg-surface border-border hover:border-border-light"
       }`}
     >
-      {/* Pear icon */}
-      <span className="text-lg mt-0.5 shrink-0">🍐</span>
+      <div className="flex gap-3">
+        {/* Avatar */}
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-pear/20 border border-border-light flex items-center justify-center text-[11px] font-bold text-pear shrink-0">
+          {initials}
+        </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <p className="text-[13px] text-text-primary leading-relaxed">
-          <span className="font-bold text-pear">{deposit.sender}</span>
-          {" vouched for "}
-          <Link
-            href={`/curate/${deposit.componentSlug}`}
-            className="font-bold text-text-primary hover:text-accent transition-colors"
-          >
-            {deposit.componentName}
-          </Link>
-          {" in "}
-          <span className="font-semibold text-accent">{deposit.context}</span>
-        </p>
-        <div className="flex items-center gap-3 mt-1.5">
-          <span className="text-[12px] font-semibold text-pear">{deposit.amount} $Trust</span>
-          <span className="text-[11px] text-text-muted">{deposit.timeAgo}</span>
-          <a
-            href={`https://explorer.intuition.systems/tx/${deposit.txHash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-[11px] text-text-muted hover:text-accent transition-colors font-mono"
-          >
-            {deposit.txHash}
-          </a>
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          {/* Main line */}
+          <p className="text-[14px] text-text-primary leading-relaxed">
+            <span className="font-bold text-pear">{deposit.sender}</span>
+            <span className="text-text-secondary"> whispered trust in </span>
+            <Link
+              href={`/curate/${deposit.componentSlug}`}
+              className="font-bold text-text-primary hover:text-accent transition-colors"
+            >
+              {deposit.componentName}
+            </Link>
+          </p>
+
+          {/* Context + amount row */}
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
+            <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-accent-soft text-accent border border-accent/20">
+              {deposit.context}
+            </span>
+            <span className="text-[12px] font-bold text-pear">
+              {deposit.amount} $Trust
+            </span>
+          </div>
+
+          {/* Footer */}
+          <div className="flex items-center gap-3 mt-2">
+            <span className="text-[11px] text-text-muted">{deposit.timeAgo}</span>
+            <a
+              href={`https://explorer.intuition.systems/tx/${deposit.txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-text-muted hover:text-accent transition-colors font-mono"
+            >
+              {deposit.txHash} ↗
+            </a>
+          </div>
         </div>
       </div>
     </div>
