@@ -49,11 +49,11 @@ COPY --from=build /app/packages/ontology/dist ./packages/ontology/dist
 COPY packages/feedback-api/package.json ./packages/feedback-api/
 COPY packages/ontology/package.json ./packages/ontology/
 
-ENV FEEDBACK_API_PORT=3003
+ENV FEEDBACK_API_PORT=3005
 ENV FEEDBACK_DB_PATH=/app/data/feedback.db
 
 RUN mkdir -p /app/data
 
-EXPOSE 3003
+EXPOSE 3005
 
 CMD ["node", "packages/feedback-api/dist/serve.js"]
