@@ -82,8 +82,10 @@ function ComponentCard({
 
 export function BlueprintCard({
   blueprint,
+  onCurate,
 }: {
   blueprint: Blueprint;
+  onCurate?: () => void;
 }) {
   const [visibleCount, setVisibleCount] = useState(0);
   const [bordered, setBordered] = useState(false);
@@ -211,6 +213,7 @@ export function BlueprintCard({
           className="flex-1 gap-2 text-sm bg-accent hover:bg-accent/90 text-accent-foreground"
           size="sm"
           disabled={!showCtas}
+          onClick={onCurate}
         >
           <Users className="h-3.5 w-3.5" />
           Curate

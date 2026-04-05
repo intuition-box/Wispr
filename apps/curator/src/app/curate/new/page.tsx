@@ -55,9 +55,9 @@ export default function NewAtomPage() {
         {!isConnected && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-bg/70 backdrop-blur-sm">
             <span className="text-4xl">🔒</span>
-            <h2 className="text-xl font-bold text-text-primary">Connect your wallet</h2>
+            <h2 className="text-xl font-bold text-text-primary">Connect</h2>
             <p className="text-sm text-text-secondary max-w-[300px] text-center">
-              Connect your wallet to create and publish atoms on-chain.
+              Connect to create and publish atoms on-chain.
             </p>
             <WalletConnect />
           </div>

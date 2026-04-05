@@ -128,7 +128,8 @@ export default function ChatPage() {
         curatorCount: c.curatorCount,
       };
     });
-    const data = btoa(JSON.stringify(payload));
+    const jsonStr = JSON.stringify(payload);
+    const data = btoa(new TextEncoder().encode(jsonStr).reduce((s, b) => s + String.fromCharCode(b), ""));
     window.open(`${curatorUrl}/curate?blueprint=${data}`, "_blank");
   }
 
@@ -317,7 +318,10 @@ export default function ChatPage() {
                   <p className="text-sm text-muted-foreground">{msg.content}</p>
                 )}
                 {msg.blueprint && (
-                  <BlueprintCard blueprint={msg.blueprint} />
+                  <BlueprintCard
+                    blueprint={msg.blueprint}
+                    onCurate={() => handleImprove(msg.blueprint!)}
+                  />
                 )}
               </div>
             )}
