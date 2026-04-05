@@ -37,5 +37,15 @@
   "ai-agents": "0x4e49d60b3ef0d6b65fb42ed100e6ea5216a6d7a7e50f6b20cbf8706413fd6e7f",
   "data-scraping": "0x96b8d6c2b38fcf8505f24b3aea3208bd1675e77401dc515d04b6bbcee55d0f6b",
   "batch-processing": "0x5d7f010b6ef9ea73a01d520708697075856ff68b226478ba1656bc62ccbc0f55",
-  "automation": "0x859a488d88a86962617d93cd5be3ca8d6de57ef712e1d185dd95b0dd37b4def0"
+  "automation": "0x859a488d88a86962617d93cd5be3ca8d6de57ef712e1d185dd95b0dd37b4def0",
+  "mcp-slack": "0xf9b16a9fb4c2f828d050927eb671f35a769e54caaa92972b146dbff260cf498b",
+  "mcp-linear": "0x1040549ee67949cb36b3798f233e512d22eb3fa1be6c0aec243e334f3d19911c",
+  "mcp-figma": "0xfe619f12ad94fffcca9a12b929e7b941658c3dd4d95c448adf796b9198ec5d3d",
+  "gpt-4o": "0xdd62718b2cca9dfbb8a7a444b8a820fdcb4c95772ac8f57d2b9f1c864229e12a",
+  "thegraph": "0x03e12f8c8f731db56f918b0d3d7caee46a64733ba81b31ad006bc5cb43b4ee14",
+  "safe-sdk": "0x1d69b42a0cc634b1bed075ae279095fa44790bc4ce76049c7236db14c9a0f3df",
+  "vercel-ai-sdk": "0x7fd8cee3892c9849f743cba34c30a42f2e226a639e078f5e72eb2fe3d1d07f34",
+  "langchain": "0x2da5cde8305bcae752ce9c8e41b230faf571c9467c497cbcd420d9bec1b3ded8",
+  "smart-contract-audit-skill": "0xe1a9ddb2843e940e51bc08b36029b6ed0744ed9309662b1e1b46ed48f296e949",
+  "mcp-brave-search": "0x25bd6994e80ff2b809eaa576af8a98b20dacda23e432b97e7a6120c29eb63324"
 }

@@ -38,7 +38,17 @@
     "ai-agents": "0x4e49d60b3ef0d6b65fb42ed100e6ea5216a6d7a7e50f6b20cbf8706413fd6e7f",
     "data-scraping": "0x96b8d6c2b38fcf8505f24b3aea3208bd1675e77401dc515d04b6bbcee55d0f6b",
     "batch-processing": "0x5d7f010b6ef9ea73a01d520708697075856ff68b226478ba1656bc62ccbc0f55",
-    "automation": "0x859a488d88a86962617d93cd5be3ca8d6de57ef712e1d185dd95b0dd37b4def0"
+    "automation": "0x859a488d88a86962617d93cd5be3ca8d6de57ef712e1d185dd95b0dd37b4def0",
+    "mcp-slack": "0xf9b16a9fb4c2f828d050927eb671f35a769e54caaa92972b146dbff260cf498b",
+    "mcp-linear": "0x1040549ee67949cb36b3798f233e512d22eb3fa1be6c0aec243e334f3d19911c",
+    "mcp-figma": "0xfe619f12ad94fffcca9a12b929e7b941658c3dd4d95c448adf796b9198ec5d3d",
+    "gpt-4o": "0xdd62718b2cca9dfbb8a7a444b8a820fdcb4c95772ac8f57d2b9f1c864229e12a",
+    "thegraph": "0x03e12f8c8f731db56f918b0d3d7caee46a64733ba81b31ad006bc5cb43b4ee14",
+    "safe-sdk": "0x1d69b42a0cc634b1bed075ae279095fa44790bc4ce76049c7236db14c9a0f3df",
+    "vercel-ai-sdk": "0x7fd8cee3892c9849f743cba34c30a42f2e226a639e078f5e72eb2fe3d1d07f34",
+    "langchain": "0x2da5cde8305bcae752ce9c8e41b230faf571c9467c497cbcd420d9bec1b3ded8",
+    "smart-contract-audit-skill": "0xe1a9ddb2843e940e51bc08b36029b6ed0744ed9309662b1e1b46ed48f296e949",
+    "mcp-brave-search": "0x25bd6994e80ff2b809eaa576af8a98b20dacda23e432b97e7a6120c29eb63324"
   },
   "triples": {
     "base": {
@@ -54,7 +64,17 @@
       "T1-firecrawl": "0x4ae2f0f4b9469ce6fc8fda8353afdb53dd9bf15d7fce9759a8a33c6ec7116ada",
       "T1-embeddings": "0x7f0810e8a7cd669bc4a5e6e60ecdf5b4167a1b95c3cd1723b18a6fd35d5d587f",
       "T1-mcp-gmail": "0x07496946a9968d13477201abbcc40f976439b70820794d96e945dd9d074f3b22",
-      "T1-claude-haiku": "0xea93546cd0ae0cde0c315223732f9e0956a3bd549732ce6e64e7c779889fc609"
+      "T1-claude-haiku": "0xea93546cd0ae0cde0c315223732f9e0956a3bd549732ce6e64e7c779889fc609",
+      "T1-mcp-slack": "0x10307d9c1c84bb1f0d30d6eadd8a901bb369bd4e95f518979c4a002eb9d4b482",
+      "T1-mcp-linear": "0x00add548e554c9079c4efc310d151f6b1d4d3a838065980eaee3411b2096d3fe",
+      "T1-mcp-figma": "0xb4550fd5ed47059b1b85ea6e257995e771e1269ab29dede36526725053ba7717",
+      "T1-gpt-4o": "0xe5ea9dbdacd0fae42e609598ebbb01e776f62dd5a8ec0a06b8bc0cee7d10eaa0",
+      "T1-thegraph": "0x25fbcd060034649530c66513b1fa3b818c8baeb7bee208f528c2216de817d4df",
+      "T1-safe-sdk": "0xa4a935a4567152d8e359300c3f694382db52dd39af660134bb48ca5613282417",
+      "T1-vercel-ai": "0xf4cc0ea4a9bb05f6420d09ba9220164d3983489d5940bfd3a2d2602dc0e5647f",
+      "T1-langchain": "0x4a7d43ccf648d8e4055d3e0272b2ed0fdb0bb816b2be4ea64a610d98df65af74",
+      "T1-sc-audit": "0xdfc911fa009fc237a4d88d36fc67b3d24e816fc69399f2dab3d8fb2d6d5c8b5d",
+      "T1-mcp-brave": "0xe179da6bd7bfa3224f5709da6d371f98920370ff541f2ac6849750778a473b38"
     },
     "nested": {
       "T1-mcp-notion→content-automation": "0x4394df113951f12a82a774f2bc4e885dcd8f860b72d470d71ce517fb2fdb089f",
@@ -69,7 +89,17 @@
       "T1-firecrawl→data-scraping": "0xb29fb0294b9884e24dd10336543bf94a450ef468f76fecc0df8c494b276cbe8a",
       "T1-embeddings→ai-agents": "0xc26a53491bd9a19a7dc5e767b2cd7aadb951440d9b1c81847e311172585e8ae2",
       "T1-mcp-gmail→automation": "0x7fe5b05935d7260662a5b5a4b38b4e61d3fa432809d39f9e9b7dbcc94b5d35cc",
-      "T1-claude-haiku→batch-processing": "0xf4a9f713b5458be19835f31639c1cc3be9829b45f0615640ec685a286e7fa7d1"
+      "T1-claude-haiku→batch-processing": "0xf4a9f713b5458be19835f31639c1cc3be9829b45f0615640ec685a286e7fa7d1",
+      "T1-mcp-slack→communication": "0x09a071fdb2c5323931ed9863853612dcfce7a8f6d50a6634afcd5c294bc50d81",
+      "T1-mcp-linear→productivity": "0x1563c653937c2b287f98b50073411ff7351131418951e894f9ba28b2f86df80e",
+      "T1-mcp-figma→productivity": "0x8f92e8dbdfd785e44dfd0b2d30290a74d2944bb7e2f8aa88f36d13ece56bf4c8",
+      "T1-gpt-4o→content-generation": "0xf4e7231df4dd21a7860663485abf095f77a30d9052d59405097c1e617ee802e1",
+      "T1-thegraph→defi": "0x0e4e8e0d435720f239818adae9e2e0bfa4562efce26e32ed6043f1abeb002e1f",
+      "T1-safe-sdk→web3-building": "0xa2c63cc6e487c5f4fcacd2ce6e1ae4fc9c87a675daf99a6b9ad70e5da37d22f2",
+      "T1-vercel-ai→automation": "0xe12660370f34bedd16b33c8c9731f04728e4a5861766bda43ef8cfa6df33f223",
+      "T1-langchain→ai-agents": "0x4855f5899d1e35cd6a240b8a00a524c3c1da5fefde7ba3c105279ec50aebe18e",
+      "T1-sc-audit→web3-building": "0x4cb5317053aecf16c6d0c783c502c762c1a4fb0408e8a0baf9f14b4c78173e4b",
+      "T1-mcp-brave→automation": "0xdf30c977d4c49f441d2f7258c1c653d8f53d1674af61cb845b514d2595554fb8"
     },
     "category": {
       "code-analysis→productivity": "0xb14f44c509d118a432147cec47d87f55d8261ccd1236bdf14669d921a8cfb380",
