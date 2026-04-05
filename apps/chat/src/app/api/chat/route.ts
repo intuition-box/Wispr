@@ -6,10 +6,19 @@ import {
   closeIntuitionClient,
   type RankedComponent,
 } from "@wispr/agent";
-import { db, sessions, conversations, messages, blueprints, blueprintComponents } from "@wispr/feedback-api";
-import { eq } from "drizzle-orm";
 
 const anthropic = new Anthropic();
+
+const FEEDBACK_API_URL =
+  process.env.FEEDBACK_API_URL ?? "http://localhost:3002";
+
+async function feedbackPost(path: string, body: Record<string, unknown>) {
+  await fetch(`${FEEDBACK_API_URL}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
 
 export async function POST(req: Request) {
   const { message, sessionId, conversationId } = await req.json();
@@ -18,40 +27,28 @@ export async function POST(req: Request) {
     return Response.json({ error: "message required" }, { status: 400 });
   }
 
-  // ── Persist session + conversation (upsert) ────────────────────────────────
+  // ── Persist session + conversation via feedback API ────────────────────────
   if (sessionId && conversationId) {
-    db.insert(sessions)
-      .values({ id: sessionId })
-      .onConflictDoNothing()
-      .run();
-
-    db.insert(conversations)
-      .values({ id: conversationId, sessionId })
-      .onConflictDoNothing()
-      .run();
+    await feedbackPost("/conversations/sessions", { id: sessionId });
+    await feedbackPost("/conversations", { id: conversationId, sessionId });
 
     // Save system prompt once (first message of the conversation)
-    const existing = db.select().from(messages).where(eq(messages.conversationId, conversationId)).limit(1).all();
-    if (existing.length === 0) {
-      db.insert(messages)
-        .values({
-          id: crypto.randomUUID(),
-          conversationId,
-          role: "system",
-          content: SYSTEM_PROMPT,
-        })
-        .run();
+    const res = await fetch(`${FEEDBACK_API_URL}/conversations/${conversationId}/messages`);
+    const { count } = await res.json();
+    if (count === 0) {
+      await feedbackPost("/conversations/messages", {
+        conversationId,
+        role: "system",
+        content: SYSTEM_PROMPT,
+      });
     }
 
     // Save user message
-    db.insert(messages)
-      .values({
-        id: crypto.randomUUID(),
-        conversationId,
-        role: "user",
-        content: message,
-      })
-      .run();
+    await feedbackPost("/conversations/messages", {
+      conversationId,
+      role: "user",
+      content: message,
+    });
   }
 
   // ── Agent pipeline ─────────────────────────────────────────────────────────
@@ -100,41 +97,32 @@ export async function POST(req: Request) {
     return Response.json({ error: "Invalid blueprint JSON" }, { status: 500 });
   }
 
-  // ── Persist agent message + blueprint ─────────────────────────────────────
+  // ── Persist agent message + blueprint via feedback API ─────────────────────
   if (sessionId && conversationId) {
-    db.insert(messages)
-      .values({
-        id: crypto.randomUUID(),
-        conversationId,
-        role: "assistant",
-        content: text,
-        model: "claude-opus-4-6",
-        tokensInput: response.usage.input_tokens,
-        tokensOutput: response.usage.output_tokens,
-        latencyMs,
-      })
-      .run();
+    await feedbackPost("/conversations/messages", {
+      conversationId,
+      role: "assistant",
+      content: text,
+      model: "claude-opus-4-6",
+      tokensInput: response.usage.input_tokens,
+      tokensOutput: response.usage.output_tokens,
+      latencyMs,
+    });
 
     const blueprintId = blueprint.id ?? crypto.randomUUID();
-
-    db.insert(blueprints)
-      .values({ id: blueprintId, conversationId, intent: message })
-      .onConflictDoNothing()
-      .run();
-
     const stackComponents: unknown[] = blueprint.stack?.components ?? [];
-    stackComponents.forEach((c: any, i: number) => {
-      db.insert(blueprintComponents)
-        .values({
-          id: crypto.randomUUID(),
-          blueprintId,
-          componentId: c.id ?? c.name,
-          componentType: c.type ?? "unknown",
-          componentName: c.name,
-          trustScoreAtTime: c.trustScore ?? null,
-          position: i,
-        })
-        .run();
+
+    await feedbackPost("/conversations/blueprints", {
+      id: blueprintId,
+      conversationId,
+      intent: message,
+      components: stackComponents.map((c: any, i: number) => ({
+        componentId: c.id ?? c.name,
+        componentType: c.type ?? "unknown",
+        componentName: c.name,
+        trustScoreAtTime: c.trustScore ?? null,
+        position: i,
+      })),
     });
   }
 

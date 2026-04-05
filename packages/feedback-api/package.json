@@ -5,12 +5,13 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.js",
+    "dev": "tsx watch src/serve.ts",
+    "start": "node dist/serve.js",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@hono/node-server": "^1.0.0",
     "hono": "^4.0.0",
     "@wispr/ontology": "workspace:*",
     "better-sqlite3": "^9.4.3",

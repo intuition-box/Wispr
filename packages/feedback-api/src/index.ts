@@ -13,10 +13,12 @@
 
 import { Hono } from "hono";
 import { feedback } from "./routes/feedback";
+import { conv } from "./routes/conversations";
 
 const app = new Hono();
 
 app.route("/feedback", feedback);
+app.route("/conversations", conv);
 
 export { app };
 
