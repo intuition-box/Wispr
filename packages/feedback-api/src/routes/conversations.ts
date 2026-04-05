@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { db } from "../db";
 import {
   sessions,
@@ -7,6 +7,7 @@ import {
   messages,
   blueprints,
   blueprintComponents,
+  curationSignals,
 } from "../db/schema";
 
 const conv = new Hono();
@@ -105,6 +106,119 @@ conv.post("/blueprints", async (c) => {
   }
 
   return c.json({ ok: true, id });
+});
+
+// ── GET /conversations ───────────────────────────────────────────────────────
+// List recent conversations with message count, preview, and curation counts.
+conv.get("/", async (c) => {
+  const rows = db
+    .select({
+      id: conversations.id,
+      sessionId: conversations.sessionId,
+      createdAt: conversations.createdAt,
+      messageCount: sql<number>`count(${messages.id})`,
+    })
+    .from(conversations)
+    .leftJoin(messages, eq(messages.conversationId, conversations.id))
+    .groupBy(conversations.id)
+    .orderBy(desc(conversations.createdAt))
+    .limit(50)
+    .all();
+
+  const result = rows.map((row) => {
+    const firstMsg = db
+      .select({ content: messages.content, role: messages.role })
+      .from(messages)
+      .where(eq(messages.conversationId, row.id))
+      .orderBy(messages.createdAt)
+      .limit(1)
+      .all()[0];
+
+    const curations = db
+      .select({
+        verdict: curationSignals.verdict,
+        count: sql<number>`count(*)`,
+      })
+      .from(curationSignals)
+      .where(eq(curationSignals.conversationId, row.id))
+      .groupBy(curationSignals.verdict)
+      .all();
+
+    const goodCount = curations.find((c) => c.verdict === "good")?.count ?? 0;
+    const badCount = curations.find((c) => c.verdict === "bad")?.count ?? 0;
+
+    return {
+      ...row,
+      preview: firstMsg?.content ?? "",
+      goodCount,
+      badCount,
+    };
+  });
+
+  return c.json(result);
+});
+
+// ── GET /conversations/:id ───────────────────────────────────────────────────
+// Full conversation detail: messages, curations, blueprint + components.
+conv.get("/:id", async (c) => {
+  const id = c.req.param("id");
+
+  const msgs = db
+    .select()
+    .from(messages)
+    .where(eq(messages.conversationId, id))
+    .orderBy(messages.createdAt)
+    .all();
+
+  const curations = db
+    .select()
+    .from(curationSignals)
+    .where(eq(curationSignals.conversationId, id))
+    .orderBy(curationSignals.createdAt)
+    .all();
+
+  const blueprint = db
+    .select()
+    .from(blueprints)
+    .where(eq(blueprints.conversationId, id))
+    .limit(1)
+    .all()[0] ?? null;
+
+  const components = blueprint
+    ? db
+        .select()
+        .from(blueprintComponents)
+        .where(eq(blueprintComponents.blueprintId, blueprint.id))
+        .orderBy(blueprintComponents.position)
+        .all()
+    : [];
+
+  return c.json({ messages: msgs, curations, blueprint, components });
+});
+
+// ── POST /conversations/:id/curate ───────────────────────────────────────────
+// Submit a curation signal for a conversation.
+// Body: { verdict, comment?, curatorAddress? }
+conv.post("/:id/curate", async (c) => {
+  const id = c.req.param("id");
+  const body = await c.req.json();
+  const { verdict, comment, curatorAddress } = body;
+
+  if (!verdict || !["good", "bad"].includes(verdict)) {
+    return c.json({ error: "verdict must be 'good' or 'bad'" }, 400);
+  }
+
+  db.insert(curationSignals)
+    .values({
+      id: crypto.randomUUID(),
+      conversationId: id,
+      curatorAddress: curatorAddress ?? null,
+      verdict,
+      comment: comment ?? null,
+    })
+    .run();
+
+  return c.json({ ok: true });
 });
 
 export { conv };
