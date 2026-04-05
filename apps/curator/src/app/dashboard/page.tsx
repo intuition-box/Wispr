@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { useWalletConnection, WalletConnect } from "@wispr/wallet";
+import { usePositions } from "@/hooks/usePositions";
 
 const ROLE_LABELS: Record<string, string> = {
   "full-stack-web3": "Full Stack Web3 Developer",
@@ -38,28 +39,6 @@ const LEVEL_EMOJI: Record<string, string> = {
   expert: "🧠",
 };
 
-interface Position {
-  id: string;
-  name: string;
-  type: string;
-  typeIcon: string;
-  context: string;
-  vote: "support" | "oppose";
-  staked: number;
-  currentValue: number;
-  pnl: number;
-  pnlPercent: number;
-}
-
-const DEMO_POSITIONS: Position[] = [
-  { id: "mcp-notion", name: "MCP Notion", type: "mcp", typeIcon: "🔌", context: "content automation", vote: "support", staked: 120, currentValue: 148, pnl: 28, pnlPercent: 23.3 },
-  { id: "brand-voice-skill", name: "Brand Voice Skill", type: "skill", typeIcon: "🧠", context: "content creation", vote: "support", staked: 80, currentValue: 95, pnl: 15, pnlPercent: 18.7 },
-  { id: "mcp-twitter", name: "MCP Twitter", type: "mcp", typeIcon: "🔌", context: "social media", vote: "oppose", staked: 60, currentValue: 42, pnl: -18, pnlPercent: -30.0 },
-  { id: "claude-sonnet-4-5", name: "Claude Sonnet 4.5", type: "model", typeIcon: "🤖", context: "content generation", vote: "support", staked: 200, currentValue: 267, pnl: 67, pnlPercent: 33.5 },
-  { id: "chainlink-data-feeds", name: "Chainlink Data Feeds", type: "api", typeIcon: "⚡", context: "defi", vote: "support", staked: 150, currentValue: 183, pnl: 33, pnlPercent: 22.0 },
-  { id: "1inch-fusion-plus-sdk", name: "1inch Fusion+ SDK", type: "sdk", typeIcon: "⚡", context: "defi", vote: "oppose", staked: 90, currentValue: 72, pnl: -18, pnlPercent: -20.0 },
-];
-
 function useProfile() {
   const searchParams = useSearchParams();
   return useMemo(() => ({
@@ -68,8 +47,17 @@ function useProfile() {
   }), [searchParams]);
 }
 
+function formatValue(v: number): string {
+  if (v >= 1000) return `${(v / 1000).toFixed(1)}k`;
+  if (v >= 1) return v.toFixed(2);
+  if (v >= 0.01) return v.toFixed(3);
+  if (v === 0) return "0";
+  return v.toFixed(4);
+}
+
 export default function DashboardPage() {
-  const { isConnected } = useWalletConnection();
+  const { address, isConnected } = useWalletConnection();
+  const { positions, loading, error } = usePositions(address ?? null);
   const profile = useProfile();
 
   const roleLabel = ROLE_LABELS[profile.role] ?? profile.role;
@@ -77,13 +65,9 @@ export default function DashboardPage() {
   const levelLabel = LEVEL_LABELS[profile.level] ?? profile.level;
   const levelEmoji = LEVEL_EMOJI[profile.level] ?? "🌱";
 
-  const totalStaked = DEMO_POSITIONS.reduce((s, p) => s + p.staked, 0);
-  const totalValue = DEMO_POSITIONS.reduce((s, p) => s + p.currentValue, 0);
-  const totalPnl = totalValue - totalStaked;
-  const totalPnlPercent = totalStaked > 0 ? (totalPnl / totalStaked) * 100 : 0;
-
-  const supportCount = DEMO_POSITIONS.filter((p) => p.vote === "support").length;
-  const opposeCount = DEMO_POSITIONS.filter((p) => p.vote === "oppose").length;
+  const totalValue = positions.reduce((s, p) => s + p.currentValue, 0);
+  const supportCount = positions.filter((p) => p.vote === "support").length;
+  const opposeCount = positions.filter((p) => p.vote === "oppose").length;
 
   return (
     <>
@@ -109,103 +93,119 @@ export default function DashboardPage() {
         )}
 
         <div className={`flex gap-6 ${!isConnected ? "blur-sm pointer-events-none" : ""}`}>
-          {/* Left — P&L + Positions */}
+          {/* Left — Positions */}
           <div className="flex-1 min-w-0 flex flex-col gap-6">
 
-            {/* P&L summary cards */}
-            <div className="grid grid-cols-4 gap-3">
+            {/* Summary cards */}
+            <div className="grid grid-cols-3 gap-3">
               <div className="bg-surface rounded-xl border border-border p-4 text-center">
-                <div className="text-xl font-bold text-pear">{totalStaked} $T</div>
-                <div className="text-[11px] text-text-secondary mt-1">Total staked</div>
+                <div className="text-xl font-bold text-pear">{positions.length}</div>
+                <div className="text-[11px] text-text-secondary mt-1">Positions</div>
               </div>
               <div className="bg-surface rounded-xl border border-border p-4 text-center">
-                <div className="text-xl font-bold text-white">{totalValue} $T</div>
-                <div className="text-[11px] text-text-secondary mt-1">Current value</div>
+                <div className="text-xl font-bold text-white">{formatValue(totalValue)} $T</div>
+                <div className="text-[11px] text-text-secondary mt-1">Total value</div>
               </div>
               <div className="bg-surface rounded-xl border border-border p-4 text-center">
-                <div className={`text-xl font-bold ${totalPnl >= 0 ? "text-pear" : "text-red"}`}>
-                  {totalPnl >= 0 ? "+" : ""}{totalPnl} $T
-                </div>
-                <div className="text-[11px] text-text-secondary mt-1">Total P&L</div>
-              </div>
-              <div className="bg-surface rounded-xl border border-border p-4 text-center">
-                <div className={`text-xl font-bold ${totalPnlPercent >= 0 ? "text-pear" : "text-red"}`}>
-                  {totalPnlPercent >= 0 ? "+" : ""}{totalPnlPercent.toFixed(1)}%
-                </div>
-                <div className="text-[11px] text-text-secondary mt-1">ROI</div>
+                <div className="text-xl font-bold text-pear">{supportCount}</div>
+                <div className="text-[11px] text-text-secondary mt-1">Support / <span className="text-red">{opposeCount}</span> Oppose</div>
               </div>
             </div>
+
+            {/* Loading */}
+            {loading && (
+              <div className="flex items-center justify-center py-20">
+                <div className="w-6 h-6 border-2 border-pear/30 border-t-pear rounded-full animate-spin" />
+              </div>
+            )}
+
+            {/* Error */}
+            {error && (
+              <div className="flex flex-col items-center justify-center py-20 gap-2">
+                <span className="text-2xl">⚠️</span>
+                <p className="text-sm text-text-secondary">{error}</p>
+              </div>
+            )}
+
+            {/* Empty */}
+            {!loading && !error && positions.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-20 gap-2">
+                <span className="text-2xl">🍐</span>
+                <p className="text-sm text-text-secondary">No positions yet — go curate some components!</p>
+              </div>
+            )}
 
             {/* Positions */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-white">Your positions</h2>
-                <div className="flex items-center gap-3">
-                  <span className="text-[12px] font-semibold text-pear">✓ {supportCount} supported</span>
-                  <span className="text-[12px] font-semibold text-red">✕ {opposeCount} opposed</span>
+            {!loading && !error && positions.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold text-white">Your positions</h2>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[12px] font-semibold text-pear">✓ {supportCount} supported</span>
+                    <span className="text-[12px] font-semibold text-red">✕ {opposeCount} opposed</span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {DEMO_POSITIONS.map((pos) => (
-                  <div
-                    key={pos.id}
-                    className={`bg-surface rounded-xl border p-4 flex flex-col gap-3 transition-colors duration-200 ${
-                      pos.vote === "support"
-                        ? "border-pear/30"
-                        : "border-red/30"
-                    }`}
-                  >
-                    {/* Name + type */}
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{pos.typeIcon}</span>
-                      <span className="text-[14px] font-bold text-white truncate flex-1">{pos.name}</span>
-                      <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {positions.map((pos) => (
+                    <div
+                      key={pos.id}
+                      className={`bg-surface rounded-xl border p-4 flex flex-col gap-3 transition-colors duration-200 ${
                         pos.vote === "support"
-                          ? "bg-pear-soft text-pear border border-pear/20"
-                          : "bg-red-soft text-red border border-red/20"
-                      }`}>
-                        {pos.vote === "support" ? "✓ Support" : "✕ Oppose"}
-                      </span>
-                    </div>
-
-                    {/* Context */}
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[10px] font-semibold text-text-secondary uppercase tracking-wider">Context</span>
-                      <span className="text-[12px] font-semibold px-3 py-1.5 rounded-full bg-accent-soft text-accent border border-accent/20 self-start">
-                        {pos.context}
-                      </span>
-                    </div>
-
-                    {/* P&L */}
-                    <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] text-text-secondary">Staked</span>
-                        <span className="text-[13px] font-semibold text-white">{pos.staked} $T</span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <span className="text-[10px] text-text-secondary">Value</span>
-                        <span className="text-[13px] font-semibold text-white">{pos.currentValue} $T</span>
-                      </div>
-                      <div className="flex flex-col items-end">
-                        <span className="text-[10px] text-text-secondary">P&L</span>
-                        <span className={`text-[13px] font-bold ${pos.pnl >= 0 ? "text-pear" : "text-red"}`}>
-                          {pos.pnl >= 0 ? "+" : ""}{pos.pnl} $T ({pos.pnlPercent >= 0 ? "+" : ""}{pos.pnlPercent.toFixed(1)}%)
+                          ? "border-pear/30"
+                          : "border-red/30"
+                      }`}
+                    >
+                      {/* Name + type */}
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{pos.typeIcon}</span>
+                        <span className="text-[14px] font-bold text-white truncate flex-1">{pos.name}</span>
+                        <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
+                          pos.vote === "support"
+                            ? "bg-pear-soft text-pear border border-pear/20"
+                            : "bg-red-soft text-red border border-red/20"
+                        }`}>
+                          {pos.vote === "support" ? "✓ Support" : "✕ Oppose"}
                         </span>
                       </div>
-                    </div>
 
-                    {/* View details */}
-                    <a
-                      href={`/curate/${pos.id}`}
-                      className="text-[12px] font-semibold text-accent hover:text-white transition-colors"
-                    >
-                      View details →
-                    </a>
-                  </div>
-                ))}
+                      {/* Context */}
+                      {pos.context && (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] font-semibold text-text-secondary uppercase tracking-wider">Context</span>
+                          <span className="text-[12px] font-semibold px-3 py-1.5 rounded-full bg-accent-soft text-accent border border-accent/20 self-start">
+                            {pos.context.replace(/-/g, " ")}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Component type */}
+                      {pos.componentType && (
+                        <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-pear-soft text-pear border border-pear/20 self-start">
+                          {pos.componentType}
+                        </span>
+                      )}
+
+                      {/* Value */}
+                      <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] text-text-secondary">Type</span>
+                          <span className="text-[12px] font-semibold text-text-muted">
+                            {pos.type === "atom" ? "Atom" : "Triple"}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-[10px] text-text-secondary">Value</span>
+                          <span className="text-[13px] font-bold text-pear">
+                            {formatValue(pos.currentValue)} $T
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Right — Persona card */}
