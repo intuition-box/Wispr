@@ -1,18 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { brand } from "@wispr/ui";
-import { useWalletConnection } from "@wispr/wallet";
-import { Compass, PlusCircle, BarChart3, TrendingUp, MessageCircle, ExternalLink, Wallet, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Logo, brand } from "@wispr/ui";
+import { brand } from "@wispr/ui";
 import { useWalletConnection, useWalletBalance } from "@wispr/wallet";
 import { QRCodeSVG } from "qrcode.react";
-import { Compass, PlusCircle, BarChart3, TrendingUp, MessageCircle, Settings, ExternalLink, Wallet, Copy, Check, X } from "lucide-react";
+import { Compass, PlusCircle, BarChart3, TrendingUp, MessageCircle, ExternalLink, Wallet, Copy, Check, X, Menu } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const NAV_ITEMS: { href: string; icon: LucideIcon | "🍐"; label: string; external: boolean }[] = [
@@ -225,8 +219,8 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 }
