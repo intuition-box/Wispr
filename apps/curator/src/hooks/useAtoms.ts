@@ -20,6 +20,7 @@ const COMPONENT_IDS = [
   "0x0ec84d948f958f451b66f392f40ed5d6455fc1554c6853ba5bac1441e10f825d", // embeddings-matching-skill
   "0x3bf263939c8d136589ea84a24c6a00bfcf3f15cfce1c2ae795d698b45fc97b37", // mcp-gmail
   "0x35cb11f4a04de74c479b39448d1ab6e97dc74d71d20a1502b4a6ee86e52e0dca", // claude-haiku-4-5
+  "0x8f399cddc38fbd98cc8d94428370321f07dd49f7a984927683fee15faef18e41", // newly created component
 ];
 
 const ATOMS_QUERY = `

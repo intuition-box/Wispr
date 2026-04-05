@@ -27,6 +27,7 @@ export default function NewAtomPage() {
   const router = useRouter();
   const { wallet, isConnected } = useWalletConnection();
   const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
   const [step, setStep] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
@@ -124,15 +125,15 @@ export default function NewAtomPage() {
       setTxHash(t2Tx.hash);
       await t2Tx.wait();
 
-      setStep("Done!");
+      setStep("Published!");
+      setDone(true);
+      setSaving(false);
 
-      // Redirect after short delay
       const slug = name.toLowerCase().replace(/\+/g, "plus").replace(/[\s.]/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
-      setTimeout(() => router.push(`/curate/${slug}`), 1500);
+      setTimeout(() => router.push(`/curate/${slug}`), 2000);
     } catch (err: unknown) {
       console.error("Create failed:", err);
       setError(err instanceof Error ? err.message.split("(")[0].trim() : "Transaction failed");
-    } finally {
       setSaving(false);
     }
   };
@@ -320,14 +321,14 @@ export default function NewAtomPage() {
             variant="primary"
             size="lg"
             onClick={handleSave}
-            disabled={saving || !isValid || !isConnected}
+            disabled={saving || done || !isValid || !isConnected}
             style={{
               width: "100%",
               borderRadius: "12px",
               padding: "16px 24px",
               fontSize: "15px",
               fontWeight: 700,
-              background: !isValid ? "#2d2d52" : saving ? "rgba(212, 255, 71, 0.4)" : "#d4ff47",
+              background: !isValid ? "#2d2d52" : (saving || done) ? "rgba(212, 255, 71, 0.4)" : "#d4ff47",
               color: !isValid ? "#4a4a6a" : "#06070f",
               border: "none",
               boxShadow: !isValid || saving ? "none" : "0 0 24px rgba(212, 255, 71, 0.2)",
@@ -341,7 +342,7 @@ export default function NewAtomPage() {
                 {step}
               </span>
             ) : (
-              "🍐 Publish on-chain"
+              "🍐 Whisper your wisdom"
             )}
           </Button>
         </div>

@@ -15,6 +15,7 @@ interface StakeModalProps {
 
 export function StakeModal({ wallet, termId, atomName, atomType, context, onClose }: StakeModalProps) {
   const [amount, setAmount] = useState("");
+  const [direction, setDirection] = useState<"yes" | "no">("yes");
   const [staking, setStaking] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,9 +31,15 @@ export function StakeModal({ wallet, termId, atomName, atomType, context, onClos
       const { ethers } = await import("ethers");
       const value = ethers.parseEther(amount);
 
+      // If "no", deposit into the counter vault (against bonding curve)
+      let depositTermId = termId;
+      if (direction === "no") {
+        depositTermId = await wallet.multiVault.getCounterIdFromTripleId(termId);
+      }
+
       const tx = await wallet.multiVault.deposit(
         wallet.address,
-        termId,
+        depositTermId,
         1,
         0,
         { value },
@@ -89,6 +96,30 @@ export function StakeModal({ wallet, termId, atomName, atomType, context, onClos
               {atomType}
             </span>
           )}
+        </div>
+
+        {/* Yes / No toggle */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setDirection("yes")}
+            className={`flex-1 h-10 rounded-lg flex items-center justify-center text-[13px] font-semibold gap-1.5 transition-all duration-200 ${
+              direction === "yes"
+                ? "bg-pear text-bg border border-pear"
+                : "bg-transparent border border-pear/40 text-pear hover:bg-pear hover:text-bg"
+            }`}
+          >
+            ✓ Yes
+          </button>
+          <button
+            onClick={() => setDirection("no")}
+            className={`flex-1 h-10 rounded-lg flex items-center justify-center text-[13px] font-semibold gap-1.5 transition-all duration-200 ${
+              direction === "no"
+                ? "bg-red text-white border border-red"
+                : "bg-transparent border border-red/40 text-red hover:bg-red hover:text-white"
+            }`}
+          >
+            ✕ No
+          </button>
         </div>
 
         {/* Amount input */}
@@ -152,7 +183,7 @@ export function StakeModal({ wallet, termId, atomName, atomType, context, onClos
             boxShadow: staking ? "none" : "0 0 24px rgba(212, 255, 71, 0.2)",
           }}
         >
-          {staking ? "Whispering..." : `🍐 Express your WisPear — ${amount || "..."} $Trust`}
+          {staking ? "Whispering..." : `🍐 Express your Wispear — ${amount || "..."} $Trust`}
         </Button>
 
         <p className="text-[11px] text-text-muted text-center">

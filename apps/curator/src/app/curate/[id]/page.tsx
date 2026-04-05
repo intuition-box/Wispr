@@ -175,7 +175,7 @@ export default function AtomDetailPage() {
                 transition: "all 0.3s ease",
               }}
             >
-              {!isConnected ? "Connect Wallet" : "🍐 Express your WisPear"}
+              {!isConnected ? "Connect Wallet" : "🍐 Express your Wispear"}
             </Button>
             <Button
               variant="ghost"
@@ -359,7 +359,7 @@ export default function AtomDetailPage() {
                 <a href={`https://warpcast.com/~/compose?text=${encodeURIComponent(`I just staked $TRUST on ${atom.name} via @wispear 🍐⛓️`)}&embeds[]=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
                   <span className="text-lg">🟪</span> Farcaster
                 </a>
-                <a href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${atom.name} on WisPear — backed by curators 🍐`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
+                <a href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${atom.name} on Wispear — backed by curators 🍐`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
                   <span className="text-lg">✈️</span> Telegram
                 </a>
                 <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">

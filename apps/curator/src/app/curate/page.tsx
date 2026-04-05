@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useWalletConnection, WalletConnect } from "@wispr/wallet";
 import { useAtoms, type OnChainAtom } from "@/hooks/useAtoms";
+import { getNestedTripleId } from "@/lib/termIds";
 
 const TYPE_ICONS: Record<string, string> = {
   mcp: "🔌",
@@ -19,10 +20,22 @@ const TYPE_ICONS: Record<string, string> = {
 type Vote = "support" | "oppose" | null;
 
 export default function CuratePage() {
-  const { isConnected } = useWalletConnection();
+  const { wallet, isConnected } = useWalletConnection();
   const { atoms, loading, error } = useAtoms();
   const searchParams = useSearchParams();
   const [votes, setVotes] = useState<Record<string, Vote>>({});
+  const [cartOpen, setCartOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [pearBounce, setPearBounce] = useState(false);
+
+  // Auto-stop bounce animation after 3s
+  useEffect(() => {
+    if (!pearBounce) return;
+    const t = setTimeout(() => setPearBounce(false), 3000);
+    return () => clearTimeout(t);
+  }, [pearBounce]);
 
   // Extract pre-selected context from blueprint URL param
   const preSelectedContext = useMemo(() => {
@@ -63,18 +76,95 @@ export default function CuratePage() {
 
   const supportCount = Object.values(votes).filter((v) => v === "support").length;
   const opposeCount = Object.values(votes).filter((v) => v === "oppose").length;
+  const totalVotes = supportCount + opposeCount;
 
   const toSlug = (atom: OnChainAtom) =>
-    atom.name.toLowerCase().replace(/[\s+]/g, "-").replace(/[^a-z0-9-]/g, "");
+    atom.name.toLowerCase().replace(/\+/g, "plus").replace(/[\s.]/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
+
+  // Build the tagline based on active context
+  const tagline = activeContext
+    ? `Is this the best tool for ${activeContext.replace(/-/g, " ")}?`
+    : "Is this the best tool for the job?";
+
+  // Submit votes on-chain via multiVault batch deposit
+  const handleSubmit = async () => {
+    if (!wallet?.multiVault || !wallet.address || totalVotes === 0) return;
+
+    setSubmitting(true);
+    setTxHash(null);
+    setSubmitError(null);
+
+    try {
+      const multiVault = wallet.multiVault;
+
+      const [bondingConfig, atomCost] = await Promise.all([
+        multiVault.getBondingCurveConfig(),
+        multiVault.getAtomCost(),
+      ]);
+      const defaultCurveId = bondingConfig[1];
+
+      const zeroBig = BigInt(0);
+      const termIds: string[] = [];
+      const curveIds: any[] = [];
+      const assets: any[] = [];
+      const minShares: any[] = [];
+
+      for (const atom of atoms) {
+        const vote = votes[atom.term_id];
+        if (!vote) continue;
+
+        // Get the nested triple for the active context, or fallback to first context
+        const ctx = activeContext ?? atom.contexts[0];
+        if (!ctx) continue;
+
+        const nestedTripleId = getNestedTripleId(atom.term_id, ctx);
+        if (!nestedTripleId) continue;
+
+        let depositTermId = nestedTripleId;
+        if (vote === "oppose") {
+          // Deposit into the counter vault (against bonding curve)
+          depositTermId = await multiVault.getCounterIdFromTripleId(nestedTripleId);
+        }
+
+        termIds.push(depositTermId);
+        curveIds.push(defaultCurveId);
+        assets.push(atomCost);
+        minShares.push(zeroBig);
+      }
+
+      if (termIds.length === 0) return;
+
+      const totalValue = assets.reduce((sum: any, a: any) => sum + a, zeroBig);
+
+      const tx = await multiVault.depositBatch(
+        wallet.address,
+        termIds,
+        curveIds,
+        assets,
+        minShares,
+        { value: totalValue }
+      );
+
+      const receipt = await tx.wait();
+      setTxHash(receipt.hash);
+      setPearBounce(true);
+      setVotes({});
+      setCartOpen(false);
+    } catch (err) {
+      console.error("Submit votes failed:", err);
+      setSubmitError(
+        err instanceof Error ? err.message.split("(")[0].trim() : "Transaction failed"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <>
       {/* Header */}
       <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
-        <h1 className="page-title">Curate</h1>
-        <p className="text-sm text-text-secondary mt-1">
-          Vote on contextual claims for each component
-        </p>
+        <h1 className="page-title">Wispear</h1>
       </div>
 
       <div className="relative w-full px-5 py-6">
@@ -84,11 +174,16 @@ export default function CuratePage() {
             <span className="text-4xl">🔒</span>
             <h2 className="text-xl font-bold text-text-primary">Connect your wallet</h2>
             <p className="text-sm text-text-secondary max-w-[300px] text-center">
-              Connect your wallet to vote on claims and stake $TRUST.
+              Connect your wallet to express your Wispear and stake $TRUST.
             </p>
             <WalletConnect />
           </div>
         )}
+
+        {/* Tagline */}
+        <h2 className={`text-xl font-bold text-text-primary mb-4 ${!isConnected ? "blur-sm" : ""}`}>
+          {tagline}
+        </h2>
 
         {/* Context filter bubbles */}
         <div className={`flex flex-wrap gap-2 mb-5 ${!isConnected ? "blur-sm" : ""}`}>
@@ -117,25 +212,19 @@ export default function CuratePage() {
           ))}
         </div>
 
-        {/* Summary + Add new */}
+        {/* Summary */}
         <div className={`flex items-center justify-between mb-5 ${!isConnected ? "blur-sm" : ""}`}>
           <div className="flex items-center gap-4">
             <span className="text-sm text-text-muted">
               {filteredAtoms.length} component{filteredAtoms.length !== 1 ? "s" : ""}
             </span>
             {supportCount > 0 && (
-              <span className="text-sm font-semibold text-pear">✓ {supportCount} supported</span>
+              <span className="text-sm font-semibold text-pear">✓ {supportCount} yes</span>
             )}
             {opposeCount > 0 && (
-              <span className="text-sm font-semibold text-red">✕ {opposeCount} opposed</span>
+              <span className="text-sm font-semibold text-red">✕ {opposeCount} no</span>
             )}
           </div>
-          <a
-            href="/curate/new"
-            className="text-[13px] font-semibold text-accent hover:text-text-primary transition-colors"
-          >
-            + Add new component
-          </a>
         </div>
 
         {/* Loading state */}
@@ -221,7 +310,7 @@ export default function CuratePage() {
                     View details →
                   </Link>
 
-                  {/* Vote buttons */}
+                  {/* Yes / No buttons */}
                   <div className="flex gap-2 pt-1">
                     <button
                       onClick={() => handleVote(atom.term_id, "support")}
@@ -231,7 +320,7 @@ export default function CuratePage() {
                           : "bg-transparent border border-pear/40 text-pear hover:bg-pear hover:text-bg"
                       }`}
                     >
-                      ✓ Support
+                      ✓ Yes
                     </button>
                     <button
                       onClick={() => handleVote(atom.term_id, "oppose")}
@@ -241,7 +330,7 @@ export default function CuratePage() {
                           : "bg-transparent border border-red/40 text-red hover:bg-red hover:text-white"
                       }`}
                     >
-                      ✕ Oppose
+                      ✕ No
                     </button>
                   </div>
                 </div>
@@ -249,19 +338,153 @@ export default function CuratePage() {
             })}
           </div>
         )}
-
-        {/* Submit votes */}
-        {isConnected && Object.keys(votes).length > 0 && (
-          <div className="mt-6 flex justify-center">
-            <button
-              className="bg-pear font-bold text-[14px] px-8 py-3.5 rounded-xl shadow-[0_0_24px_rgba(212,255,71,0.2)] hover:shadow-[0_0_32px_rgba(212,255,71,0.3)] transition-all duration-300"
-              style={{ color: "#06070f" }}
-            >
-              Submit {Object.keys(votes).length} vote{Object.keys(votes).length > 1 ? "s" : ""} on-chain
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Floating Pear Cart */}
+      {isConnected && (totalVotes > 0 || txHash) && (
+        <>
+          {/* Pear button — pulses green on success */}
+          <button
+            onClick={() => { setCartOpen(!cartOpen); }}
+            className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
+              pearBounce
+                ? "bg-pear shadow-[0_0_32px_rgba(212,255,71,0.5),0_0_64px_rgba(212,255,71,0.25)] scale-110 animate-bounce"
+                : "bg-pear shadow-[0_4px_24px_rgba(212,255,71,0.3)] hover:shadow-[0_4px_32px_rgba(212,255,71,0.45)] hover:scale-105"
+            }`}
+          >
+            {pearBounce ? (
+              <span className="text-bg text-xl font-bold">✓</span>
+            ) : (
+              <>
+                <span className="text-2xl">🍐</span>
+                {totalVotes > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-accent text-white text-[11px] font-bold flex items-center justify-center">
+                    {totalVotes}
+                  </span>
+                )}
+              </>
+            )}
+          </button>
+
+          {/* Cart dropdown */}
+          {cartOpen && (
+            <div className="fixed bottom-24 right-6 z-50 w-[300px] bg-surface border border-border rounded-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] overflow-hidden">
+              {/* Success state */}
+              {txHash ? (
+                <div className="p-5 flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-pear/20 flex items-center justify-center">
+                    <span className="text-2xl">🍐</span>
+                  </div>
+                  <span className="text-[14px] font-bold text-pear">Votes submitted!</span>
+                  <a
+                    href={`https://explorer.intuition.systems/tx/${txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[12px] text-accent hover:text-pear transition-colors underline"
+                  >
+                    View on-chain ↗
+                  </a>
+                  <button
+                    onClick={() => { setTxHash(null); setCartOpen(false); }}
+                    className="text-[12px] text-text-muted hover:text-text-primary mt-1 transition-colors"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {/* Header */}
+                  <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+                    <div>
+                      <span className="text-[13px] font-bold text-text-primary">Your votes</span>
+                      {activeContext && (
+                        <span className="text-[11px] text-accent ml-2">
+                          in {activeContext.replace(/-/g, " ")}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setCartOpen(false)}
+                      className="text-text-muted hover:text-text-primary text-[12px] transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Vote list */}
+                  <div className="max-h-[280px] overflow-y-auto">
+                    {atoms
+                      .filter((a) => votes[a.term_id])
+                      .map((a) => {
+                        const v = votes[a.term_id]!;
+                        const icon = TYPE_ICONS[a.componentType ?? ""] ?? "📦";
+                        const ctx = activeContext ?? a.contexts[0];
+                        return (
+                          <div
+                            key={a.term_id}
+                            className="flex items-center gap-2.5 px-4 py-2.5 border-b border-border/50 last:border-none"
+                          >
+                            <span className="text-sm shrink-0">{icon}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[13px] text-text-primary font-medium truncate">{a.name}</div>
+                              {ctx && (
+                                <div className="text-[10px] text-accent font-semibold truncate">
+                                  {ctx.replace(/-/g, " ")}
+                                </div>
+                              )}
+                            </div>
+                            <span
+                              className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                                v === "support"
+                                  ? "bg-pear-soft text-pear"
+                                  : "bg-red-soft text-red"
+                              }`}
+                            >
+                              {v === "support" ? "Yes" : "No"}
+                            </span>
+                            <button
+                              onClick={() =>
+                                setVotes((prev) => {
+                                  const next = { ...prev };
+                                  delete next[a.term_id];
+                                  return next;
+                                })
+                              }
+                              className="text-text-muted hover:text-text-primary text-[11px] transition-colors shrink-0"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        );
+                      })}
+                  </div>
+
+                  {/* Error */}
+                  {submitError && (
+                    <div className="px-4 py-2 text-[12px] text-red-400 bg-red-400/10 border-t border-red-400/20">
+                      ⚠️ {submitError}
+                    </div>
+                  )}
+
+                  {/* Submit */}
+                  <div className="px-4 py-3 border-t border-border">
+                    <button
+                      onClick={handleSubmit}
+                      disabled={submitting}
+                      className="w-full bg-pear font-bold text-[13px] px-4 py-2.5 rounded-xl shadow-[0_0_16px_rgba(212,255,71,0.2)] hover:shadow-[0_0_24px_rgba(212,255,71,0.3)] transition-all duration-200 disabled:opacity-50"
+                      style={{ color: "#06070f" }}
+                    >
+                      {submitting
+                        ? "Submitting..."
+                        : `🍐 Submit ${totalVotes} vote${totalVotes > 1 ? "s" : ""} on-chain`}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 }
