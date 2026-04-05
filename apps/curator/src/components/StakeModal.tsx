@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@wispr/ui";
 import type { WalletConnection } from "@wispr/wallet";
 import { AlertTriangle } from "lucide-react";
+import { useWalletBalance } from "@wispr/wallet";
 
 interface StakeModalProps {
   wallet: WalletConnection;
@@ -20,6 +21,7 @@ export function StakeModal({ wallet, termId, atomName, atomType, context, onClos
   const [staking, setStaking] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { formatted: balanceFormatted, value: balanceValue } = useWalletBalance(wallet.address ?? null);
 
   const handleStake = async () => {
     if (!wallet.multiVault || !wallet.address || !amount) return;
@@ -125,6 +127,12 @@ export function StakeModal({ wallet, termId, atomName, atomType, context, onClos
 
         {/* Amount input */}
         <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-[12px] text-text-muted">Amount</span>
+            <span className="text-[12px] text-text-muted">
+              Balance: <span className={`font-semibold ${balanceValue > 0 ? "text-pear" : "text-text-muted"}`}>{balanceFormatted}</span>
+            </span>
+          </div>
           <div className="relative">
             <input
               type="number"

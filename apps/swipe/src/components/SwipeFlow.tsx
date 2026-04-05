@@ -208,18 +208,11 @@ export default function SwipeFlow() {
                         </span>
                       </div>
 
-                      <button
-                        onClick={handleStartOver}
-                        className="w-full flex items-center justify-center gap-2 bg-pear hover:bg-pear-hover text-ink-inverse font-bold text-[15px] py-4 rounded-2xl shadow-glow transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
-                      >
-                        Share more wisdom →
-                      </button>
-
                       <a
                         href={`https://app.wispear.ai/dashboard/${wallet.address}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full flex items-center justify-center gap-2 bg-bg-raised border border-line hover:border-line-strong text-ink-secondary hover:text-ink font-semibold text-[14px] py-3.5 rounded-2xl shadow-xs hover:shadow-sm transition-all duration-200"
+                        className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 text-ink-inverse font-bold text-[15px] py-4 rounded-2xl shadow-glow transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
                       >
                         Track your wisdom PNL →
                       </a>
