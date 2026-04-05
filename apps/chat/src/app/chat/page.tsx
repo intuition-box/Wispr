@@ -5,6 +5,7 @@ import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlueprintCard } from "@/components/blueprint-card";
 import { LoadingTips } from "@/components/loading-tips";
+import { WispearLogoAnimated } from "@wispr/ui";
 import type { Blueprint } from "@/lib/mock-blueprint";
 
 // Pear icon SVG (dark theme) — reused from packages/ui Logo
@@ -217,44 +218,14 @@ export default function ChatPage() {
       <div className="flex-1 overflow-y-auto pt-4 sm:pt-24 pb-4 space-y-8">
         {/* ── Empty state ── */}
         {!hasMessages && (
-          <div className="flex flex-col items-center h-full text-center">
-            {/* Combined logo */}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -10 920 280" className="h-36 sm:h-64 md:h-80" role="img" aria-label="Wispear">
-              <defs>
-                <linearGradient id="pearGradHome" x1="0%" y1="0%" x2="40%" y2="100%">
-                  <stop offset="0%" stopColor="#d4ff47" />
-                  <stop offset="40%" stopColor="#55e292" />
-                  <stop offset="100%" stopColor="#1990ff" />
-                </linearGradient>
-                <filter id="ringGlowHome" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="6" result="blur1" />
-                  <feGaussianBlur stdDeviation="2" result="blur2" />
-                  <feMerge>
-                    <feMergeNode in="blur1" />
-                    <feMergeNode in="blur2" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-                <filter id="baseLightHome" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="12" />
-                </filter>
-              </defs>
-              <g transform="translate(20, 0)">
-                <g transform="translate(0, 220)">
-                  <ellipse cx="150" cy="0" rx="70" ry="16" fill="#00ffff" opacity="0.4" filter="url(#baseLightHome)" />
-                  <ellipse cx="150" cy="0" rx="60" ry="14" fill="none" stroke="#00ffff" strokeWidth="4" filter="url(#ringGlowHome)" />
-                  <ellipse cx="150" cy="0" rx="56" ry="12" fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.8" />
-                </g>
-                <g transform="translate(0, -10)">
-                  <path d="M 152 75 C 152 45 178 40 188 45 C 183 62 163 72 152 75 Z" fill="#d4ff47" />
-                  <path d="M 148 76 C 145 52 122 47 112 52 C 117 68 137 73 148 76 Z" fill="#aaff2b" />
-                  <path d="M 150 75 C 165 75 175 95 180 120 C 185 145 215 155 215 185 C 215 215 185 235 150 235 C 115 235 85 215 85 185 C 85 155 115 145 120 120 C 125 95 135 75 150 75 Z" fill="url(#pearGradHome)" />
-                </g>
-              </g>
-              <text x="450" y="205" textAnchor="middle" fontFamily="'Montserrat', 'Inter', sans-serif" fontSize="85" fontWeight="900" fill="#ffffff" letterSpacing="-2">
-                wis<tspan fill="#00ffff">p</tspan>ear<tspan fill="#00ffff">.ai</tspan>
-              </text>
-            </svg>
+          <div className="flex flex-col items-center h-full text-center -mt-8 sm:-mt-16">
+            {/* Animated logo + wordmark */}
+            <div className="flex items-end">
+              <WispearLogoAnimated mode="intro-only" theme="dark" className="h-36 sm:h-64 md:h-80 w-auto" />
+              <h1 className="-ml-2 mb-8 sm:mb-14 md:mb-18 font-black tracking-tighter leading-none text-4xl sm:text-7xl md:text-8xl" style={{ fontFamily: "'Montserrat', 'Inter', sans-serif", letterSpacing: "-0.03em" }}>
+                wis<span className="text-[#00ffff]">p</span>ear<span className="text-[#00ffff]">.ai</span>
+              </h1>
+            </div>
 
             <p className="hidden sm:block text-lg text-muted-foreground mt-2 max-w-md px-4" style={{ fontFamily: "var(--font-heading)" }}>
               Collective wisdom, whispered to your agent.

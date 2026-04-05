@@ -15,6 +15,7 @@
     "@wispr/agent": "workspace:*",
     "@wispr/feedback-api": "workspace:*",
     "@wispr/ontology": "workspace:*",
+    "@wispr/ui": "workspace:*",
     "@wispr/wallet": "workspace:*",
     "ethers": "^6.0.0",
     "class-variance-authority": "^0.7.1",
