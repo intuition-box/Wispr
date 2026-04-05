@@ -12,20 +12,20 @@ export interface StakingEvent {
   time: string;
 }
 
-const POSITIONS_QUERY = `
-  query GetPositions($termId: String!) {
-    positions(
-      where: { term_id: { _eq: $termId }, curve_id: { _eq: "1" } }
-      order_by: { updated_at: desc }
+const DEPOSITS_QUERY = `
+  query GetDeposits($termId: String!) {
+    deposits(
+      where: { term_id: { _eq: $termId } }
+      order_by: { created_at: desc }
       limit: 20
     ) {
-      account {
-        id
+      sender_id
+      assets_after_fees
+      created_at
+      transaction_hash
+      sender {
         label
       }
-      shares
-      assets
-      updated_at
     }
   }
 `;
@@ -41,6 +41,7 @@ function formatRelativeTime(timestamp: string): string {
   const diff = now - then;
 
   const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "just now";
   if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours}h ago`;
@@ -74,19 +75,19 @@ export function useStakingHistory(termId: string | null) {
 
     async function fetchHistory() {
       try {
-        const data = await gqlFetch<{ positions: any[] }>(POSITIONS_QUERY, {
+        const data = await gqlFetch<{ deposits: any[] }>(DEPOSITS_QUERY, {
           termId,
         });
 
         if (cancelled) return;
 
-        const parsed: StakingEvent[] = data.positions.map((p: any) => ({
-          curator: p.account?.label ?? truncateAddress(p.account?.id ?? ""),
+        const parsed: StakingEvent[] = data.deposits.map((d: any) => ({
+          curator: d.sender?.label || truncateAddress(d.sender_id ?? ""),
           action: "Stake" as const,
-          amount: formatTrust(p.assets),
-          tx: truncateAddress(p.account?.id ?? ""),
-          txFull: p.account?.id ?? "",
-          time: formatRelativeTime(p.updated_at),
+          amount: formatTrust(d.assets_after_fees),
+          tx: truncateAddress(d.transaction_hash ?? ""),
+          txFull: d.transaction_hash ?? "",
+          time: formatRelativeTime(d.created_at),
         }));
 
         setEvents(parsed);
