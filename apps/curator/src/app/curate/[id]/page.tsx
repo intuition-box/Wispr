@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@wispr/ui";
 import { useWalletConnection } from "@wispr/wallet";
 import { getAtom, ATOMS } from "@/data/atoms";
-import { getTermId } from "@/lib/termIds";
+import { getTermId, getContextsByTermId, getNestedTripleId } from "@/lib/termIds";
 import { StakeModal } from "@/components/StakeModal";
 import { useStakingHistory } from "@/hooks/useStakingHistory";
 
@@ -18,11 +18,11 @@ const TRENDING = Object.values(ATOMS).slice(0, 5).map((a, i) => ({
 }));
 
 const TOP_CURATORS = [
-  { name: "vitalik.eth", totalStaked: "4.2k", atoms: 18, avatar: "V" },
-  { name: "aave-whale.eth", totalStaked: "3.8k", atoms: 14, avatar: "A" },
-  { name: "defi-chad.eth", totalStaked: "2.9k", atoms: 22, avatar: "D" },
-  { name: "sam.eth", totalStaked: "1.6k", atoms: 9, avatar: "S" },
-  { name: "0xbuilder.eth", totalStaked: "1.1k", atoms: 7, avatar: "0" },
+  { name: "bob.eth", totalStaked: "4.2k", atoms: 18, avatar: "B" },
+  { name: "buildr.eth", totalStaked: "3.8k", atoms: 14, avatar: "B" },
+  { name: "alice.eth", totalStaked: "2.9k", atoms: 22, avatar: "A" },
+  { name: "nodo.eth", totalStaked: "1.6k", atoms: 9, avatar: "N" },
+  { name: "frank.eth", totalStaked: "1.1k", atoms: 7, avatar: "F" },
 ];
 
 export default function AtomDetailPage() {
@@ -31,8 +31,11 @@ export default function AtomDetailPage() {
   const atom = getAtom(atomId);
 
   const { wallet, isConnected, connect } = useWalletConnection();
-  const termId = getTermId(atomId);
-  const { events: stakingEvents, loading: historyLoading } = useStakingHistory(termId);
+  const atomTermId = getTermId(atomId);
+  const contexts = atomTermId ? getContextsByTermId(atomTermId) : [];
+  const nestedTripleId = atomTermId && contexts[0] ? getNestedTripleId(atomTermId, contexts[0]) : null;
+  const stakeTermId = nestedTripleId ?? atomTermId;
+  const { events: stakingEvents, loading: historyLoading } = useStakingHistory(stakeTermId);
 
   const [showShare, setShowShare] = useState(false);
   const [showStake, setShowStake] = useState(false);
@@ -172,7 +175,7 @@ export default function AtomDetailPage() {
                 transition: "all 0.3s ease",
               }}
             >
-              {!isConnected ? "Connect Wallet" : "Stake $TRUST"}
+              {!isConnected ? "Connect Wallet" : "🍐 Express your WisPear"}
             </Button>
             <Button
               variant="ghost"
@@ -322,11 +325,13 @@ export default function AtomDetailPage() {
       </div>
 
       {/* Stake Modal */}
-      {showStake && wallet && termId && (
+      {showStake && wallet && stakeTermId && (
         <StakeModal
           wallet={wallet}
-          termId={termId}
+          termId={stakeTermId}
           atomName={atom.name}
+          atomType={atom.type}
+          context={contexts[0]}
           onClose={() => setShowStake(false)}
         />
       )}
