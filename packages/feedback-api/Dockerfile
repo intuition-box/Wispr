@@ -5,6 +5,9 @@ WORKDIR /app
 # ── Install ──────────────────────────────────────────────────────────────────
 FROM base AS install
 
+# Python + build tools for better-sqlite3 native compilation
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
+
 # Copy workspace root files
 COPY package.json bun.lock turbo.json ./
 
