@@ -197,7 +197,17 @@ export function BlueprintCard({
           size="sm"
           disabled={!showCtas}
           onClick={() => {
-            navigator.clipboard.writeText(blueprint.systemPrompt);
+            const mcpJson = Object.keys(blueprint.mcpConfig).length > 0
+              ? `\n\nMCP Configuration (add to claude_desktop_config.json or .cursor/mcp.json):\n\`\`\`json\n${JSON.stringify({ mcpServers: blueprint.mcpConfig }, null, 2)}\n\`\`\``
+              : "";
+            const models = blueprint.llms?.length
+              ? `\n\nRecommended model: ${blueprint.llms[0].model} (${blueprint.llms[0].provider})`
+              : "";
+            const install = blueprint.installCommand
+              ? `\n\nInstall:\n${blueprint.installCommand}`
+              : "";
+            const full = `${blueprint.systemPrompt}${install}${mcpJson}${models}\n\nFlow: ${blueprint.stack.flow}`;
+            navigator.clipboard.writeText(full);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
           }}
