@@ -44,4 +44,11 @@ export const MULTIVAULT_ABI = [
   // Write — deposit/redeem
   "function deposit(address receiver, bytes32 termId, uint256 curveId, uint256 minShares) payable returns (uint256)",
   "function depositBatch(address receiver, bytes32[] termIds, uint256[] curveIds, uint256[] assets, uint256[] minShares) payable returns (uint256[])",
+  // Deposit & redeem (staking)
+  "function deposit(address receiver, bytes32 termId, uint256 curveId, uint256 minShares) payable returns (uint256)",
+  "function depositBatch(address receiver, bytes32[] termIds, uint256[] curveIds, uint256[] assets, uint256[] minShares) payable returns (uint256[])",
+  "function redeem(address receiver, bytes32 termId, uint256 curveId, uint256 shares, uint256 minAssets) returns (uint256)",
+  "function redeemBatch(address receiver, bytes32[] termIds, uint256[] curveIds, uint256[] shares, uint256[] minAssets) returns (uint256[])",
+  "function previewDeposit(uint256 assets, bytes32 termId, uint256 curveId) view returns (uint256)",
+  "function previewRedeem(uint256 shares, bytes32 termId, uint256 curveId) view returns (uint256)",
 ] as const;

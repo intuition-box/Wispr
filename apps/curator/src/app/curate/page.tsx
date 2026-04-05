@@ -1,79 +1,187 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useWalletConnection, WalletConnect } from "@wispr/wallet";
-import { Button } from "@wispr/ui";
-
-interface CurateItem {
-  component: { id: string; name: string; description: string; url: string };
-  baseTriple: { id: string; subject: string; predicate: string; object: string; label: string };
-  nestedTriple: { subjectTriple: string; predicate: string; object: string; label: string } | null;
-  trustScore: number;
-  wisPearerCount: number;
-}
+import { useAtoms, type OnChainAtom } from "@/hooks/useAtoms";
+import { getNestedTripleId } from "@/lib/termIds";
 
 const TYPE_ICONS: Record<string, string> = {
-  mcp: "🔌", skill: "🧠", model: "🤖", api: "⚡", sdk: "⚡", package: "📦", agent: "🛠️",
+  mcp: "🔌",
+  skill: "🧠",
+  model: "🤖",
+  api: "⚡",
+  sdk: "⚡",
+  package: "📦",
+  agent: "🛠️",
 };
-
-const DEMO_ITEMS: CurateItem[] = [
-  {
-    component: { id: "mcp-notion", name: "MCP Notion", description: "Model Context Protocol server for Notion — reads databases, pages, and syncs workspace content with your AI agent.", url: "https://github.com/makenotion/notion-mcp-server" },
-    baseTriple: { id: "T1-mcp-notion", subject: "mcp-notion", predicate: "is-best-of", object: "mcp", label: "MCP Notion is-best-of mcp" },
-    nestedTriple: { subjectTriple: "T1-mcp-notion", predicate: "in-context-of", object: "content-automation", label: "(MCP Notion is-best-of mcp) in-context-of content-automation" },
-    trustScore: 9.1, wisPearerCount: 25,
-  },
-  {
-    component: { id: "brand-voice-skill", name: "Brand Voice Skill", description: "AI service that analyzes your writing style from existing content and applies it to new drafts.", url: "https://wispear.ai/skills/brand-voice" },
-    baseTriple: { id: "T1-brand-voice", subject: "brand-voice-skill", predicate: "is-best-of", object: "skill", label: "Brand Voice Skill is-best-of skill" },
-    nestedTriple: { subjectTriple: "T1-brand-voice", predicate: "in-context-of", object: "content-creation", label: "(Brand Voice Skill is-best-of skill) in-context-of content-creation" },
-    trustScore: 8.8, wisPearerCount: 10,
-  },
-  {
-    component: { id: "mcp-twitter", name: "MCP Twitter", description: "Model Context Protocol server for Twitter — posts tweets, threads, and manages social presence.", url: "https://github.com/EnesCinr/twitter-mcp" },
-    baseTriple: { id: "T1-mcp-twitter", subject: "mcp-twitter", predicate: "is-best-of", object: "mcp", label: "MCP Twitter is-best-of mcp" },
-    nestedTriple: { subjectTriple: "T1-mcp-twitter", predicate: "in-context-of", object: "social-media", label: "(MCP Twitter is-best-of mcp) in-context-of social-media" },
-    trustScore: 8.5, wisPearerCount: 16,
-  },
-  {
-    component: { id: "claude-sonnet-4-5", name: "Claude Sonnet 4.5", description: "Anthropic's Claude Sonnet 4.5 — long-form generation, advanced reasoning, and precise tone control.", url: "https://docs.anthropic.com/en/docs/about-claude/models" },
-    baseTriple: { id: "T1-claude-sonnet", subject: "claude-sonnet-4-5", predicate: "is-best-of", object: "model", label: "Claude Sonnet 4.5 is-best-of model" },
-    nestedTriple: { subjectTriple: "T1-claude-sonnet", predicate: "in-context-of", object: "content-generation", label: "(Claude Sonnet 4.5 is-best-of model) in-context-of content-generation" },
-    trustScore: 9.4, wisPearerCount: 42,
-  },
-];
 
 type Vote = "support" | "oppose" | null;
 
-function useBlueprint(): CurateItem[] {
-  const searchParams = useSearchParams();
-  return useMemo(() => {
-    const raw = searchParams.get("blueprint");
-    if (raw) {
-      try { return JSON.parse(atob(raw)) as CurateItem[]; } catch { /* fallback */ }
-    }
-    return DEMO_ITEMS;
-  }, [searchParams]);
-}
-
 export default function CuratePage() {
-  const { isConnected } = useWalletConnection();
-  const items = useBlueprint();
+  const { wallet, isConnected } = useWalletConnection();
+  const { atoms, loading, error } = useAtoms();
+  const searchParams = useSearchParams();
   const [votes, setVotes] = useState<Record<string, Vote>>({});
+  const [amounts, setAmounts] = useState<Record<string, number>>({});
+  const [cartOpen, setCartOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [pearBounce, setPearBounce] = useState(false);
 
-  const handleVote = (tripleId: string, vote: Vote) => {
-    setVotes((prev) => ({ ...prev, [tripleId]: prev[tripleId] === vote ? null : vote }));
+  // Auto-stop bounce animation after 3s
+  useEffect(() => {
+    if (!pearBounce) return;
+    const t = setTimeout(() => setPearBounce(false), 3000);
+    return () => clearTimeout(t);
+  }, [pearBounce]);
+
+  // Extract pre-selected context from blueprint URL param
+  const preSelectedContext = useMemo(() => {
+    const raw = searchParams.get("blueprint");
+    if (!raw) return null;
+    try {
+      const items = JSON.parse(atob(raw));
+      const ctx = items.find((i: any) => i.nestedTriple?.object)?.nestedTriple?.object;
+      return ctx ?? null;
+    } catch {
+      return null;
+    }
+  }, [searchParams]);
+
+  const [activeContext, setActiveContext] = useState<string | null>(preSelectedContext);
+
+  // Extract unique contexts from all atoms
+  const allContexts = useMemo(() => {
+    const ctxSet = new Set<string>();
+    atoms.forEach((atom) => {
+      atom.contexts.forEach((ctx) => ctxSet.add(ctx));
+    });
+    return Array.from(ctxSet).sort();
+  }, [atoms]);
+
+  // Filter atoms by selected context
+  const filteredAtoms = useMemo(() => {
+    if (!activeContext) return atoms;
+    return atoms.filter((atom) => atom.contexts.includes(activeContext));
+  }, [atoms, activeContext]);
+
+  const DEFAULT_AMOUNT = 1;
+  const STEP = 1;
+
+  const handleVote = (termId: string, vote: Vote) => {
+    setVotes((prev) => {
+      const toggled = prev[termId] === vote ? null : vote;
+      if (!toggled) {
+        setAmounts((a) => { const n = { ...a }; delete n[termId]; return n; });
+      } else if (!amounts[termId]) {
+        setAmounts((a) => ({ ...a, [termId]: DEFAULT_AMOUNT }));
+      }
+      return { ...prev, [termId]: toggled };
+    });
+  };
+
+  const adjustAmount = (termId: string, delta: number) => {
+    setAmounts((prev) => {
+      const current = prev[termId] ?? DEFAULT_AMOUNT;
+      const next = Math.max(STEP, current + delta);
+      return { ...prev, [termId]: next };
+    });
   };
 
   const supportCount = Object.values(votes).filter((v) => v === "support").length;
   const opposeCount = Object.values(votes).filter((v) => v === "oppose").length;
+  const totalVotes = supportCount + opposeCount;
+  const totalAmount = Object.entries(votes)
+    .filter(([, v]) => v)
+    .reduce((sum, [id]) => sum + (amounts[id] ?? DEFAULT_AMOUNT), 0);
+
+  const toSlug = (atom: OnChainAtom) =>
+    atom.name.toLowerCase().replace(/\+/g, "plus").replace(/[\s.]/g, "-").replace(/[^a-z0-9-]/g, "").replace(/-+/g, "-");
+
+  // Build the tagline based on active context
+  const tagline = activeContext
+    ? `Is this the best tool for ${activeContext.replace(/-/g, " ")}?`
+    : "Is this the best tool for the job?";
+
+  // Submit votes on-chain via multiVault batch deposit
+  const handleSubmit = async () => {
+    if (!wallet?.multiVault || !wallet.address || totalVotes === 0) return;
+
+    setSubmitting(true);
+    setTxHash(null);
+    setSubmitError(null);
+
+    try {
+      const multiVault = wallet.multiVault;
+
+      const { ethers } = await import("ethers");
+      const bondingConfig = await multiVault.getBondingCurveConfig();
+      const defaultCurveId = bondingConfig[1];
+
+      const zeroBig = BigInt(0);
+      const termIds: string[] = [];
+      const curveIds: any[] = [];
+      const assets: any[] = [];
+      const minShares: any[] = [];
+
+      for (const atom of atoms) {
+        const vote = votes[atom.term_id];
+        if (!vote) continue;
+
+        const ctx = activeContext ?? atom.contexts[0];
+        if (!ctx) continue;
+
+        const nestedTripleId = getNestedTripleId(atom.term_id, ctx);
+        if (!nestedTripleId) continue;
+
+        let depositTermId = nestedTripleId;
+        if (vote === "oppose") {
+          depositTermId = await multiVault.getCounterIdFromTripleId(nestedTripleId);
+        }
+
+        const amt = amounts[atom.term_id] ?? DEFAULT_AMOUNT;
+        termIds.push(depositTermId);
+        curveIds.push(defaultCurveId);
+        assets.push(ethers.parseEther(amt.toString()));
+        minShares.push(zeroBig);
+      }
+
+      if (termIds.length === 0) return;
+
+      const totalValue = assets.reduce((sum: any, a: any) => sum + a, zeroBig);
+
+      const tx = await multiVault.depositBatch(
+        wallet.address,
+        termIds,
+        curveIds,
+        assets,
+        minShares,
+        { value: totalValue }
+      );
+
+      const receipt = await tx.wait();
+      setTxHash(receipt.hash);
+      setPearBounce(true);
+      setVotes({});
+      setCartOpen(false);
+    } catch (err) {
+      console.error("Submit votes failed:", err);
+      setSubmitError(
+        err instanceof Error ? err.message.split("(")[0].trim() : "Transaction failed"
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <>
-      <div className="sticky top-0 z-10 bg-bg/65 backdrop-blur-xl border-b border-border px-5 py-3">
-        <h1 className="text-3xl font-bold text-text-primary tracking-tight">Curate</h1>
-        <p className="text-sm text-text-secondary mt-1">Vote on contextual claims for each component</p>
+      {/* Header */}
+      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
+        <h1 className="page-title">Wispear</h1>
       </div>
 
       <div className="relative w-full px-5 py-6">
@@ -81,102 +189,337 @@ export default function CuratePage() {
         {!isConnected && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-bg/70 backdrop-blur-sm">
             <span className="text-4xl">🔒</span>
-            <h2 className="text-xl font-bold text-text-primary">Connect</h2>
+            <h2 className="text-xl font-bold text-text-primary">Connect your wallet</h2>
             <p className="text-sm text-text-secondary max-w-[300px] text-center">
-              Connect to vote on claims and stake $TRUST.
+              Connect your wallet to express your Wispear and stake $TRUST.
             </p>
             <WalletConnect />
           </div>
         )}
 
+        {/* Tagline */}
+        <h2 className={`text-xl font-bold text-text-primary mb-4 ${!isConnected ? "blur-sm" : ""}`}>
+          {tagline}
+        </h2>
+
+        {/* Context filter bubbles */}
+        <div className={`flex flex-wrap gap-2 mb-5 ${!isConnected ? "blur-sm" : ""}`}>
+          <button
+            onClick={() => setActiveContext(null)}
+            className={`text-[12px] font-semibold px-4 py-1.5 rounded-full border transition-all duration-200 ${
+              activeContext === null
+                ? "bg-pear text-bg border-pear"
+                : "bg-transparent text-text-secondary border-border hover:border-border-light hover:text-text-primary"
+            }`}
+          >
+            All
+          </button>
+          {allContexts.map((ctx) => (
+            <button
+              key={ctx}
+              onClick={() => setActiveContext(activeContext === ctx ? null : ctx)}
+              className={`text-[12px] font-semibold px-4 py-1.5 rounded-full border transition-all duration-200 ${
+                activeContext === ctx
+                  ? "bg-accent text-bg border-accent"
+                  : "bg-transparent text-text-secondary border-border hover:border-border-light hover:text-text-primary"
+              }`}
+            >
+              {ctx.replace(/-/g, " ")}
+            </button>
+          ))}
+        </div>
+
         {/* Summary */}
         <div className={`flex items-center justify-between mb-5 ${!isConnected ? "blur-sm" : ""}`}>
           <div className="flex items-center gap-4">
-            {supportCount > 0 && <span className="text-sm font-semibold text-pear">✓ {supportCount} supported</span>}
-            {opposeCount > 0 && <span className="text-sm font-semibold text-red">✕ {opposeCount} opposed</span>}
+            <span className="text-sm text-text-muted">
+              {filteredAtoms.length} component{filteredAtoms.length !== 1 ? "s" : ""}
+            </span>
+            {supportCount > 0 && (
+              <span className="text-sm font-semibold text-pear">✓ {supportCount} yes</span>
+            )}
+            {opposeCount > 0 && (
+              <span className="text-sm font-semibold text-red">✕ {opposeCount} no</span>
+            )}
           </div>
-          <a href="/curate/new" className="text-[13px] font-semibold text-accent hover:text-text-primary transition-colors">
-            + Add new component
-          </a>
         </div>
+
+        {/* Loading state */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-6 h-6 border-2 border-pear/30 border-t-pear rounded-full animate-spin" />
+          </div>
+        )}
+
+        {/* Error state */}
+        {error && (
+          <div className="flex flex-col items-center justify-center py-20 gap-2">
+            <span className="text-2xl">⚠️</span>
+            <p className="text-sm text-text-secondary">{error}</p>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && !error && filteredAtoms.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20 gap-2">
+            <span className="text-2xl">🔍</span>
+            <p className="text-sm text-text-secondary">No components found for this context</p>
+          </div>
+        )}
 
         {/* Components grid */}
-        <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 ${!isConnected ? "blur-sm pointer-events-none" : ""}`}>
-          {items.map((item) => {
-            const tripleId = item.nestedTriple?.subjectTriple ?? item.baseTriple.id;
-            const vote = votes[tripleId] ?? null;
-            const context = item.nestedTriple?.object ?? null;
-            const typeIcon = TYPE_ICONS[item.baseTriple.object] ?? "📦";
+        {!loading && !error && filteredAtoms.length > 0 && (
+          <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 ${!isConnected ? "blur-sm pointer-events-none" : ""}`}>
+            {filteredAtoms.map((atom) => {
+              const vote = votes[atom.term_id] ?? null;
+              const typeIcon = TYPE_ICONS[atom.componentType ?? ""] ?? "📦";
 
-            return (
-              <div
-                key={item.component.id}
-                className={`bg-surface rounded-xl border p-4 flex flex-col gap-3 transition-all duration-200 ${
-                  vote === "support" ? "border-pear/40 shadow-[0_0_16px_rgba(212,255,71,0.1)]"
-                  : vote === "oppose" ? "border-red/30 opacity-60"
-                  : "border-border hover:border-border-light"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-lg">{typeIcon}</span>
-                  <span className="text-[14px] font-bold text-text-primary truncate flex-1">{item.component.name}</span>
-                  <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-pear-soft text-pear border border-pear/20">
-                    {item.baseTriple.object}
-                  </span>
-                </div>
-
-                <p className="text-[12px] text-text-secondary leading-relaxed line-clamp-2">{item.component.description}</p>
-
-                {context && (
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">Context</span>
-                    <span className="text-[12px] font-semibold px-3 py-1.5 rounded-full bg-accent-soft text-accent border border-accent/20 self-start">
-                      {context.replace(/-/g, " ")}
-                    </span>
+              return (
+                <div
+                  key={atom.term_id}
+                  className={`bg-surface rounded-xl border p-4 flex flex-col gap-3 transition-all duration-200 ${
+                    vote === "support"
+                      ? "border-pear/40 shadow-[0_0_16px_rgba(212,255,71,0.1)]"
+                      : vote === "oppose"
+                      ? "border-red/30 opacity-60"
+                      : "border-border hover:border-border-light"
+                  }`}
+                >
+                  {/* Name + icon + type pill */}
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">{typeIcon}</span>
+                    <span className="text-[14px] font-bold text-text-primary truncate flex-1">{atom.name}</span>
+                    {atom.componentType && (
+                      <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-pear-soft text-pear border border-pear/20">
+                        {atom.componentType}
+                      </span>
+                    )}
                   </div>
-                )}
 
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-semibold text-amber">★ {item.trustScore.toFixed(1)}</span>
-                  <span className="text-[11px] font-medium text-white">{item.wisPearerCount} wisPearers</span>
+                  {/* Description */}
+                  <p className="text-[12px] text-text-secondary leading-relaxed line-clamp-2">
+                    {atom.description}
+                  </p>
+
+                  {/* Contexts + trust */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap gap-1">
+                      {atom.contexts.map((ctx) => (
+                        <span
+                          key={ctx}
+                          className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-accent-soft text-accent border border-accent/20"
+                        >
+                          {ctx.replace(/-/g, " ")}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[11px] font-semibold text-amber">★ {atom.totalMarketCap}</span>
+                      <span className="text-[10px] text-text-muted">{atom.positionCount} stakers</span>
+                    </div>
+                  </div>
+
+                  {/* View details */}
+                  <Link
+                    href={`/curate/${toSlug(atom)}`}
+                    className="text-[12px] font-semibold text-accent hover:text-text-primary transition-colors"
+                  >
+                    View details →
+                  </Link>
+
+                  {/* Yes / No buttons */}
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={() => handleVote(atom.term_id, "support")}
+                      className={`flex-1 h-9 rounded-lg flex items-center justify-center text-[12px] font-semibold gap-1 transition-all duration-200 ${
+                        vote === "support"
+                          ? "bg-pear text-bg border border-pear"
+                          : "bg-transparent border border-pear/40 text-pear hover:bg-pear hover:text-bg"
+                      }`}
+                    >
+                      ✓ Yes
+                    </button>
+                    <button
+                      onClick={() => handleVote(atom.term_id, "oppose")}
+                      className={`flex-1 h-9 rounded-lg flex items-center justify-center text-[12px] font-semibold gap-1 transition-all duration-200 ${
+                        vote === "oppose"
+                          ? "bg-red text-white border border-red"
+                          : "bg-transparent border border-red/40 text-red hover:bg-red hover:text-white"
+                      }`}
+                    >
+                      ✕ No
+                    </button>
+                  </div>
                 </div>
-
-                <a href={`/curate/${item.component.id}`} className="text-[12px] font-semibold text-accent hover:text-text-primary transition-colors">
-                  View details →
-                </a>
-
-                <div className="flex gap-2 pt-1">
-                  <button
-                    onClick={() => handleVote(tripleId, "support")}
-                    className={`flex-1 h-9 rounded-lg flex items-center justify-center text-[12px] font-semibold gap-1 transition-all duration-200 ${
-                      vote === "support" ? "bg-pear text-bg border border-pear" : "bg-transparent border border-pear/40 text-pear hover:bg-pear hover:text-bg"
-                    }`}
-                  >✓ Support</button>
-                  <button
-                    onClick={() => handleVote(tripleId, "oppose")}
-                    className={`flex-1 h-9 rounded-lg flex items-center justify-center text-[12px] font-semibold gap-1 transition-all duration-200 ${
-                      vote === "oppose" ? "bg-red text-white border border-red" : "bg-transparent border border-red/40 text-red hover:bg-red hover:text-white"
-                    }`}
-                  >✕ Oppose</button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Submit */}
-        {isConnected && Object.keys(votes).length > 0 && (
-          <div className="mt-6 flex justify-center">
-            <Button
-              variant="primary"
-              size="lg"
-              style={{ borderRadius: "12px", fontWeight: 700, fontSize: "14px", background: "#d4ff47", color: "#06070f", boxShadow: "0 0 24px rgba(212,255,71,0.2)", padding: "12px 32px" }}
-            >
-              Submit {Object.keys(votes).length} vote{Object.keys(votes).length > 1 ? "s" : ""} on-chain
-            </Button>
+              );
+            })}
           </div>
         )}
       </div>
+
+      {/* Floating Pear Cart */}
+      {isConnected && (totalVotes > 0 || txHash) && (
+        <>
+          {/* Pear button — pulses green on success */}
+          <button
+            onClick={() => { setCartOpen(!cartOpen); }}
+            className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
+              pearBounce
+                ? "bg-pear shadow-[0_0_32px_rgba(212,255,71,0.5),0_0_64px_rgba(212,255,71,0.25)] scale-110 animate-bounce"
+                : "bg-pear shadow-[0_4px_24px_rgba(212,255,71,0.3)] hover:shadow-[0_4px_32px_rgba(212,255,71,0.45)] hover:scale-105"
+            }`}
+          >
+            {pearBounce ? (
+              <span className="text-bg text-xl font-bold">✓</span>
+            ) : (
+              <>
+                <span className="text-2xl">🍐</span>
+                {totalVotes > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-accent text-white text-[11px] font-bold flex items-center justify-center">
+                    {totalVotes}
+                  </span>
+                )}
+              </>
+            )}
+          </button>
+
+          {/* Cart dropdown */}
+          {cartOpen && (
+            <div className="fixed bottom-24 right-6 z-50 w-[300px] bg-surface border border-border rounded-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] overflow-hidden">
+              {/* Success state */}
+              {txHash ? (
+                <div className="p-5 flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-pear/20 flex items-center justify-center">
+                    <span className="text-2xl">🍐</span>
+                  </div>
+                  <span className="text-[14px] font-bold text-pear">Votes submitted!</span>
+                  <a
+                    href={`https://explorer.intuition.systems/tx/${txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[12px] text-accent hover:text-pear transition-colors underline"
+                  >
+                    View on-chain ↗
+                  </a>
+                  <button
+                    onClick={() => { setTxHash(null); setCartOpen(false); }}
+                    className="text-[12px] text-text-muted hover:text-text-primary mt-1 transition-colors"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {/* Header */}
+                  <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+                    <div>
+                      <span className="text-[13px] font-bold text-text-primary">Your votes</span>
+                      {activeContext && (
+                        <span className="text-[11px] text-accent ml-2">
+                          in {activeContext.replace(/-/g, " ")}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => setCartOpen(false)}
+                      className="text-text-muted hover:text-text-primary text-[12px] transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Vote list */}
+                  <div className="max-h-[280px] overflow-y-auto">
+                    {atoms
+                      .filter((a) => votes[a.term_id])
+                      .map((a) => {
+                        const v = votes[a.term_id]!;
+                        const icon = TYPE_ICONS[a.componentType ?? ""] ?? "📦";
+                        const ctx = activeContext ?? a.contexts[0];
+                        const amt = amounts[a.term_id] ?? DEFAULT_AMOUNT;
+                        return (
+                          <div
+                            key={a.term_id}
+                            className="flex flex-col gap-1.5 px-4 py-2.5 border-b border-border/50 last:border-none"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-sm shrink-0">{icon}</span>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-[13px] text-text-primary font-medium truncate">{a.name}</div>
+                                {ctx && (
+                                  <div className="text-[10px] text-accent font-semibold truncate">
+                                    {ctx.replace(/-/g, " ")}
+                                  </div>
+                                )}
+                              </div>
+                              <span
+                                className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                                  v === "support"
+                                    ? "bg-pear-soft text-pear"
+                                    : "bg-red-soft text-red"
+                                }`}
+                              >
+                                {v === "support" ? "Yes" : "No"}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  setVotes((prev) => { const n = { ...prev }; delete n[a.term_id]; return n; });
+                                  setAmounts((prev) => { const n = { ...prev }; delete n[a.term_id]; return n; });
+                                }}
+                                className="text-text-muted hover:text-text-primary text-[11px] transition-colors shrink-0"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                            {/* +/- amount control */}
+                            <div className="flex items-center gap-1.5 ml-7">
+                              <button
+                                onClick={() => adjustAmount(a.term_id, -STEP)}
+                                className="w-6 h-6 rounded-md bg-surface-2 border border-border text-text-muted hover:text-text-primary hover:border-border-light text-[13px] font-bold flex items-center justify-center transition-all"
+                              >
+                                −
+                              </button>
+                              <span className="text-[12px] font-mono font-semibold text-pear min-w-[60px] text-center">
+                                {amt} $T
+                              </span>
+                              <button
+                                onClick={() => adjustAmount(a.term_id, STEP)}
+                                className="w-6 h-6 rounded-md bg-surface-2 border border-border text-text-muted hover:text-text-primary hover:border-border-light text-[13px] font-bold flex items-center justify-center transition-all"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+
+                  {/* Error */}
+                  {submitError && (
+                    <div className="px-4 py-2 text-[12px] text-red-400 bg-red-400/10 border-t border-red-400/20">
+                      ⚠️ {submitError}
+                    </div>
+                  )}
+
+                  {/* Submit */}
+                  <div className="px-4 py-3 border-t border-border">
+                    <button
+                      onClick={handleSubmit}
+                      disabled={submitting}
+                      className="w-full bg-pear font-bold text-[13px] px-4 py-2.5 rounded-xl shadow-[0_0_16px_rgba(212,255,71,0.2)] hover:shadow-[0_0_24px_rgba(212,255,71,0.3)] transition-all duration-200 disabled:opacity-50"
+                      style={{ color: "#06070f" }}
+                    >
+                      {submitting
+                        ? "Submitting..."
+                        : `🍐 Submit ${totalVotes} vote${totalVotes > 1 ? "s" : ""} — ${totalAmount} $T`}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </>
   );
 }

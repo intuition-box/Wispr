@@ -6,12 +6,11 @@ import { Logo, brand } from "@wispr/ui";
 import { useWalletConnection } from "@wispr/wallet";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", icon: "📊", label: "Dashboard", external: false },
   { href: "/explorer", icon: "🧭", label: "Explorer", external: false },
-  { href: "/curate", icon: "🍐", label: "Curate", external: false },
-  { href: "/explorer", icon: "🔍", label: "Explorer" },
-  { href: "/activity", icon: "⚡", label: "Activity" },
-  { href: "/curate", icon: "✏️", label: "Curate" },
+  { href: "/curate", icon: "🍐", label: "Wispear", external: false },
+  { href: "/curate/new", icon: "➕", label: "Add New", external: false },
+  { href: "/activity", icon: "📊", label: "Activity", external: false },
+  { href: "/dashboard", icon: "📈", label: "Dashboard", external: false },
   { href: "/chat", icon: "💬", label: "Chat", external: true },
   { href: "/onboarding", icon: "⚙️", label: "Settings", external: false },
 ];

@@ -42,6 +42,13 @@
   },
   "triples": {
     "base": {
+      "T1-mcp-notion": "0x895dc560b80a8bca62eda1ba8255ce46dc979271b71e390d5b86545fd01f3227",
+      "T1-mcp-twitter": "0xb24d8a39c54fd544cc0546132b5aa7fcd794b60f95ab39399fcd0903551bd032",
+      "T1-claude-sonnet": "0xd24a5ea792b700c3d4988e4117eb533613df0515c861984f02e26e35d3139ee7",
+      "T1-chainlink": "0xfcf17c3ceca270b4b29e65b0a4d305ad023493502e4d9b17335ac54af1de3942",
+      "T1-1inch": "0x391cfb80aaa9b7fcc4e0f0d21d30d8f6a9daac4396049ed30d3c9d143f0df49f",
+      "T1-privy": "0xc1af4b322a5530c5748601a7134c4d1b727daf75d1fdac9734510e3674a86fde",
+      "T1-brand-voice": "0x4b8d3be4773d5b170c5d3d54ef495dfefe7d237db8b86521cc9bb906a15f60ea",
       "T1-mcp-github": "0x72d0abe6d7377b9fc663a08e288aa57a1a6b177726ee28e9c227a462a95b93dc",
       "T1-code-review": "0x8204d10f10c84ab9cf1cd8f19647cb5f235c25aae786d6b24ae46e8b94331b98",
       "T1-firecrawl": "0x4ae2f0f4b9469ce6fc8fda8353afdb53dd9bf15d7fce9759a8a33c6ec7116ada",
@@ -50,6 +57,13 @@
       "T1-claude-haiku": "0xea93546cd0ae0cde0c315223732f9e0956a3bd549732ce6e64e7c779889fc609"
     },
     "nested": {
+      "T1-mcp-notion→content-automation": "0x4394df113951f12a82a774f2bc4e885dcd8f860b72d470d71ce517fb2fdb089f",
+      "T1-mcp-twitter→social-media": "0x92987cafb84ba8ca933c75cabde60ec8257aaa66b35051a0f2ba5f8ccd04804c",
+      "T1-claude-sonnet→content-generation": "0x6931064929d2fa7565d6b1a727ed2848e78454bb2c6420ab0971dae3c215b190",
+      "T1-chainlink→defi": "0x721dc495731836d0d29ce4eb152f190b9798cee952f11b494b2e817e2e5f2584",
+      "T1-1inch→defi": "0x4775c1681177f5b30ae6b2f14acfa4206eead7b41939c3de06420e491645ce43",
+      "T1-privy→web3-building": "0x01fc4e0056735dd785e041c3bb321ff7eca8150c0dda39471301c3f4010cdb38",
+      "T1-brand-voice→content-creation": "0x552d194af42b893f4a773e0bcd4613433c9409eff8e172d28047c807b4369ba3",
       "T1-mcp-github→code-analysis": "0x53a0a6e15bc91dbe0f5ff00346a0b3bf0a5520f96b21ec6fdaa6dcbde18bc874",
       "T1-code-review→code-analysis": "0xfb31c8c8292dae5dce2a729f410dc07d0e082c77591c4e0eabea1de877d5e19d",
       "T1-firecrawl→data-scraping": "0xb29fb0294b9884e24dd10336543bf94a450ef468f76fecc0df8c494b276cbe8a",
