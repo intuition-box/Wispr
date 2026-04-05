@@ -86,7 +86,7 @@ export default function CuratePage() {
   const adjustAmount = (termId: string, delta: number) => {
     setAmounts((prev) => {
       const current = prev[termId] ?? DEFAULT_AMOUNT;
-      const next = Math.max(STEP, parseFloat((current + delta).toFixed(4)));
+      const next = Math.max(STEP, current + delta);
       return { ...prev, [termId]: next };
     });
   };
@@ -480,7 +480,7 @@ export default function CuratePage() {
                                 −
                               </button>
                               <span className="text-[12px] font-mono font-semibold text-pear min-w-[60px] text-center">
-                                {amt.toFixed(3)} $T
+                                {amt} $T
                               </span>
                               <button
                                 onClick={() => adjustAmount(a.term_id, STEP)}
@@ -511,7 +511,7 @@ export default function CuratePage() {
                     >
                       {submitting
                         ? "Submitting..."
-                        : `🍐 Submit ${totalVotes} vote${totalVotes > 1 ? "s" : ""} — ${totalAmount.toFixed(3)} $T`}
+                        : `🍐 Submit ${totalVotes} vote${totalVotes > 1 ? "s" : ""} — ${totalAmount} $T`}
                     </button>
                   </div>
                 </>
