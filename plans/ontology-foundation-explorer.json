@@ -1,0 +1,195 @@
+{
+  "version": "1.0.0-explorer",
+  "description": "Additional components for curator explorer feed. Extends w4-p3 and w2-w3 ontologies.",
+  "use_cases": ["explorer-curation"],
+  "extends": "ontology-foundation-w2-w3.json",
+  "shared_atoms": [
+    "mcp", "sdk", "api", "model", "skill",
+    "is-best-of", "in-context-of", "belongs-to",
+    "communication", "productivity", "defi", "web3-building",
+    "content-generation", "automation", "code-analysis", "social-media"
+  ],
+  "stats": {
+    "newAtoms": 10,
+    "newTriples": 20
+  },
+  "atoms": [
+    {
+      "id": "mcp-slack",
+      "name": "MCP Slack",
+      "description": "Model Context Protocol server for Slack - sends messages, reads channels, manages workflows",
+      "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/slack"
+    },
+    {
+      "id": "mcp-linear",
+      "name": "MCP Linear",
+      "description": "Model Context Protocol server for Linear - manages issues, projects, and sprints",
+      "url": "https://github.com/jerhadf/linear-mcp-server"
+    },
+    {
+      "id": "mcp-figma",
+      "name": "MCP Figma",
+      "description": "Model Context Protocol server for Figma - reads designs, components, and design tokens",
+      "url": "https://github.com/nicholasgriffintn/figma-mcp-server"
+    },
+    {
+      "id": "gpt-4o",
+      "name": "GPT-4o",
+      "description": "OpenAI's GPT-4o - multimodal model for text, image, and audio understanding",
+      "url": "https://platform.openai.com/docs/models/gpt-4o"
+    },
+    {
+      "id": "thegraph",
+      "name": "The Graph",
+      "description": "Decentralized indexing protocol for querying blockchain data with GraphQL",
+      "url": "https://thegraph.com/docs"
+    },
+    {
+      "id": "safe-sdk",
+      "name": "Safe SDK",
+      "description": "SDK for Safe multisig wallets - programmatic transaction management and signing",
+      "url": "https://docs.safe.global/sdk/overview"
+    },
+    {
+      "id": "vercel-ai-sdk",
+      "name": "Vercel AI SDK",
+      "description": "TypeScript SDK for building AI-powered apps with streaming, tool use, and multi-provider support",
+      "url": "https://sdk.vercel.ai/docs"
+    },
+    {
+      "id": "langchain",
+      "name": "LangChain",
+      "description": "Framework for building LLM-powered applications with chains, agents, and memory",
+      "url": "https://docs.langchain.com"
+    },
+    {
+      "id": "smart-contract-audit-skill",
+      "name": "Smart Contract Audit Skill",
+      "description": "AI skill that analyzes Solidity contracts for vulnerabilities and gas optimization",
+      "url": "https://whisper.xyz/skills/smart-contract-audit"
+    },
+    {
+      "id": "mcp-brave-search",
+      "name": "MCP Brave Search",
+      "description": "Model Context Protocol server for Brave Search - web search with privacy focus",
+      "url": "https://github.com/nicholasxuu/BraveSearchMCPServer"
+    }
+  ],
+  "triples": {
+    "base_triples": [
+      {
+        "id": "T1-mcp-slack",
+        "subject": "mcp-slack",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      },
+      {
+        "id": "T1-mcp-linear",
+        "subject": "mcp-linear",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      },
+      {
+        "id": "T1-mcp-figma",
+        "subject": "mcp-figma",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      },
+      {
+        "id": "T1-gpt-4o",
+        "subject": "gpt-4o",
+        "predicate": "is-best-of",
+        "object": "model"
+      },
+      {
+        "id": "T1-thegraph",
+        "subject": "thegraph",
+        "predicate": "is-best-of",
+        "object": "api"
+      },
+      {
+        "id": "T1-safe-sdk",
+        "subject": "safe-sdk",
+        "predicate": "is-best-of",
+        "object": "sdk"
+      },
+      {
+        "id": "T1-vercel-ai",
+        "subject": "vercel-ai-sdk",
+        "predicate": "is-best-of",
+        "object": "sdk"
+      },
+      {
+        "id": "T1-langchain",
+        "subject": "langchain",
+        "predicate": "is-best-of",
+        "object": "sdk"
+      },
+      {
+        "id": "T1-sc-audit",
+        "subject": "smart-contract-audit-skill",
+        "predicate": "is-best-of",
+        "object": "skill"
+      },
+      {
+        "id": "T1-mcp-brave",
+        "subject": "mcp-brave-search",
+        "predicate": "is-best-of",
+        "object": "mcp"
+      }
+    ],
+    "nested_triples": [
+      {
+        "subject_triple": "T1-mcp-slack",
+        "predicate": "in-context-of",
+        "object": "communication"
+      },
+      {
+        "subject_triple": "T1-mcp-linear",
+        "predicate": "in-context-of",
+        "object": "productivity"
+      },
+      {
+        "subject_triple": "T1-mcp-figma",
+        "predicate": "in-context-of",
+        "object": "productivity"
+      },
+      {
+        "subject_triple": "T1-gpt-4o",
+        "predicate": "in-context-of",
+        "object": "content-generation"
+      },
+      {
+        "subject_triple": "T1-thegraph",
+        "predicate": "in-context-of",
+        "object": "defi"
+      },
+      {
+        "subject_triple": "T1-safe-sdk",
+        "predicate": "in-context-of",
+        "object": "web3-building"
+      },
+      {
+        "subject_triple": "T1-vercel-ai",
+        "predicate": "in-context-of",
+        "object": "automation"
+      },
+      {
+        "subject_triple": "T1-langchain",
+        "predicate": "in-context-of",
+        "object": "ai-agents"
+      },
+      {
+        "subject_triple": "T1-sc-audit",
+        "predicate": "in-context-of",
+        "object": "web3-building"
+      },
+      {
+        "subject_triple": "T1-mcp-brave",
+        "predicate": "in-context-of",
+        "object": "automation"
+      }
+    ],
+    "category_triples": []
+  }
+}

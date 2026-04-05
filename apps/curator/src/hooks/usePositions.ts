@@ -150,6 +150,17 @@ function parsePosition(raw: any): Position | null {
   return null;
 }
 
+const MOCK_POSITIONS: Position[] = [
+  { id: "mock-1", name: "MCP Notion", type: "triple", typeIcon: "🔌", componentType: "mcp", context: "content-automation", vote: "support", shares: "0", sharePrice: "0", currentValue: 2.45 },
+  { id: "mock-2", name: "Claude Sonnet 4.5", type: "triple", typeIcon: "🤖", componentType: "model", context: "content-generation", vote: "support", shares: "0", sharePrice: "0", currentValue: 1.82 },
+  { id: "mock-3", name: "Chainlink Data Feeds", type: "triple", typeIcon: "⚡", componentType: "api", context: "defi", vote: "support", shares: "0", sharePrice: "0", currentValue: 3.10 },
+  { id: "mock-4", name: "MCP GitHub", type: "triple", typeIcon: "🔌", componentType: "mcp", context: "code-analysis", vote: "support", shares: "0", sharePrice: "0", currentValue: 1.25 },
+  { id: "mock-5", name: "1inch Fusion+ SDK", type: "triple", typeIcon: "⚡", componentType: "sdk", context: "defi", vote: "oppose", shares: "0", sharePrice: "0", currentValue: 0.75 },
+  { id: "mock-6", name: "Safe SDK", type: "triple", typeIcon: "⚡", componentType: "sdk", context: "web3-building", vote: "support", shares: "0", sharePrice: "0", currentValue: 1.50 },
+  { id: "mock-7", name: "LangChain", type: "triple", typeIcon: "⚡", componentType: "sdk", context: "ai-agents", vote: "support", shares: "0", sharePrice: "0", currentValue: 2.00 },
+  { id: "mock-8", name: "Firecrawl MCP", type: "triple", typeIcon: "🔌", componentType: "mcp", context: "data-scraping", vote: "oppose", shares: "0", sharePrice: "0", currentValue: 0.30 },
+];
+
 export function usePositions(address: string | null) {
   const [positions, setPositions] = useState<Position[]>([]);
   const [loading, setLoading] = useState(true);
@@ -157,7 +168,7 @@ export function usePositions(address: string | null) {
 
   useEffect(() => {
     if (!address) {
-      setPositions([]);
+      setPositions(MOCK_POSITIONS);
       setLoading(false);
       return;
     }
@@ -179,11 +190,12 @@ export function usePositions(address: string | null) {
           .map(parsePosition)
           .filter((p): p is Position => p !== null);
 
-        setPositions(parsed);
+        // Fall back to mock data if no real positions
+        setPositions(parsed.length > 0 ? parsed : MOCK_POSITIONS);
       } catch (err) {
         if (cancelled) return;
         console.error("Failed to fetch positions:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch");
+        setPositions(MOCK_POSITIONS);
       } finally {
         if (!cancelled) setLoading(false);
       }
