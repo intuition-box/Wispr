@@ -1,9 +1,20 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useWalletConnection, WalletConnect } from "@wispr/wallet";
 import { usePositions } from "@/hooks/usePositions";
+import { Lock, Globe, FileText, Palette, Cog, PenLine, ClipboardList, Rocket, Sprout, Wrench, Zap, Brain, AlertTriangle, Target, Plug, Bot, Package } from "lucide-react";
+
+const COMP_TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  mcp: Plug,
+  skill: Brain,
+  model: Bot,
+  api: Zap,
+  sdk: Zap,
+  package: Package,
+  agent: Wrench,
+};
 
 const ROLE_LABELS: Record<string, string> = {
   "full-stack-web3": "Full Stack Web3 Developer",
@@ -15,14 +26,14 @@ const ROLE_LABELS: Record<string, string> = {
   founder: "Founder",
 };
 
-const ROLE_EMOJI: Record<string, string> = {
-  "full-stack-web3": "🌐",
-  "smart-contract-dev": "📜",
-  "frontend-dev": "🎨",
-  "backend-dev": "⚙️",
-  designer: "✏️",
-  "product-manager": "📋",
-  founder: "🚀",
+const ROLE_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
+  "full-stack-web3": Globe,
+  "smart-contract-dev": FileText,
+  "frontend-dev": Palette,
+  "backend-dev": Cog,
+  designer: PenLine,
+  "product-manager": ClipboardList,
+  founder: Rocket,
 };
 
 const LEVEL_LABELS: Record<string, string> = {
@@ -32,11 +43,11 @@ const LEVEL_LABELS: Record<string, string> = {
   expert: "Expert",
 };
 
-const LEVEL_EMOJI: Record<string, string> = {
-  beginner: "🌱",
-  intermediate: "🔧",
-  advanced: "⚡",
-  expert: "🧠",
+const LEVEL_ICON: Record<string, React.ComponentType<{ className?: string }>> = {
+  beginner: Sprout,
+  intermediate: Wrench,
+  advanced: Zap,
+  expert: Brain,
 };
 
 function useProfile() {
@@ -61,43 +72,59 @@ export default function DashboardPage() {
   const profile = useProfile();
 
   const roleLabel = ROLE_LABELS[profile.role] ?? profile.role;
-  const roleEmoji = ROLE_EMOJI[profile.role] ?? "👤";
+  const RoleIcon = ROLE_ICON[profile.role] ?? Globe;
   const levelLabel = LEVEL_LABELS[profile.level] ?? profile.level;
-  const levelEmoji = LEVEL_EMOJI[profile.level] ?? "🌱";
+  const LevelIcon = LEVEL_ICON[profile.level] ?? Sprout;
 
   const totalValue = positions.reduce((s, p) => s + p.currentValue, 0);
   const supportCount = positions.filter((p) => p.vote === "support").length;
   const opposeCount = positions.filter((p) => p.vote === "oppose").length;
 
+  // Lock scroll when wallet not connected
+  useEffect(() => {
+    document.body.style.overflow = isConnected ? "" : "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [isConnected]);
+
   return (
     <>
       {/* Header */}
-      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
+      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-4 sm:px-5 py-4 sm:py-5">
         <h1 className="page-title">Dashboard</h1>
-        <p className="text-sm text-text-secondary mt-1">
+        <p className="text-xs sm:text-sm text-text-secondary mt-1">
           Your positions and curation P&L
         </p>
       </div>
 
-      <div className="relative w-full px-5 py-6">
-        {/* Wallet gate */}
-        {!isConnected && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-bg/70 backdrop-blur-sm">
-            <span className="text-4xl">🔒</span>
-            <h2 className="text-xl font-bold text-white">Connect your wallet</h2>
-            <p className="text-sm text-text-secondary max-w-[300px] text-center">
-              Connect your wallet to see your curation positions.
-            </p>
+      {/* Wallet connect — always visible */}
+      {!isConnected && (
+        <div className="px-4 sm:px-5 pt-4 pb-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl bg-surface border border-border">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <Lock className="w-7 h-7 shrink-0 text-text-secondary" />
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-text-primary">Connect</h2>
+                <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
+                  Connect to see your curation positions.
+                </p>
+              </div>
+            </div>
             <WalletConnect />
           </div>
+        </div>
+      )}
+
+      <div className="relative w-full px-4 sm:px-5 py-6">
+        {!isConnected && (
+          <div className="absolute inset-0 z-20 bg-bg/60 backdrop-blur-sm rounded-xl pointer-events-auto" />
         )}
 
-        <div className={`flex gap-6 ${!isConnected ? "blur-sm pointer-events-none" : ""}`}>
+        <div className="flex gap-6">
           {/* Left — Positions */}
           <div className="flex-1 min-w-0 flex flex-col gap-6">
 
             {/* Summary cards */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-surface rounded-xl border border-border p-4 text-center">
                 <div className="text-xl font-bold text-pear">{positions.length}</div>
                 <div className="text-[11px] text-text-secondary mt-1">Positions</div>
@@ -122,7 +149,7 @@ export default function DashboardPage() {
             {/* Error */}
             {error && (
               <div className="flex flex-col items-center justify-center py-20 gap-2">
-                <span className="text-2xl">⚠️</span>
+                <AlertTriangle className="w-6 h-6 text-amber" />
                 <p className="text-sm text-text-secondary">{error}</p>
               </div>
             )}
@@ -131,6 +158,7 @@ export default function DashboardPage() {
             {!loading && !error && positions.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20 gap-2">
                 <span className="text-2xl">🍐</span>
+
                 <p className="text-sm text-text-secondary">No positions yet — go curate some components!</p>
               </div>
             )}
@@ -158,7 +186,7 @@ export default function DashboardPage() {
                     >
                       {/* Name + type */}
                       <div className="flex items-center gap-3">
-                        <span className="text-lg">{pos.typeIcon}</span>
+                        {(() => { const I = COMP_TYPE_ICONS[pos.componentType ?? ""] ?? Package; return <I className="w-5 h-5 text-text-secondary" />; })()}
                         <span className="text-[14px] font-bold text-white truncate flex-1">{pos.name}</span>
                         <span className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
                           pos.vote === "support"
@@ -209,16 +237,16 @@ export default function DashboardPage() {
           </div>
 
           {/* Right — Persona card */}
-          <aside className="w-[300px] shrink-0 hidden lg:flex flex-col gap-6 sticky top-24 self-start">
+          <aside className="w-[300px] shrink-0 hidden xl:flex flex-col gap-6 sticky top-24 self-start">
             {/* Profile card */}
             <div className="bg-surface rounded-xl border border-border p-5 flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-surface-2 border border-border flex items-center justify-center text-3xl">
-                {roleEmoji}
+              <div className="w-16 h-16 rounded-2xl bg-surface-2 border border-border flex items-center justify-center">
+                <RoleIcon className="w-8 h-8 text-accent" />
               </div>
               <div className="text-center">
                 <h3 className="text-[16px] font-bold text-white">{roleLabel}</h3>
                 <div className="flex items-center justify-center gap-1.5 mt-2">
-                  <span>{levelEmoji}</span>
+                  <LevelIcon className="w-4 h-4 text-accent" />
                   <span className="text-[13px] font-semibold text-accent">{levelLabel} in AI</span>
                 </div>
               </div>
@@ -238,7 +266,7 @@ export default function DashboardPage() {
             {/* Recommended contexts */}
             <div className="bg-surface rounded-xl border border-border p-5 flex flex-col gap-3">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <span>🎯</span> Recommended for you
+                <Target className="w-4 h-4" /> Recommended for you
               </h3>
               <p className="text-[11px] text-text-secondary">
                 Based on your profile as {roleLabel}

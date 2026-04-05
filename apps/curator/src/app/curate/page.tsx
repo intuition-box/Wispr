@@ -6,15 +6,16 @@ import Link from "next/link";
 import { useWalletConnection, WalletConnect } from "@wispr/wallet";
 import { useAtoms, type OnChainAtom } from "@/hooks/useAtoms";
 import { getNestedTripleId } from "@/lib/termIds";
+import { Lock, Plug, Brain, Bot, Zap, Package, Wrench, AlertTriangle, Search } from "lucide-react";
 
-const TYPE_ICONS: Record<string, string> = {
-  mcp: "🔌",
-  skill: "🧠",
-  model: "🤖",
-  api: "⚡",
-  sdk: "⚡",
-  package: "📦",
-  agent: "🛠️",
+const TYPE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  mcp: Plug,
+  skill: Brain,
+  model: Bot,
+  api: Zap,
+  sdk: Zap,
+  package: Package,
+  agent: Wrench,
 };
 
 type Vote = "support" | "oppose" | null;
@@ -37,6 +38,12 @@ export default function CuratePage() {
     const t = setTimeout(() => setPearBounce(false), 3000);
     return () => clearTimeout(t);
   }, [pearBounce]);
+
+  // Lock scroll when wallet not connected
+  useEffect(() => {
+    document.body.style.overflow = isConnected ? "" : "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [isConnected]);
 
   // Extract pre-selected context from blueprint URL param
   const preSelectedContext = useMemo(() => {
@@ -180,30 +187,41 @@ export default function CuratePage() {
   return (
     <>
       {/* Header */}
-      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
+      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-4 sm:px-5 py-4 sm:py-5">
         <h1 className="page-title">Wispear</h1>
       </div>
 
-      <div className="relative w-full px-5 py-6">
-        {/* Wallet gate */}
-        {!isConnected && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-bg/70 backdrop-blur-sm">
-            <span className="text-4xl">🔒</span>
-            <h2 className="text-xl font-bold text-text-primary">Connect your wallet</h2>
-            <p className="text-sm text-text-secondary max-w-[300px] text-center">
-              Connect your wallet to express your Wispear and stake $TRUST.
-            </p>
+      {/* Wallet connect — always visible */}
+      {!isConnected && (
+        <div className="px-4 sm:px-5 pt-4 pb-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl bg-surface border border-border">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <Lock className="w-7 h-7 shrink-0 text-text-secondary" />
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-text-primary">Connect</h2>
+                <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
+                  Connect to express your Wispear and stake $TRUST.
+                </p>
+              </div>
+            </div>
             <WalletConnect />
           </div>
+        </div>
+      )}
+
+      <div className="relative w-full px-4 sm:px-5 py-6">
+        {/* Blur overlay when not connected */}
+        {!isConnected && (
+          <div className="absolute inset-0 z-20 bg-bg/60 backdrop-blur-sm rounded-xl pointer-events-auto" />
         )}
 
         {/* Tagline */}
-        <h2 className={`text-xl font-bold text-text-primary mb-4 ${!isConnected ? "blur-sm" : ""}`}>
+        <h2 className="text-xl font-bold text-text-primary mb-4">
           {tagline}
         </h2>
 
         {/* Context filter bubbles */}
-        <div className={`flex flex-wrap gap-2 mb-5 ${!isConnected ? "blur-sm" : ""}`}>
+        <div className="flex flex-wrap gap-2 mb-5">
           <button
             onClick={() => setActiveContext(null)}
             className={`text-[12px] font-semibold px-4 py-1.5 rounded-full border transition-all duration-200 ${
@@ -230,7 +248,7 @@ export default function CuratePage() {
         </div>
 
         {/* Summary */}
-        <div className={`flex items-center justify-between mb-5 ${!isConnected ? "blur-sm" : ""}`}>
+        <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-4">
             <span className="text-sm text-text-muted">
               {filteredAtoms.length} component{filteredAtoms.length !== 1 ? "s" : ""}
@@ -254,7 +272,7 @@ export default function CuratePage() {
         {/* Error state */}
         {error && (
           <div className="flex flex-col items-center justify-center py-20 gap-2">
-            <span className="text-2xl">⚠️</span>
+            <AlertTriangle className="w-6 h-6 text-amber" />
             <p className="text-sm text-text-secondary">{error}</p>
           </div>
         )}
@@ -262,17 +280,17 @@ export default function CuratePage() {
         {/* Empty state */}
         {!loading && !error && filteredAtoms.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 gap-2">
-            <span className="text-2xl">🔍</span>
+            <Search className="w-6 h-6 text-text-muted" />
             <p className="text-sm text-text-secondary">No components found for this context</p>
           </div>
         )}
 
         {/* Components grid */}
         {!loading && !error && filteredAtoms.length > 0 && (
-          <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 ${!isConnected ? "blur-sm pointer-events-none" : ""}`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filteredAtoms.map((atom) => {
               const vote = votes[atom.term_id] ?? null;
-              const typeIcon = TYPE_ICONS[atom.componentType ?? ""] ?? "📦";
+              const TypeIcon = TYPE_ICONS[atom.componentType ?? ""] ?? Package;
 
               return (
                 <div
@@ -287,7 +305,7 @@ export default function CuratePage() {
                 >
                   {/* Name + icon + type pill */}
                   <div className="flex items-center gap-3">
-                    <span className="text-lg">{typeIcon}</span>
+                    <TypeIcon className="w-5 h-5 text-text-secondary shrink-0" />
                     <span className="text-[14px] font-bold text-text-primary truncate flex-1">{atom.name}</span>
                     {atom.componentType && (
                       <span className="text-[11px] font-semibold px-3 py-1 rounded-full bg-pear-soft text-pear border border-pear/20">
@@ -363,7 +381,7 @@ export default function CuratePage() {
           {/* Pear button — pulses green on success */}
           <button
             onClick={() => { setCartOpen(!cartOpen); }}
-            className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
+            className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${
               pearBounce
                 ? "bg-pear shadow-[0_0_32px_rgba(212,255,71,0.5),0_0_64px_rgba(212,255,71,0.25)] scale-110 animate-bounce"
                 : "bg-pear shadow-[0_4px_24px_rgba(212,255,71,0.3)] hover:shadow-[0_4px_32px_rgba(212,255,71,0.45)] hover:scale-105"
@@ -385,7 +403,7 @@ export default function CuratePage() {
 
           {/* Cart dropdown */}
           {cartOpen && (
-            <div className="fixed bottom-24 right-6 z-50 w-[300px] bg-surface border border-border rounded-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] overflow-hidden">
+            <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[300px] max-w-[300px] bg-surface border border-border rounded-2xl shadow-[0_16px_48px_rgba(0,0,0,0.4)] overflow-hidden">
               {/* Success state */}
               {txHash ? (
                 <div className="p-5 flex flex-col items-center gap-3">
@@ -434,7 +452,7 @@ export default function CuratePage() {
                       .filter((a) => votes[a.term_id])
                       .map((a) => {
                         const v = votes[a.term_id]!;
-                        const icon = TYPE_ICONS[a.componentType ?? ""] ?? "📦";
+                        const Icon = TYPE_ICONS[a.componentType ?? ""] ?? Package;
                         const ctx = activeContext ?? a.contexts[0];
                         const amt = amounts[a.term_id] ?? DEFAULT_AMOUNT;
                         return (
@@ -443,7 +461,7 @@ export default function CuratePage() {
                             className="flex flex-col gap-1.5 px-4 py-2.5 border-b border-border/50 last:border-none"
                           >
                             <div className="flex items-center gap-2.5">
-                              <span className="text-sm shrink-0">{icon}</span>
+                              <Icon className="w-4 h-4 text-text-secondary shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <div className="text-[13px] text-text-primary font-medium truncate">{a.name}</div>
                                 {ctx && (
@@ -497,7 +515,7 @@ export default function CuratePage() {
                   {/* Error */}
                   {submitError && (
                     <div className="px-4 py-2 text-[12px] text-red-400 bg-red-400/10 border-t border-red-400/20">
-                      ⚠️ {submitError}
+                      <AlertTriangle className="w-3.5 h-3.5 inline-block mr-1" /> {submitError}
                     </div>
                   )}
 

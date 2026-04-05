@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@wispr/ui";
+import { Search } from "lucide-react";
 
 const TRENDING = [
   { category: "DeFi", name: "Chainlink Data Feeds", trust: "2.4k $TRUST · 31 wisPearers" },
@@ -44,7 +45,7 @@ export function RightPanel() {
     <aside className="w-[320px] shrink-0 sticky top-0 h-screen overflow-y-auto border-l border-border px-4 py-5 flex flex-col gap-4">
       {/* Search */}
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm">🔍</span>
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4" />
         <input
           type="text"
           placeholder="Search components"

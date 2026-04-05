@@ -9,11 +9,11 @@ export default function ExplorerPage() {
   return (
     <>
       {/* Header */}
-      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
+      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-4 sm:px-5 py-4 sm:py-5">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="page-title">Explorer</h1>
-            <p className="text-sm text-text-secondary mt-1">
+            <p className="text-xs sm:text-sm text-text-secondary mt-1">
               Live feed — whispers from the community
             </p>
           </div>
@@ -33,7 +33,7 @@ export default function ExplorerPage() {
 
       {/* Feed */}
       {!loading && (
-        <div className="flex flex-col gap-3 px-5 py-4">
+        <div className="flex flex-col gap-3 px-4 sm:px-5 py-4">
           {deposits.map((deposit, i) => (
             <FeedCard
               key={deposit.id}
@@ -95,7 +95,7 @@ function FeedCard({ deposit, isNew }: { deposit: FeedDeposit; isNew: boolean }) 
               href={`https://explorer.intuition.systems/tx/${deposit.txHash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[11px] text-text-muted hover:text-accent transition-colors font-mono"
+              className="text-[11px] text-text-muted hover:text-accent transition-colors font-mono hidden sm:inline"
             >
               {deposit.txHash} ↗
             </a>

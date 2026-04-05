@@ -19,7 +19,7 @@ export default function RootLayout({
         <WalletProvider>
           <div className="flex min-h-screen">
             <Sidebar />
-            <main className="flex-1 min-w-0">
+            <main className="flex-1 min-w-0 pt-[56px] md:pt-0">
               {children}
             </main>
           </div>

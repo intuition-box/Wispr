@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@wispr/ui";
 import { useWalletConnection, WalletConnect } from "@wispr/wallet";
 import { getAllContexts, getTermId } from "@/lib/termIds";
+import { Lock, Plug, Brain, Package, Zap, Bot, Wrench, AlertTriangle } from "lucide-react";
 
 const TYPES = [
-  { value: "mcp", icon: "🔌", label: "MCP" },
-  { value: "skill", icon: "🧠", label: "Skill" },
-  { value: "package", icon: "📦", label: "Package" },
-  { value: "api", icon: "⚡", label: "API" },
-  { value: "model", icon: "🤖", label: "Model" },
-  { value: "agent", icon: "🛠️", label: "Agent" },
-];
+  { value: "mcp", icon: Plug, label: "MCP" },
+  { value: "skill", icon: Brain, label: "Skill" },
+  { value: "package", icon: Package, label: "Package" },
+  { value: "api", icon: Zap, label: "API" },
+  { value: "model", icon: Bot, label: "Model" },
+  { value: "agent", icon: Wrench, label: "Agent" },
+] as const;
 
 const AUTONOMY = [
   { value: "low", label: "Low", description: "Needs human approval" },
@@ -38,6 +39,12 @@ export default function NewAtomPage() {
   const [type, setType] = useState<string | null>(null);
   const [context, setContext] = useState<string | null>(null);
   const [autonomy, setAutonomy] = useState<string | null>(null);
+
+  // Lock scroll when wallet not connected
+  useEffect(() => {
+    document.body.style.overflow = isConnected ? "" : "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [isConnected]);
 
   const existingContexts = getAllContexts();
   const isValid = name.trim() && type && description.trim() && context;
@@ -141,28 +148,39 @@ export default function NewAtomPage() {
   return (
     <>
       {/* Header */}
-      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
+      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-4 sm:px-5 py-4 sm:py-5">
         <h1 className="page-title">Add New</h1>
-        <p className="text-sm text-text-secondary mt-1">
+        <p className="text-xs sm:text-sm text-text-secondary mt-1">
           Add a new component to the knowledge graph
         </p>
       </div>
 
-      <div className="relative w-full px-5 py-8 flex flex-col gap-7">
-        {/* Wallet gate */}
-        {!isConnected && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-6 bg-bg/70 backdrop-blur-sm">
-            <span className="text-4xl">🔒</span>
-            <h2 className="text-xl font-bold text-text-primary">Connect</h2>
-            <p className="text-sm text-text-secondary max-w-[300px] text-center">
-              Connect to create and publish atoms on-chain.
-            </p>
+      {/* Wallet connect — always visible */}
+      {!isConnected && (
+        <div className="px-4 sm:px-5 pt-4 pb-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl bg-surface border border-border">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <Lock className="w-7 h-7 shrink-0 text-text-secondary" />
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-text-primary">Connect</h2>
+                <p className="text-xs sm:text-sm text-text-secondary mt-0.5">
+                  Connect to create and publish atoms on-chain.
+                </p>
+              </div>
+            </div>
             <WalletConnect />
           </div>
+        </div>
+      )}
+
+      <div className="relative w-full px-4 sm:px-5 py-6 sm:py-8 flex flex-col gap-6 sm:gap-7">
+        {/* Blur overlay when not connected */}
+        {!isConnected && (
+          <div className="absolute inset-0 z-20 bg-bg/60 backdrop-blur-sm rounded-xl pointer-events-auto" />
         )}
 
         {/* Two columns */}
-        <div className={`flex gap-6 ${!isConnected ? "blur-sm pointer-events-none" : ""}`}>
+        <div className={`flex flex-col md:flex-row gap-6 ${!isConnected ? "blur-sm pointer-events-none" : ""}`}>
           {/* Left — Name, URL, Description */}
           <div className="flex-1 flex flex-col gap-5">
             <div className="flex flex-col gap-2">
@@ -224,7 +242,7 @@ export default function NewAtomPage() {
                       ),
                     }}
                   >
-                    <span style={{ fontSize: "16px" }}>{t.icon}</span>
+                    <t.icon style={{ width: "16px", height: "16px" }} />
                     {t.label}
                   </Button>
                 ))}
@@ -293,7 +311,7 @@ export default function NewAtomPage() {
 
         {error && (
           <div className="flex items-center gap-2 text-[13px] text-red-400 bg-red-400/10 rounded-lg px-4 py-3 border border-red-400/20">
-            <span>⚠️</span>
+            <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@wispr/ui";
 import type { WalletConnection } from "@wispr/wallet";
+import { AlertTriangle } from "lucide-react";
 
 interface StakeModalProps {
   wallet: WalletConnection;
@@ -144,7 +145,7 @@ export function StakeModal({ wallet, termId, atomName, atomType, context, onClos
         {/* Error */}
         {error && (
           <div className="flex items-center gap-2 text-[13px] text-red-400 bg-red-400/10 rounded-lg px-3 py-2 border border-red-400/20">
-            <span>⚠️</span>
+            <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}

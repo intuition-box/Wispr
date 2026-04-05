@@ -69,8 +69,22 @@ h1, h2, h3, h4, h5, h6 {
 
 .page-title {
   font-family: 'Montserrat', 'Inter', 'Helvetica Neue', sans-serif;
-  font-size: 81px;
+  font-size: clamp(36px, 8vw, 81px);
   font-weight: 800;
   letter-spacing: -0.03em;
   color: #1d2050;
+}
+
+/* Slide-in animation for mobile drawer */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.25s ease-out;
 }

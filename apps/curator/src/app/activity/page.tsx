@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@wispr/ui";
+import { Zap, MessageCircle, Wrench } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -271,7 +272,7 @@ function ChatModal({ conversationId, onClose }: { conversationId: string; onClos
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
-        className="flex flex-col w-full max-w-2xl rounded-2xl border border-border overflow-hidden"
+        className="flex flex-col w-full max-w-2xl rounded-2xl border border-border overflow-hidden mx-4 sm:mx-0"
         style={{ background: "var(--color-surface)", maxHeight: "88vh" }}
       >
         {/* Header */}
@@ -296,7 +297,7 @@ function ChatModal({ conversationId, onClose }: { conversationId: string; onClos
                       : { background: "transparent", color: "var(--color-text-secondary)" }),
                   }}
                 >
-                  {t === "chat" ? "💬 Chat" : "🔧 Stack"}
+                  {t === "chat" ? <><MessageCircle className="w-3.5 h-3.5 inline mr-1" /> Chat</> : <><Wrench className="w-3.5 h-3.5 inline mr-1" /> Stack</>}
                 </Button>
               ))}
             </div>
@@ -412,9 +413,9 @@ export default function ActivityPage() {
 
   return (
     <>
-      <div className="sticky top-0 z-10 bg-bg/65 backdrop-blur-xl border-b border-border px-5 py-3">
-        <h1 className="text-3xl font-bold text-text-primary tracking-tight">Activity</h1>
-        <p className="text-sm text-text-primary mt-1">
+      <div className="sticky top-0 z-10 bg-bg/65 backdrop-blur-xl border-b border-border px-4 sm:px-5 py-3">
+        <h1 className="text-2xl sm:text-3xl font-bold text-text-primary tracking-tight">Activity</h1>
+        <p className="text-xs sm:text-sm text-text-primary mt-1">
           Agent exchanges · Deposit $TRUST on Intuition to validate stacks
         </p>
       </div>
@@ -425,12 +426,12 @@ export default function ActivityPage() {
         </div>
       ) : convos.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <div className="text-4xl opacity-30">⚡</div>
+          <Zap className="w-10 h-10 text-text-muted opacity-30" />
           <p className="text-sm text-text-muted">No activity yet.</p>
           <p className="text-xs text-text-muted opacity-60">Wispr chat exchanges will appear here.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 p-4 sm:p-5">
           {convos.map((convo) => (
             <div key={convo.id} onClick={() => setOpenId(convo.id)}
               className="bg-bg p-5 flex flex-col gap-3 cursor-pointer group rounded-xl border border-border transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:border-accent/30"
@@ -440,7 +441,7 @@ export default function ActivityPage() {
                   className="w-9 h-9 rounded-full flex items-center justify-center text-sm shrink-0 group-hover:scale-110 transition-all duration-300"
                   style={{ background: "rgba(212,255,71,0.1)", border: "1px solid rgba(212,255,71,0.2)" }}
                 >
-                  ⚡
+                  <Zap className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-mono text-text-muted truncate">{convo.id.slice(0, 12)}…</div>

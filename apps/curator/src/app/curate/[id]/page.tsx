@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@wispr/ui";
 import { useWalletConnection } from "@wispr/wallet";
+import { Search, Flame, Award, Send, LinkIcon } from "lucide-react";
 import { getAtom, ATOMS } from "@/data/atoms";
 import { getTermId, getContextsByTermId, getNestedTripleId } from "@/lib/termIds";
 import { StakeModal } from "@/components/StakeModal";
@@ -52,7 +53,7 @@ export default function AtomDetailPage() {
   if (!atom) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4">
-        <span className="text-4xl">🔍</span>
+        <Search className="w-10 h-10 text-text-muted" />
         <h2 className="text-xl font-bold text-text-primary">Atom not found</h2>
         <p className="text-sm text-text-secondary">No on-chain data for &quot;{atomId}&quot;</p>
         <Link href="/explorer" className="text-sm text-accent hover:underline">← Back to Explorer</Link>
@@ -63,7 +64,7 @@ export default function AtomDetailPage() {
   return (
     <>
       {/* Header — atom name as page title */}
-      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-5 py-5">
+      <div className="sticky top-0 z-10 page-header backdrop-blur-xl px-4 sm:px-5 py-4 sm:py-5">
         <Link href="/curate" className="text-xs text-text-muted hover:text-pear transition-colors mb-2 inline-block">
           ← Back to Curate
         </Link>
@@ -71,7 +72,7 @@ export default function AtomDetailPage() {
       </div>
 
       {/* Two-column layout */}
-      <div className="flex gap-6 px-5 py-8">
+      <div className="flex flex-col lg:flex-row gap-6 px-4 sm:px-5 py-6 sm:py-8">
 
         {/* Left — Main content */}
         <div className="flex-1 min-w-0 flex flex-col gap-8">
@@ -101,7 +102,7 @@ export default function AtomDetailPage() {
           </div>
 
           {/* Chart + Stats side by side */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             {/* Chart */}
             <div className="flex-1 min-w-0 flex flex-col">
               <h3 className="text-sm font-semibold text-text-primary mb-3">$TRUST staked over time</h3>
@@ -136,7 +137,7 @@ export default function AtomDetailPage() {
             </div>
 
             {/* Stats column */}
-            <div className="w-[160px] shrink-0 flex flex-col gap-2">
+            <div className="w-full sm:w-[160px] shrink-0 grid grid-cols-2 sm:flex sm:flex-col gap-2">
               {[
                 { label: "Autonomy", value: atom.autonomy, color: "text-amber" },
                 { label: "Type", value: atom.type.toUpperCase(), color: "text-white" },
@@ -196,7 +197,7 @@ export default function AtomDetailPage() {
           </div>
 
           {/* Contexts + Bundles */}
-          <div className="flex gap-6">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <div className="flex-1">
               <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-wider mb-2">Contexts</h3>
               <div className="flex flex-wrap gap-1.5">
@@ -222,8 +223,8 @@ export default function AtomDetailPage() {
           {/* Staking history table */}
           <div>
             <h3 className="text-[11px] font-semibold text-text-muted uppercase tracking-wider mb-3">Staking history</h3>
-            <div className="bg-surface rounded-xl border border-border overflow-hidden">
-              <table className="w-full text-[13px]">
+            <div className="bg-surface rounded-xl border border-border overflow-x-auto">
+              <table className="w-full text-[13px] min-w-[500px]">
                 <thead>
                   <tr className="border-b border-border">
                     <th className="text-left text-[11px] font-semibold text-text-muted uppercase tracking-wider px-4 py-2.5">Curator</th>
@@ -274,11 +275,11 @@ export default function AtomDetailPage() {
         </div>
 
         {/* Right — Sidebar */}
-        <aside className="w-[300px] shrink-0 hidden lg:flex flex-col gap-6 sticky top-14 self-start">
+        <aside className="w-full lg:w-[300px] shrink-0 hidden lg:flex flex-col gap-6 sticky top-14 self-start">
           {/* Trending atoms */}
           <div className="bg-surface rounded-xl border border-border p-4">
             <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-              <span className="text-base">🔥</span> Trending
+              <Flame className="w-4 h-4 text-amber" /> Trending
             </h3>
             <div className="flex flex-col gap-2.5">
               {TRENDING.map((item, i) => (
@@ -304,7 +305,7 @@ export default function AtomDetailPage() {
           {/* Top Curators */}
           <div className="bg-surface rounded-xl border border-border p-4">
             <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
-              <span className="text-base">👑</span> Top Curators
+              <Award className="w-4 h-4 text-pear" /> Top Curators
             </h3>
             <div className="flex flex-col gap-2.5">
               {TOP_CURATORS.map((curator) => (
@@ -357,13 +358,13 @@ export default function AtomDetailPage() {
                   <span className="text-lg">𝕏</span> Twitter / X
                 </a>
                 <a href={`https://warpcast.com/~/compose?text=${encodeURIComponent(`I just staked $TRUST on ${atom.name} via @wispear 🍐⛓️`)}&embeds[]=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
-                  <span className="text-lg">🟪</span> Farcaster
+                  <span className="text-lg text-purple">◆</span> Farcaster
                 </a>
                 <a href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${atom.name} on Wispear — backed by curators 🍐`)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
-                  <span className="text-lg">✈️</span> Telegram
+                  <Send className="w-5 h-5 text-accent" /> Telegram
                 </a>
                 <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-surface-2 border border-border text-text-primary text-[14px] font-medium hover:border-border-light hover:-translate-y-0.5 transition-all duration-200">
-                  <span className="text-lg">🔗</span> LinkedIn
+                  <LinkIcon className="w-5 h-5 text-accent" /> LinkedIn
                 </a>
               </div>
             </div>
